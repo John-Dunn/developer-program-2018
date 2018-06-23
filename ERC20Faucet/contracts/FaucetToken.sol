@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import "./StandardToken.sol";
+import "zeppelin/contracts/token/StandardToken.sol";
 
 /**
  * @title Faucet Token
@@ -15,7 +15,7 @@ contract FaucetToken is StandardToken {
     * @return A boolean that indicates if the operation was successful.
     */
     function mint() public payable returns (bool) {
-        totalSupply_ = totalSupply_.add(msg.value);
+        totalSupply = totalSupply.add(msg.value);
         balances[msg.sender] = balances[msg.sender].add(msg.value);
         emit Mint(msg.sender, msg.value);
         emit Transfer(address(0), msg.sender, msg.value);
