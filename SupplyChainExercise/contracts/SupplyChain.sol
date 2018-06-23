@@ -82,8 +82,7 @@ contract SupplyChain {
   /* Add a keyword so the function can be paid. This function should transfer money
     to the seller, set the buyer as the person who called this transaction, and set the state
     to Sold. Be careful, this function should use 3 modifiers to check if the item is for sale,
-    if the buyer paid enough, and check the value after the function is called to make sure the buyer is
-    refunded any excess ether sent. Remember to call the event associated with this function!*/
+    if the buyer paid enough, and check the value after the function is called to make sure the buyer is refunded any excess ether sent. Remember to call the event associated with this function!*/
 
     function buyItem(uint _sku)
         public
@@ -100,8 +99,7 @@ contract SupplyChain {
         emit Sold(_sku);
     }
 
-  /* Add 2 modifiers to check if the item is sold already, and that the person calling this function
-  is the seller. Change the state of the item to shipped. Remember to call the event associated with this function!*/
+  /* Add 2 modifiers to check if the item is sold already, and that the person calling this function is the seller. Change the state of the item to shipped. Remember to call the event associated with this function!*/
     function shipItem(uint _sku)
         public
         sold(_sku)
@@ -112,8 +110,7 @@ contract SupplyChain {
         emit Shipped(_sku);
     }
 
-  /* Add 2 modifiers to check if the item is shipped already, and that the person calling this function
-  is the buyer. Change the state of the item to received. Remember to call the event associated with this function!*/
+    /* Add 2 modifiers to check if the item is shipped already, and that the person calling this function is the buyer. Change the state of the item to received. Remember to call the event associated with this function!*/
     function receiveItem(uint _sku)
       public
       shipped(_sku)
