@@ -1,2 +1,4 @@
 # Consensys Developer Program 2018
-Exercises and projects 
+Contains the following exercises and projects:
+* Supply chain exercise
+* Simple bank exercise  
