@@ -21,8 +21,8 @@ contract SimpleBank {
     /// @return The balance of the user after enrolling
     function enroll() public returns (uint){
       /* Set the sender's balance to 1000, return the sender's balance */
-      balances[msg.sender] = 1000;
-      return balances[msg.sender];
+        balances[msg.sender] = 1000;
+        return balances[msg.sender];
     }
 
     /// @notice Deposit ether into bank
@@ -55,7 +55,7 @@ contract SimpleBank {
     /// @return The balance of the user
     // A SPECIAL KEYWORD prevents function from editing state variables;
     // allows function to run locally/off blockchain
-    function balance() public constant returns (uint) {
+    function balance() public view returns (uint) {
         /* Get the balance of the sender of this transaction */
         return balances[msg.sender];
 
@@ -66,7 +66,7 @@ contract SimpleBank {
     // Typically, called when invalid data is sent
     // Added so ether sent to this contract is reverted if the contract fails
     // otherwise, the sender's money is transferred to contract
-    function () {
+    function () public {
         revert();
     }
 }
