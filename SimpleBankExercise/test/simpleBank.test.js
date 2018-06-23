@@ -33,7 +33,7 @@ contract('SimpleBank', function(accounts) {
     const balance = await bank.balance({from: alice});
     assert.equal(deposit.plus(1000).toString(), balance, 'deposit amount incorrect, check deposit method');
 
-    const expectedEventResult = {accountAddress: alice.address, amount: deposit};
+    const expectedEventResult = {accountAddress: alice, amount: deposit};
 
     const LogDepositMade = await bank.allEvents();
     const log = await new Promise(function(resolve, reject) {
@@ -41,9 +41,10 @@ contract('SimpleBank', function(accounts) {
     });
 
     const logAccountAddress = log.args.accountAddress;
-    const logAmount = log.args.amount;
-    assert.equal(expectedEventResult.accountAddress, expectedEventResult.accountAddress, "LogDepositMade event accountAddress property not emmitted, check deposit method");
-    assert.equal(expectedEventResult.amount, expectedEventResult.amount, "LogDepositMade event amount property not emmitted, check deposit method");
+    const logAmount = log.args.amount.toNumber();
+
+    assert.equal(expectedEventResult.accountAddress, logAccountAddress, "LogDepositMade event accountAddress property not emmitted, check deposit method");
+    assert.equal(expectedEventResult.amount, logAmount, "LogDepositMade event amount property not emmitted, check deposit method");
   });
 
   it("should withdraw correct amount", async () => {
