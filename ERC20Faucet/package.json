@@ -1,0 +1,19 @@
+{
+  "name": "ERC20Faucet",
+  "version": "1.0.0",
+  "description": "This offers an easy way to get ERC20 token on testnets. Simply call the payable function `mint` with some ETH and receive the same amount of the Generic ERC20 Token (GERCT).",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "truffle-hdwallet-provider": "0.0.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
