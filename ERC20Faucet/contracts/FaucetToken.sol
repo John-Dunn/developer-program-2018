@@ -10,7 +10,7 @@ import "zeppelin/contracts/token/StandardToken.sol";
 contract FaucetToken is StandardToken {
     event Mint(address indexed to, uint256 amount);
 
-    uint256 constant public amountToMint = 100*10**9; //
+    uint256 constant public amountToMint = 100*10**18; 
 
     /**
     * @dev Function to mint token and transfer them to the message sender.
