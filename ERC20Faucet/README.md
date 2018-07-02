@@ -9,7 +9,7 @@ Run `truffle install` and `npm install`.
 
 This is a modified version of OpenZeppelin's `MintableToken`. Requires the OpenZeppelin `StandardToken`, which is included via ethpm by running `truffle install`. Additionally, for migration to a testnet Infura is used which requires the `truffle-hdwallet-provider` per npm.
 
-Migration to rinkeby is done by running `truffle migrate --network rinkeby`. This requires an an Infura token and the mnemonic of the contract creator. This must be specified in `accounts.js` in the root directory of this repository and should look like this:
+Migration to Rinkeby is done by running `truffle migrate --network rinkeby`. This requires an an Infura token and the mnemonic of the contract creator. This must be specified in `accounts.js` in the root directory of this repository and should look like this:
 
 ```javascript
 module.exports = {
