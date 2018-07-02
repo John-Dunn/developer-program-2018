@@ -3,7 +3,7 @@ pragma solidity ^0.4.24;
 import "./FaucetToken.sol";
 
 /**
- * @title Generic Token example that anybody can mint by calling the mint function with some ETH. The same amount of this token is then minted and assigned to the sender.
+ * @title Generic Token example that anybody can mint by calling the mint function. 
  */
 contract GenericERC20Token is FaucetToken {
 
