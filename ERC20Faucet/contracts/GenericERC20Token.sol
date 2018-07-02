@@ -8,7 +8,7 @@ import "./FaucetToken.sol";
 contract GenericERC20Token is FaucetToken {
 
     string public constant name = "GenericERC20Token";
-    string public constant symbol = "GERCT";
+    string public constant symbol = "GET20";
     uint8 public constant decimals = 18;
 
 }
