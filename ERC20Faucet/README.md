@@ -1,8 +1,8 @@
 # ERC20 Token Faucet
-An easily accessible faucet for ERC20 token with the goal of providing ERC20 token on testnets.
+An easily accessible faucet for ERC20 token with the goal of providing ERC20 token on testnets to play around with.
 
 #### Use:
-The contract has beed deployed on the Rinkeby testnet and can be found under the address `0x2a1595A3aaAfE463193Fc48854A5E1C52A5B56D3` or [here on Etherscan](https://rinkeby.etherscan.io/address/0x2a1595a3aaafe463193fc48854a5e1c52a5b56d3). Call the payable mint function and send along some ETH and receive the same amount of the Generic ERC20 Token (GERCT).
+The contract has been deployed on the Rinkeby testnet and can be found under the address `0xe6fcAC0f0A5496A7D2Ffa158e6FFeDCc910dEAcD` or [here on Etherscan](https://rinkeby.etherscan.io/address/0xe6fcAC0f0A5496A7D2Ffa158e6FFeDCc910dEAcD). To receive token, call the `mint()` function to receive 100 Generic ERC20 Token (GET20) yourself, or call `mint(address _to)` to supply some other address.
 
 #### Development:
 Run `truffle install` and `npm install`.
