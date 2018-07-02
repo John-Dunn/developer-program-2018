@@ -2,7 +2,7 @@
 An easily accessible faucet for ERC20 token with the goal of providing ERC20 token on testnets to play around with.
 
 #### Use:
-The contract has been deployed on the Rinkeby testnet and can be found under the address `0xe6fcAC0f0A5496A7D2Ffa158e6FFeDCc910dEAcD` or [here on Etherscan](https://rinkeby.etherscan.io/address/0xe6fcAC0f0A5496A7D2Ffa158e6FFeDCc910dEAcD). To receive token, call the `mint()` function to receive 100 Generic ERC20 Token (GET20) yourself, or call `mint(address _to)` to supply some other address.
+The contract has been deployed on the Rinkeby testnet and can be found under the address `0xe6fcAC0f0A5496A7D2Ffa158e6FFeDCc910dEAcD` or [here on Etherscan](https://rinkeby.etherscan.io/address/0xe6fcAC0f0A5496A7D2Ffa158e6FFeDCc910dEAcD). To receive 100 Generic ERC20 Token (GET20), call the `mint()` function to receive them yourself, or call `mint(address _to)` to supply some other address.
 
 #### Development:
 Run `truffle install` and `npm install`.
