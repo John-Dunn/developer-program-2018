@@ -60,7 +60,7 @@ contract('GenericERC20Token', function(accounts) {
 
 
     it("should mint token to sender if called without arguments", async() => {
-        var expectedTokenMinted = await token.amountToMint.call();
+        var expectedTokenMinted = await token.AMOUNT_TO_MINT.call();
 
         var tokenBalanceAliceBefore = await token.balanceOf.call(alice);
         var tokenBalanceBobBefore = await token.balanceOf.call(bob);
@@ -106,7 +106,7 @@ contract('GenericERC20Token', function(accounts) {
 
 
     it("should mint to given address if provided", async() => {
-        var expectedTokenMinted = await token.amountToMint.call();
+        var expectedTokenMinted = await token.AMOUNT_TO_MINT.call();
         var stringAddress = web3.toAscii(bob);
 
         const overloadedMintTxData = web3Abi.encodeFunctionCall(overloadedMintAbi,[bob]);
@@ -139,7 +139,7 @@ contract('GenericERC20Token', function(accounts) {
 
 
     it("should emit Mint event when minting to oneself", async() => {
-        var expectedTokenMinted = await token.amountToMint.call();
+        var expectedTokenMinted = await token.AMOUNT_TO_MINT.call();
 
         await token.mint.sendTransaction({from: alice});
 
@@ -168,7 +168,7 @@ contract('GenericERC20Token', function(accounts) {
 
 
     it("should emit Transfer event when minting to oneself", async() => {
-        var expectedTokenMinted = await token.amountToMint.call();
+        var expectedTokenMinted = await token.AMOUNT_TO_MINT.call();
 
         await token.mint.sendTransaction({from: alice});
 
@@ -203,7 +203,7 @@ contract('GenericERC20Token', function(accounts) {
 
 
     it("should emit Mint event when minting to third party", async() => {
-        var expectedTokenMinted = await token.amountToMint.call();
+        var expectedTokenMinted = await token.AMOUNT_TO_MINT.call();
 
         var stringAddress = web3.toAscii(bob);
         const overloadedMintTxData = web3Abi.encodeFunctionCall(overloadedMintAbi,[bob]);
@@ -233,7 +233,7 @@ contract('GenericERC20Token', function(accounts) {
     })
 
     it("should emit Transfer event when minting to oneself", async() => {
-        var expectedTokenMinted = await token.amountToMint.call();
+        var expectedTokenMinted = await token.AMOUNT_TO_MINT.call();
 
         var stringAddress = web3.toAscii(bob);
         const overloadedMintTxData = web3Abi.encodeFunctionCall(overloadedMintAbi,[bob]);
@@ -269,7 +269,7 @@ contract('GenericERC20Token', function(accounts) {
     })
 
     it("should be transferrable", async() => {
-        var expectedTokenMinted = await token.amountToMint.call();
+        var expectedTokenMinted = await token.AMOUNT_TO_MINT.call();
         const amountToTransfer = 500;
 
         await token.mint.sendTransaction({from: alice});
