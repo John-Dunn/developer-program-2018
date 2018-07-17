@@ -1,7 +1,7 @@
-### ArbitEth: Trustless swapping of arbitrary Ethereum-based assets
+### Etherary: Trustless swapping of arbitrary Ethereum-based assets
 Trade your CryptoKitty for anything you want: maybe two other CryptoKitties, maybe your favourite CryptoCelebrity, maybe 1 ETH. Every combination of ETH, ERC20, and ERC721 token is possible, just like when you used to barter your favourite trading cards. There is no need to exchange everything to ETH first and no third party involved. You put your asset up for trade and specify what you want in exchange. If somebody accepts, the assets are swapped immediately.
 
-### Why is there a need for ArbitEth
+### Why is there a need for Etherary
 Traditional exchanges offer trading pairs, mostly with BTC and ETH.
 - take long to list token -> majority unlisted
 - currently don't offer ERC721
@@ -11,7 +11,7 @@ The closest exchange to feature this is ShapeShift which offers direct trading p
 There are some ERC721 exchanges such as OpenSea, Emoon, Rare bits (only erc721 <-> ETH), known origin (erc721 for eth)
 however, they too only allow exchanges to eth.
 
-### Who would use ArbitEth
+### Who would use Etherary
 - People who want to trade ERC721 for other ERC721
 - trade unlisted ERC20 token for eth or for other (note that you need to do order matching yourself)
 
