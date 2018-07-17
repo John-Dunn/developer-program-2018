@@ -21,6 +21,7 @@ Prelims:
     Address 1: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
     Address 2: 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
     GET20: 0xde09e74d4888bc4e65f589e8c13bce9f71ddf4c7
+    GET721: 0xa45eef86cc2eb1477872b07a1298ffa29313610d
 
 First Phase:
     1) Allow seller to open an order, providing the following:
