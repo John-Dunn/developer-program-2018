@@ -10,7 +10,9 @@ import "zeppelin/contracts/token/StandardToken.sol";
 contract FaucetToken is StandardToken {
     event Mint(address indexed to, uint256 amount);
 
-    uint256 constant public amountToMint = 100*10**18; 
+    uint256 constant private PRE_DECIMAL_VALUE = 100;
+    uint8 constant internal FAUCET_DECIMALS = 18;
+    uint256 constant public AMOUNT_TO_MINT = PRE_DECIMAL_VALUE*10**uint256(FAUCET_DECIMALS);
 
     /**
     * @dev Function to mint token and transfer them to the message sender.
@@ -25,10 +27,10 @@ contract FaucetToken is StandardToken {
     * @return A boolean that indicates if the operation was successful.
     */
     function mint(address _to) public returns (bool) {
-        totalSupply = totalSupply.add(amountToMint);
-        balances[_to] = balances[_to].add(amountToMint);
-        emit Mint(_to, amountToMint);
-        emit Transfer(address(0), _to, amountToMint);
+        totalSupply = totalSupply.add(AMOUNT_TO_MINT);
+        balances[_to] = balances[_to].add(AMOUNT_TO_MINT);
+        emit Mint(_to, AMOUNT_TO_MINT);
+        emit Transfer(address(0), _to, AMOUNT_TO_MINT);
         return true;
     }
 
