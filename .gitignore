@@ -1,4 +1,6 @@
 **/installed_contracts
 **/node_modules
+**/chain
 accounts.js
 flattened.sol
+startChain.sh
