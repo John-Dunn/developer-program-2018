@@ -37,7 +37,7 @@ Second Phase:
     Frontend
 
 Unordered feature list that would be nice to have:
-    Compliance with ERC165
+    Compliance with ERC165, implement ERC721Receiver
     Order cancelling
     Expiration time can be set, after which no offers will be accepted anymore
     Open ended orders? I.e. I have this for sale, make me an offer. Should this be on-chain?
