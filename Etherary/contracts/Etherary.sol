@@ -43,10 +43,11 @@ contract Etherary {
         bool isActive;
     }
 
-    modifier activeOrder(uint256 _orderId) {
-        SellOrder memory order = idToSellOrder[_orderId];
+    modifier deactivatesOrder(uint256 _orderId) {
+        SellOrder storage order = idToSellOrder[_orderId];
         require(order.isActive, "Order is not active.");
         _;
+        order.isActive = false;
     }
 
 
@@ -74,8 +75,13 @@ contract Etherary {
             tokenContract.getApproved(_tokenForSale) == address(this),
             "Not authorized to withdraw token for sale."
         );
+        address tokenOwner = tokenContract.ownerOf(_tokenForSale);
+        // This below is necessary to avoid people starting auctions for people who were about to
+        // start auctions themselves. Alternatively, the sell order creation and token transfer
+        // may need to be adjusted.
+        require(tokenContract.ownerOf(_tokenForSale) == msg.sender);
 
-        tokenContract.transferFrom(msg.sender, address(this), _tokenForSale);
+        tokenContract.transferFrom(tokenOwner, address(this), _tokenForSale);
         SellOrder memory order = SellOrder(
             msg.sender,
             _tokenContractAddress,
@@ -110,17 +116,17 @@ contract Etherary {
 
     function cancelERC721SellOrder(uint256 _orderId)
         public
-        activeOrder(_orderId)
-        returns (bool)
+        deactivatesOrder(_orderId)
     {
-        SellOrder memory order = idToSellOrder[_orderId];
+        SellOrder storage order = idToSellOrder[_orderId];
         require(order.seller == msg.sender, "Only order creator can cancel.");
 
         ERC721Basic tokenContract = ERC721Basic(order.tokenContract);
         assert(tokenContract.ownerOf(order.tokenForSale) == address(this));
 
         tokenContract.approve(msg.sender, order.tokenForSale);
-        return true;
+        
+        emit SellOrderCancelled(_orderId);
     }
 
 }
