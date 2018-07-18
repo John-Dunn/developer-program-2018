@@ -55,6 +55,27 @@ contract('Etherary', function(accounts) {
         await token.approve.sendTransaction(etherary.address, tokenBobSells, {from: bob});
     });
 
+    describe("Hook setup", function () {
+        it("should have minted the first two token to Alice", async function () {
+            let ownerToken0 = await token.ownerOf.call(tokenAliceSells);
+            let ownerToken1 = await token.ownerOf.call(tokenAliceKeeps);
+            assert.equal(ownerToken0, alice, "First minted token should be owned by Alice")
+            assert.equal(ownerToken0, alice, "Second minted token should be owned by Alice")
+        });
+
+        it("should have minted the second batch of token to Alice", async function () {
+            let ownerToken2 = await token.ownerOf.call(tokenBobSells);
+            let ownerToken3 = await token.ownerOf.call(tokenAliceWantsBobOwns);
+            assert.equal(ownerToken2, bob, "First minted token should be owned by Alice")
+            assert.equal(ownerToken3, bob, "Second minted token should be owned by Alice")
+        });
+
+        it("should have approved the main contract", async function () {
+            let approved = await token.getApproved.call(tokenBobSells);
+            assert.equal(approved, etherary.address, "should have approved the main contract")
+        });
+    });
+
 
 
     describe("Opening a sell order", function () {
