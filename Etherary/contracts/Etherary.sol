@@ -34,6 +34,10 @@ contract Etherary {
         uint256 orderId
     );
 
+    event SellOrderFilled (
+        uint256 orderId
+    );
+
     struct SellOrder {
         //AssetType assetType;
         address seller;
@@ -99,7 +103,6 @@ contract Etherary {
     function fillERC721SellOrder(uint256 _orderId)
         public
         deactivatesOrder(_orderId)
-        returns (bool)
     {
         SellOrder memory order = idToSellOrder[_orderId];
 
@@ -111,7 +114,7 @@ contract Etherary {
         tokenContract.transferFrom(msg.sender, address(this), order.tokenWanted);
         tokenContract.approve(msg.sender, order.tokenForSale);
         tokenContract.approve(order.seller, order.tokenWanted);
-        return true;
+        emit SellOrderFilled(_orderId);
     }
 
     function cancelERC721SellOrder(uint256 _orderId)
@@ -125,7 +128,7 @@ contract Etherary {
         assert(tokenContract.ownerOf(order.tokenForSale) == address(this));
 
         tokenContract.approve(msg.sender, order.tokenForSale);
-        
+
         emit SellOrderCancelled(_orderId);
     }
 
