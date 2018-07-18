@@ -17,8 +17,8 @@ contract Etherary {
     mapping (uint256 => SellOrder) public idToSellOrder;
     mapping (address => uint256[]) public sellerToOrders;
 
-    // Increasing counter of order numbers
-    uint public orderNumber = 0;
+    // Increasing counter of order IDs
+    uint256 private orderId = 0;
 
     // Do this later as part of an order?
     // enum AssetType { ETHER, ERC20, ERC721 }
@@ -26,7 +26,12 @@ contract Etherary {
     event SellOrderCreated (
         address tokenContract,
         uint256 tokenForSale,
-        uint256 tokenWanted
+        uint256 tokenWanted,
+        uint256 orderId
+    );
+
+    event SellOrderCancelled (
+        uint256 orderId
     );
 
     struct SellOrder {
@@ -79,19 +84,18 @@ contract Etherary {
             true
         );
 
-        idToSellOrder[orderNumber] = order;
-        sellerToOrders[msg.sender].push(orderNumber);
-        emit SellOrderCreated(_tokenContractAddress, _tokenForSale, _tokenWanted);
-        return orderNumber++;
+        idToSellOrder[orderId] = order;
+        sellerToOrders[msg.sender].push(orderId);
+        emit SellOrderCreated(_tokenContractAddress, _tokenForSale, _tokenWanted, orderId);
+        return orderId++;
     }
 
     function fillERC721SellOrder(uint256 _orderId)
         public
-        activeOrder(_orderId)
+        deactivatesOrder(_orderId)
         returns (bool)
     {
         SellOrder memory order = idToSellOrder[_orderId];
-        require(order.isActive, "Order is not active.");
 
         ERC721Basic tokenContract = ERC721Basic(order.tokenContract);
         require(
