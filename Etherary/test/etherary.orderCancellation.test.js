@@ -65,32 +65,39 @@ contract('Etherary', function(accounts) {
 
 
     describe("Cancelling a sell order", function () {
-        it("should not not be possible for Bob to cancel Alice's order", async function () {
+        it("should not be possible for Bob to cancel Alice's order", async function () {
             await exceptions.tryCatch(
                 etherary.cancelERC721SellOrder.sendTransaction(orderId, {from: bob}),
                 exceptions.errTypes.revert
             );
         });
 
-        it("should not not be possible to cancel a nonexisting order", async function () {
+
+        it("should not be possible to cancel a nonexisting order", async function () {
             await exceptions.tryCatch(
                 etherary.cancelERC721SellOrder.sendTransaction(10, {from: alice}),
                 exceptions.errTypes.revert
             );
         });
 
+
         it("should be possible to cancel your own order", async function () {
             await etherary.cancelERC721SellOrder.sendTransaction(orderId, {from:alice});
-            let sellOrder = await etherary.idToSellOrder.call(orderId);
+            let approvedForToken = await token.getApproved.call(tokenAliceSells);
+            assert.equal(approvedForToken, alice, "Alice should be approved to withdraw her token");
 
             // Check for SellOrderCancelled event
             const LogSellOrderCancelled = await etherary.SellOrderCancelled();
             const log = await new Promise(function(resolve, reject) {
                 LogSellOrderCancelled.watch(function(error, log){ resolve(log); } );
             });
-
             const logOrderId = log.args.orderId.toNumber()
+            assert.equal(logOrderId, orderId, "Should emit SellOrderCancelled event with correct orderId");
+        });
 
+
+        it("should be possible to query a cancelled order's status", async function () {
+            let sellOrder = await etherary.idToSellOrder.call(orderId);
             // struct SellOrder {
             //     address seller;
             //     address tokenContract;
