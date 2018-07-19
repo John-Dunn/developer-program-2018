@@ -16,27 +16,20 @@ however, they too only allow exchanges to eth.
 - trade unlisted ERC20 token for eth or for other (note that you need to do order matching yourself)
 
 ### Roadmap
-Prelims:
-    Start a ganache chain with the faucets deployed:
-    Address 1: 0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
-    Address 2: 0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF
-    GET20: 0xde09e74d4888bc4e65f589e8c13bce9f71ddf4c7
-    GET721: 0xa45eef86cc2eb1477872b07a1298ffa29313610d
-
-First Phase: 1 ERC721 for 1 ERC721
+Completed: First Phase: One-to-one exchange of ERC721 token of the same contract
     1) Allow seller to open an order, providing the following:
     - the ERC721 token (will be locked in the contract)
     - the same erc721 token, but other id as accepted trade
-    - smart contract has mapping address => uint[] orderId
     2) The buyer can fill that order, sending
     - order id
     - the token
-    3) The assets are exchanged
+    3) The assets are exchanged and can be withdrawn
 
 Second Phase:
     Frontend
 
 Unordered feature list that would be nice to have:
+    UX is a bit unpractical, requiring 3 tx to trade, how does e.g. CryptoKitty do it?
     Compliance with ERC165, implement ERC721Receiver
     Order cancelling
     Expiration time can be set, after which no offers will be accepted anymore
