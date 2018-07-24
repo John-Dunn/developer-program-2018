@@ -1,4 +1,4 @@
-### Etherary: Trustless swapping of arbitrary Ethereum-based assets
+## Etherary: Trustless swapping of arbitrary Ethereum-based assets
 Trade your CryptoKitty for anything you want: maybe two other CryptoKitties, maybe your favourite CryptoCelebrity, maybe 1 ETH. Every combination of ETH, ERC20, and ERC721 token is possible, just like when you used to barter your favourite trading cards. There is no need to exchange everything to ETH first and no third party involved. You put your asset up for trade and specify what you want in exchange. If somebody accepts, the assets are swapped immediately.
 
 ### Why is there a need for Etherary
