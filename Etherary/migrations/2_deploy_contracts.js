@@ -1,5 +1,5 @@
-var Etherary = artifacts.require("./Etherary.sol");
+var SimpleStorage = artifacts.require("./SimpleStorage.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(Etherary);
+  deployer.deploy(SimpleStorage);
 };
