@@ -16,7 +16,7 @@ contract GenericERC721Token is ERC721Token {
     }
 
     function mint(address _recipient) public {
-        uint256 newTokenId = allTokens.length;
+        uint256 newTokenId = totalSupply();
         _mint(_recipient, newTokenId);
     }
 
