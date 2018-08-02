@@ -27,6 +27,17 @@ class BlockchainInfo extends Component {
     }
 }
 
+class ContractInfo extends Component {
+    render() {
+        return (
+            <div className="pure-g">
+                <div className="pure-u-1-2"><p>Etherary deployed at: {this.props.etheraryAddress} </p></div>
+                <div className="pure-u-1-2"><p>Faucet deployed at: {this.props.faucetAddress} </p></div>
+            </div>
+        )
+    }
+}
+
 
 class BlockchainStatus extends Component {
     render() {
@@ -40,6 +51,7 @@ class BlockchainStatus extends Component {
                     {web3Connected}
                     ? <div>
                         <BlockchainInfo web3={web3} web3Connected={web3Connected}/>
+                        <ContractInfo etheraryAddress={this.props.etheraryAddress} faucetAddress={this.props.faucetAddress} />
                       </div>
                     : 'Could not query blockchain info: no web3'
                 }
@@ -47,5 +59,8 @@ class BlockchainStatus extends Component {
         )
     }
 }
+
+
+
 
 export default BlockchainStatus

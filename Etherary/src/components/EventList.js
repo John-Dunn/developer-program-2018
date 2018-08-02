@@ -6,8 +6,6 @@ class EventList extends Component {
         var eventRows = data.map(function(event, key) {
             var outputString = '';
             Object.keys(event.args).forEach(function(key,index) {
-                console.log(key)
-                console.log()
                 outputString += key;
                 outputString += ' = ';
                 outputString += event.args[key];
