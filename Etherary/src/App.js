@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
+import { BrowserRouter, Route, Link } from 'react-router-dom';
+
 import EtheraryContract from '../build/contracts/Etherary.json'
 import FaucetContract from '../../ERC721Faucet/build/contracts/GenericERC721Token.json'
-
 
 import getWeb3 from './utils/getWeb3'
 import Web3Status from './components/Web3Status'
 import BlockchainStatus from './components/BlockchainStatus'
-import EventList from './components/EventList'
+import EventTab from './components/EventTab'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -24,20 +25,12 @@ class App extends Component {
       faucetAddress: null,
       faucetInstance: null,
 
-      contractAddressInput: '',
-
       tokenNumberInput: -1,
       tokenNumber: -1,
       tokenToSellInput: -1,
       tokenToBuyInput: -1,
-
-      faucetEvents: [],
-      etheraryEvents: []
-
     }
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmitContract = this.handleSubmitContract.bind(this);
     this.handleMint = this.handleMint.bind(this);
     this.handleTokenNumberChange = this.handleTokenNumberChange.bind(this);
     this.handleSubmitTokenNumber = this.handleSubmitTokenNumber.bind(this);
@@ -68,10 +61,6 @@ class App extends Component {
             etheraryAddress: etheraryAddress,
             etheraryInstance: etheraryInstance
         })
-
-       this.etheraryEventListener()
-      // Instantiate contract once web3 provided.
-      //this.etheraryEventListener()
     })
     .catch((e) => {
       console.log('Error finding web3.', e)
@@ -86,9 +75,6 @@ class App extends Component {
     this.setState({tokenToBuyInput: event.target.value});
   }
 
-  handleChange(event) {
-    this.setState({contractAddressInput: event.target.value});
-  }
 
   handleCreateOffer() {
       console.log("Creating offer");
@@ -100,14 +86,6 @@ class App extends Component {
       )
   }
 
-  handleSubmitContract(event) {
-    if (this.state.web3.isAddress(this.state.contractAddressInput)) {
-        console.log('A contract was submitted: ' + this.state.contractAddressInput);
-        this.setState({faucetEvents: []})
-        this.faucetEventListener(this.state.contractAddressInput)
-    }
-    event.preventDefault();
-  }
 
 
   handleTokenNumberChange(event) {
@@ -131,37 +109,12 @@ class App extends Component {
     event.preventDefault();
   }
 
-  faucetEventListener(address) {
-    console.log("Listening for Faucet Events")
-    var event = this.state.faucetInstance.allEvents({
-        fromBlock: 0,
-        toBlock: 'latest'
-    });
-
-    event.watch(function(error,log) {
-        this.setState({faucetEvents: this.state.faucetEvents.concat(log)});
-    }.bind(this))
-  }
-
-  etheraryEventListener() {
-    console.log("Listening for Etherary Events")
-    var event = this.state.etheraryInstance.allEvents({
-        fromBlock: 0,
-        toBlock: 'latest'
-    });
-
-    event.watch(function(error,log) {
-        this.setState({etheraryEvents: this.state.etheraryEvents.concat(log)});
-    }.bind(this))
-  }
-
-
-
   render() {
     return (
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
             <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
+            <span className="pure-menu-item pure-menu-link">Events</span>
             <span className="pure-menu-heading navbar-right"> <Web3Status web3={this.state.web3}/> </span>
         </nav>
 
@@ -180,7 +133,7 @@ class App extends Component {
                     <h2> Approve a token </h2>
                     <form className="pure-form">
                     <fieldset>
-                        <legend>Enter the token id you want to approve</legend>
+                        <legend>Enter the token id you want ato approve</legend>
                         <label>
                             {"Token Id: "}
                             <input
@@ -227,33 +180,19 @@ class App extends Component {
                         }
                     </fieldset>
                     </form>
-
-                    <h2> Read contract events </h2>
-                    <form className="pure-form" onSubmit={this.handleSubmitContract}>
-                    <fieldset>
-                        <legend>Enter a contract address to check all events from that address (e.g. token transfers). GET721 is at {this.state.faucetAddress}}</legend>
-                        <label>
-                            {"Token Contract: "}
-                            <input
-                                type="text"
-                                placeholder="0x8bc..."
-                                className="pure-input-1-2"
-                                value={this.state.contractAddressInput}
-                                onChange={this.handleChange}
-                            />
-                        </label>
-                        {
-                            this.state.web3 && this.state.web3.isAddress(this.state.contractAddressInput)
-                            ? <button className="pure-button pure-button-primary">Read Events</button>
-                            : <button disabled className="pure-button pure-button-primary">Read Events</button>
-                        }
-                    </fieldset>
-                    </form>
-                    <EventList events={this.state.faucetEvents} />
-                    <EventList events={this.state.etheraryEvents} />
                 </div>
               </div>
+              <EventTab
+                      web3={this.state.web3}
+                      faucetInstance={this.state.faucetInstance}
+                      etheraryInstance={this.state.etheraryInstance}
+                      faucetAddress={this.state.faucetAddress}
+              />
         </main>
+
+
+
+
       </div>
     );
   }
