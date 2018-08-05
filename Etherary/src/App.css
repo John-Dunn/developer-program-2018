@@ -9,6 +9,10 @@ h1, h2, h3 {
   font-family: 'Oswald', 'Arial Narrow', sans-serif;
 }
 
+h3 {
+    margin-top: 50px
+}
+
 code {
   display: block;
   margin: 20px 0 15px 0;
