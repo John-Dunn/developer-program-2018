@@ -3,9 +3,8 @@ import React, { Component } from 'react'
 class Web3Status extends Component {
     render() {
         var web3 = this.props.web3;
-        var isConnected = web3 && web3.isConnected()
 
-        if (!isConnected) {
+        if (!this.props.web3Connected) {
             return (<div> No Web3 Connection </div>);
         }
 
