@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import ERC721Faucet from '../../../ERC721Faucet/build/contracts/GenericERC721Token.json'
+import watchForEvent from '../utils/watchForEvent'
 
 class Testing extends Component {
     constructor(props) {
@@ -43,52 +44,38 @@ class Testing extends Component {
 
 
     handleMint(event) {
+        var instance = this.state.faucetInstance;
         this.setState({
             mintingSuccessful: false
         })
 
-        try {
-            var accountAddress = this.state.account;
-            var mintData = this.state.faucetInstance.mint.getData({from:accountAddress});
-            var gasEstimate = this.props.web3.eth.estimateGas({
-                to: this.state.faucetAddress,
-                data: mintData
-            });
-            this.state.faucetInstance.mint({from:accountAddress, gas: gasEstimate});
-            this.listenToTransfer();
+        var gasEstimate = this.props.web3.eth.estimateGas({
+            to: this.state.faucetAddress,
+            data: instance.mint.getData({from:this.state.account})
+        });
+
+        instance.mint({from:this.state.account, gas: gasEstimate});
+        var transferEvent = instance.Transfer({_to: this.state.account});
+
+        watchForEvent(transferEvent)
+        .then(results => {
             this.setState({
-                balance: this.state.faucetInstance.balanceOf(accountAddress, {from:accountAddress}).toNumber()
+                balance: instance.balanceOf(this.state.account, {from:this.state.account}).toNumber(),
+                latestMintedToken: results.args._tokenId.toNumber(),
+                mintingSuccessful: true
             })
-        } catch(e) {
-            console.log("Minting failed: ", e);
-        }
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+
         event.preventDefault();
-    }
-
-
-
-    listenToTransfer() {
-        var transferEvent = this.state.faucetInstance.Transfer({_to: this.state.account})
-        transferEvent.watch(function(error, log){
-            if (!error) {
-                var mintedTokenId = log.args._tokenId.toNumber();
-                this.setState({
-                    mintingSuccessful: true,
-                    latestMintedToken: mintedTokenId
-                })
-                transferEvent.stopWatching();
-                console.log('Token minting successful. Token Id: ', mintedTokenId);
-            } else {
-            console.log('Error getting minting log: ', error);
-            }
-        }.bind(this));
     }
 
     mintMessage() {
         if (!this.state.mintingSuccessful) {
-            return (<p> Press mint to receive a token and see your balance</p>);
+            return (<p></p>);
         } else {
-            var balance = this.state.faucetInstance.balanceOf(this.props.web3.eth.accounts[0]);
             return(
                 <p>Minting successful. You received the token with id <strong>{this.state.latestMintedToken}</strong>.</p>
             )
