@@ -7,6 +7,9 @@ class Testing extends Component {
         this.state = {
             faucetInstance: null,
             faucetAddress: null,
+            account: null,
+
+            balance: -1,
             mintingSuccessful: false,
             latestMintedToken: -1
         }
@@ -26,16 +29,17 @@ class Testing extends Component {
             var faucetAddress = ERC721Faucet.networks[this.props.web3.version.network].address;
             var faucet = this.props.web3.eth.contract(ERC721Faucet.abi);
             var faucetInstance = faucet.at(faucetAddress);
+            var account = this.props.web3.eth.accounts[0];
+            var balance = faucetInstance.balanceOf(account, {from:account}).toNumber()
 
             this.setState({
                 faucetInstance: faucetInstance,
-                faucetAddress: faucetAddress
+                faucetAddress: faucetAddress,
+                account: account,
+                balance: balance
             })
         }
     }
-
-
-
 
 
     handleMint(event) {
@@ -44,31 +48,40 @@ class Testing extends Component {
         })
 
         try {
-            var accountAddress = this.props.web3.eth.accounts[0];
+            var accountAddress = this.state.account;
             var mintData = this.state.faucetInstance.mint.getData({from:accountAddress});
             var gasEstimate = this.props.web3.eth.estimateGas({
                 to: this.state.faucetAddress,
                 data: mintData
             });
-            this.state.faucetInstance.mint({from:accountAddress, gas:gasEstimate});
-            var transferEvent = this.state.faucetInstance.Transfer({_to: this.props.web3.eth.accounts[0]})
-
-            transferEvent.watch(function(error, log){
-                if (!error) {
-                    this.setState({
-                        mintingSuccessful: true,
-                        latestMintedToken: log.args._tokenId.toNumber()
-                    })
-                    transferEvent.stopWatching();
-                    console.log('Token minting successful. Token Id: ', log.args._tokenId.toNumber());
-                } else {
-                console.log('Error getting minting log: ', error);
-                }
-            }.bind(this));
+            this.state.faucetInstance.mint({from:accountAddress, gas: gasEstimate});
+            this.listenToTransfer();
+            this.setState({
+                balance: this.state.faucetInstance.balanceOf(accountAddress, {from:accountAddress}).toNumber()
+            })
         } catch(e) {
             console.log("Minting failed: ", e);
         }
         event.preventDefault();
+    }
+
+
+
+    listenToTransfer() {
+        var transferEvent = this.state.faucetInstance.Transfer({_to: this.state.account})
+        transferEvent.watch(function(error, log){
+            if (!error) {
+                var mintedTokenId = log.args._tokenId.toNumber();
+                this.setState({
+                    mintingSuccessful: true,
+                    latestMintedToken: mintedTokenId
+                })
+                transferEvent.stopWatching();
+                console.log('Token minting successful. Token Id: ', mintedTokenId);
+            } else {
+            console.log('Error getting minting log: ', error);
+            }
+        }.bind(this));
     }
 
     mintMessage() {
@@ -77,10 +90,9 @@ class Testing extends Component {
         } else {
             var balance = this.state.faucetInstance.balanceOf(this.props.web3.eth.accounts[0]);
             return(
-                <p>Minting successful. You now own token {this.state.latestMintedToken} and {balance.toNumber()} in total.</p>
+                <p>Minting successful. You received the token with id <strong>{this.state.latestMintedToken}</strong>.</p>
             )
         }
-
     }
 
     render() {
@@ -93,7 +105,7 @@ class Testing extends Component {
         return (
             <div>
                 <h2> Mint a token  for testig purposes</h2>
-                <p> A faucet for ERC721 token is deployed at <strong>{this.state.faucetAddress}</strong>. </p>
+                <p> A faucet for ERC721 token is deployed at <strong>{this.state.faucetAddress}</strong> where you currently own <strong>{this.state.balance}</strong> token. </p>
                 <button
                     className="pure-button pure-button-primary"
                     onClick={this.handleMint}
