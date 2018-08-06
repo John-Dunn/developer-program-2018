@@ -28,6 +28,7 @@ MVP: One-to-one exchange of ERC721 token of the same contract (e.g. token with I
 #### Upcoming:
 ###### Second Phase: Frontend
 Using React, provide a visualisation of open trades and allow the use of all functionality mentioned above via the browser and Metamask.
+TODOs: extract helper from components (repetition!), create card for trade. add cancel functionality to card. Add separate tab to fill. Iterate over trades to display. 
 
 ###### Third Phase: n for m trades
 Extend the contract to allow specifying multiple tokens to be offered, both for making and taking the trade.
