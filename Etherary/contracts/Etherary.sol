@@ -22,7 +22,7 @@ contract Etherary {
 
     // Do this later as part of an order?
     // enum AssetType { ETHER, ERC20, ERC721 }
-
+    // TODO: event arguments should start with underscores
     event SellOrderCreated (
         address tokenContract,
         uint256 tokenForSale,
