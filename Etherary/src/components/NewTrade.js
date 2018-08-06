@@ -38,6 +38,15 @@ class NewTrade extends Component {
 
     }
 
+    // EXTRACT:
+    instantiate(web3, abi, address) {
+        var contract = web3.eth.contract(abi);
+        return contract.at(address)
+    }
+
+    contractAddress(web3, contract) {
+        return contract.networks[web3.version.network].address;
+    }
 
 
     // Handlers for Step 1
@@ -57,9 +66,8 @@ class NewTrade extends Component {
     }
 
     handleCheckOwnership(event) {
-        var ERC721Token = this.props.web3.eth.contract(ERC721abi);
+        var ERC721Instance = this.instantiate(this.props.web3, ERC721abi, this.state.tokenContract)
         try {
-            var ERC721Instance = ERC721Token.at(this.state.tokenContract);
             var owner = ERC721Instance.ownerOf(this.state.tokenSellId);
             if(owner === this.props.web3.eth.accounts[0]) {
                 this.setState({validContractAndTokenOwned: true});
@@ -121,6 +129,10 @@ class NewTrade extends Component {
 
 
 
+
+
+
+
     // Step 2
     handleTokenBuyIdChange(event) {
       this.setState({
@@ -130,16 +142,14 @@ class NewTrade extends Component {
     }
 
     handleCheckExistence(event) {
-        var ERC721Token = this.props.web3.eth.contract(ERC721abi);
+        var ERC721Instance = this.instantiate(this.props.web3, ERC721abi, this.state.tokenContract)
         try {
-            var ERC721Instance = ERC721Token.at(this.state.tokenContract);
             if(ERC721Instance.exists(this.state.tokenBuyId)) {
                 this.setState({tokenBuyIdExists: true});
             }
         } catch(e) {
             console.log("Checking existence failed: ", e);
         }
-
         event.preventDefault();
     }
 
@@ -183,13 +193,15 @@ class NewTrade extends Component {
 
 
 
-// TODO: this fails because of missing address, find whats wrong and implement new event system.
-// display when approved. Do the same for new trade.
+
+
+
+
     // Step 3
     handleCreateTrade(event) {
-        var Etherary = this.props.web3.eth.contract(EtheraryContract.abi);
-        var etheraryAddress = EtheraryContract.networks[this.props.web3.version.network].address;
-        var EtheraryInstance = Etherary.at(etheraryAddress);
+        var etheraryAddress = this.contractAddress(this.props.web3, EtheraryContract);
+        var EtheraryInstance = this.instantiate(this.props.web3, EtheraryContract.abi, etheraryAddress)
+
         EtheraryInstance.createERC721SellOrder(
             this.state.tokenContract,
             this.state.tokenSellId,
@@ -219,10 +231,9 @@ class NewTrade extends Component {
     }
 
     handleApproval(event) {
-        var ERC721Token = this.props.web3.eth.contract(ERC721abi);
-        var etheraryAddress = EtheraryContract.networks[this.props.web3.version.network].address;
+        var ERC721Instance = this.instantiate(this.props.web3, ERC721abi, this.state.tokenContract)
 
-        var ERC721Instance = ERC721Token.at(this.state.tokenContract);
+        var etheraryAddress = this.contractAddress(this.props.web3, EtheraryContract);
         ERC721Instance.approve(etheraryAddress, this.state.tokenSellId, {from: this.props.web3.eth.accounts[0]})
 
         var approvalEvent = ERC721Instance.Approval({
