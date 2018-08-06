@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Link } from 'react-router-dom';
 import Web3Status from './components/Web3Status'
 import NewTrade from './components/NewTrade'
 import Testing from './components/Testing'
+import BrowseTrades from './components/BrowseTrades'
 
 import getWeb3 from './utils/getWeb3'
 
@@ -102,7 +103,7 @@ class App extends Component {
                     )}/>
 
                     <Route path='/browseTrades' render={() => (
-                        <h1> You can browse trades here! </h1>
+                        <BrowseTrades web3={this.state.web3} web3Connected={this.state.web3Connected}/>
                     )}/>
 
                     <Route path='/testing' render={() => (
