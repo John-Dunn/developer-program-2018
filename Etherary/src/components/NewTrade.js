@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import ERC721abi from '../resources/ERC721BasicABI.json'
-import Etherary from '../../build/contracts/Etherary.json'
+import EtheraryContract from '../../build/contracts/Etherary.json'
+import watchForEvent from '../utils/watchForEvent'
 
 class NewTrade extends Component {
     constructor(props) {
@@ -17,7 +18,9 @@ class NewTrade extends Component {
             tokenBuyIdExists: false,
 
             // Step 3
-            withdrawalApproved: false
+            withdrawalApproved: false,
+            tradeCreated: false,
+            orderId: -1
         }
 
         // Step 1
@@ -31,10 +34,9 @@ class NewTrade extends Component {
 
         // Step 3
         this.handleApproval = this.handleApproval.bind(this);
+        this.handleCreateTrade = this.handleCreateTrade.bind(this);
+
     }
-
-
-
 
 
 
@@ -44,7 +46,6 @@ class NewTrade extends Component {
             tokenContract: event.target.value,
             validContractAndTokenOwned: false,
             tokenBuyIdExists: false
-
         });
     }
 
@@ -182,32 +183,64 @@ class NewTrade extends Component {
 
 
 
-
+// TODO: this fails because of missing address, find whats wrong and implement new event system.
+// display when approved. Do the same for new trade.
     // Step 3
+    handleCreateTrade(event) {
+        var Etherary = this.props.web3.eth.contract(EtheraryContract.abi);
+        var etheraryAddress = EtheraryContract.networks[this.props.web3.version.network].address;
+        var EtheraryInstance = Etherary.at(etheraryAddress);
+        EtheraryInstance.createERC721SellOrder(
+            this.state.tokenContract,
+            this.state.tokenSellId,
+            this.state.tokenBuyId,
+            {from: this.props.web3.eth.accounts[0], gas:500000}
+        );
+
+        var creationEvent = EtheraryInstance.SellOrderCreated({
+            tokenContract: this.state.tokenContract,
+            tokenForSale: this.state.tokenSellId,
+            tokenWanted: this.state.tokenBuyId
+        })
+
+        watchForEvent(creationEvent)
+        .then(results => {
+            this.setState({
+                orderId: results.args.orderId.toNumber(),
+                tradeCreated: true,
+            })
+            console.log('Trade created with id ', results.args.orderId.toNumber());
+        })
+        .catch(function(error) {
+            console.log('Error watching for approval events: ', error);
+        });
+
+        event.preventDefault();
+    }
+
     handleApproval(event) {
         var ERC721Token = this.props.web3.eth.contract(ERC721abi);
-        try {
-            var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
-            var ERC721Instance = ERC721Token.at(this.state.tokenContract);
-            ERC721Instance.approve(etheraryAddress, this.state.tokenSellId, {from: this.props.web3.eth.accounts[0]})
+        var etheraryAddress = EtheraryContract.networks[this.props.web3.version.network].address;
 
-            var approvalEvent = ERC721Instance.Approval({_owner: this.props.web3.eth.accounts[0]})
+        var ERC721Instance = ERC721Token.at(this.state.tokenContract);
+        ERC721Instance.approve(etheraryAddress, this.state.tokenSellId, {from: this.props.web3.eth.accounts[0]})
 
-            approvalEvent.watch(function(error, log){
-                if (!error) {
-                    this.setState({
-                        withdrawalApproved: true
-                    })
-                    approvalEvent.stopWatching();
-                    console.log('Token approved');
-                } else {
-                console.log('Error watching for approval events: ', error);
-                }
-            }.bind(this));
+        var approvalEvent = ERC721Instance.Approval({
+            _owner: this.props.web3.eth.accounts[0],
+            _approved: etheraryAddress,
+            _tokenId: this.state.tokenSellId
+        })
 
-        } catch(e) {
-            console.log("Approval failed: ", e);
-        }
+        watchForEvent(approvalEvent)
+        .then(results => {
+            this.setState({
+                withdrawalApproved: true
+            })
+            console.log('Token approved');
+        })
+        .catch(function(error) {
+            console.log('Error watching for approval events: ', error);
+        });
 
         event.preventDefault();
     }
@@ -221,6 +254,15 @@ class NewTrade extends Component {
         return this.approvalButtonDisabled() || !this.state.withdrawalApproved;
     }
 
+    tradeCreatedMessage() {
+        if (!this.state.tradeCreated) {
+            return (<p></p>);
+        } else {
+            return(
+                <p>Trade successfully created! Trade id: <strong>{this.state.orderId}</strong>.</p>
+            )
+        }
+    }
 
     stepThree() {
         return (
@@ -241,12 +283,14 @@ class NewTrade extends Component {
                     <button
                         disabled={this.createButtonDisabled()}
                         className="pure-button pure-button-primary"
+                        onClick={this.handleCreateTrade}
                     >
                         Create Trade
                     </button>
 
                 </fieldset>
             </form>
+            {this.tradeCreatedMessage()}
             </div>
         )
     }
