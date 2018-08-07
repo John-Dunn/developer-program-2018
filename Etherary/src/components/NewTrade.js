@@ -1,21 +1,30 @@
 import React, { Component } from 'react'
 import ERC721abi from '../resources/ERC721BasicABI.json'
 import EtheraryContract from '../../build/contracts/Etherary.json'
-import watchForEvent from '../utils/watchForEvent'
+import WatchForEvent from '../utils/watchForEvent'
+import ContractUtils from '../utils/contractUtils'
+import ValidationStatus from '../utils/enums'
+
+
+
+import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col, Button} from 'reactstrap';
+
 
 class NewTrade extends Component {
+
+
     constructor(props) {
         super(props);
 
         this.state = {
             // Step 1
             tokenContract: null,
-            validContractAndTokenOwned: false,
+            validContractAndTokenOwned: ValidationStatus.unchecked,
             tokenSellId: null,
 
             // Step 2
             tokenBuyId: null,
-            tokenBuyIdExists: false,
+            tokenBuyIdExists: ValidationStatus.unchecked,
 
             // Step 3
             withdrawalApproved: false,
@@ -38,41 +47,38 @@ class NewTrade extends Component {
 
     }
 
-    // EXTRACT:
-    instantiate(web3, abi, address) {
-        var contract = web3.eth.contract(abi);
-        return contract.at(address)
-    }
-
-    contractAddress(web3, contract) {
-        return contract.networks[web3.version.network].address;
-    }
-
 
     // Handlers for Step 1
     handleTokenContractChange(event) {
         this.setState({
             tokenContract: event.target.value,
-            validContractAndTokenOwned: false,
-            tokenBuyIdExists: false
+            validContractAndTokenOwned: ValidationStatus.unchecked,
+            tokenBuyIdExists: ValidationStatus.unchecked,
+            withdrawalApproved: false,
+            tradeCreated: false
         });
     }
 
     handleTokenSellIdChange(event) {
       this.setState({
           tokenSellId: event.target.value,
-          validContractAndTokenOwned: false,
+          validContractAndTokenOwned: ValidationStatus.unchecked,
+          withdrawalApproved: false,
+          tradeCreated: false
       });
     }
 
     handleCheckOwnership(event) {
-        var ERC721Instance = this.instantiate(this.props.web3, ERC721abi, this.state.tokenContract)
+        var ERC721Instance = ContractUtils.getContractInstance(this.props.web3, ERC721abi, this.state.tokenContract)
         try {
             var owner = ERC721Instance.ownerOf(this.state.tokenSellId);
             if(owner === this.props.web3.eth.accounts[0]) {
-                this.setState({validContractAndTokenOwned: true});
+                this.setState({validContractAndTokenOwned: ValidationStatus.valid});
+            } else {
+                this.setState({validContractAndTokenOwned: ValidationStatus.invalid});
             }
         } catch(e) {
+            this.setState({validContractAndTokenOwned: ValidationStatus.invalid});
             console.log("Checking ownership failed: ", e);
         }
 
@@ -85,45 +91,77 @@ class NewTrade extends Component {
     }
 
     stepOne() {
+        var validContract = this.props.web3.isAddress(this.state.tokenContract);
         return (
             <div>
-            <h3> 1. Specify token to trade away</h3>
-            <form className="pure-form">
-                <fieldset>
-                    <legend>Specify a valid ERC721 contract address which handles the token you want to trade, as well as the token ID.</legend>
-                    <label> {"Contract: "}
-                        <input
-                            className="pure-u-1-2"
-                            type="text"
-                            placeholder="0xba1..."
-                            name="contractAddress"
-                            onChange={this.handleTokenContractChange}
-                        />
-                    </label>
+            <h5> 1. Specify token to trade away</h5>
 
-                    <label> {"Token ID: "}
-                    <input
-                        className="pure-u-1-8"
+            <Form>
+                <FormGroup row>
+                  <Label for="contract" sm={2}>Contract Address</Label>
+                  <Col sm={6}>
+                      <Input
+                        type="text"
+                        id="contract"
+                        valid={validContract}
+                        invalid={this.state.tokenContract !== null && !validContract}
+                        onChange={this.handleTokenContractChange}
+                      />
+                      <FormText>Enter the ERC721 contract address of the token you want to trade.</FormText>
+                      <FormFeedback tooltip>Please enter a valid address.</FormFeedback>
+                  </Col>
+                </FormGroup>
+
+                <FormGroup row>
+                  <Label for="tokenId" sm={2}>Token ID</Label>
+                  <Col sm={6}>
+                      <Input
                         type="number"
-                        placeholder="123"
-                        name="tokenSellId"
+                        id="tokenId"
+                        valid={this.state.validContractAndTokenOwned == ValidationStatus.valid}
+                        invalid={this.state.validContractAndTokenOwned == ValidationStatus.invalid}
+                        disabled={!validContract}
                         onChange={this.handleTokenSellIdChange}
-                    />
-                    </label>
+                      />
+                      <FormFeedback tooltip>You must own the token you want to trade.</FormFeedback>
+                      <FormText>For the contract above, provide the token ID.</FormText>
+                  </Col>
 
-                    <button
-                        disabled={this.ownershipButtonDisabled()}
-                        className="pure-button pure-button-primary"
-                        onClick={this.handleCheckOwnership}
-                    >
-                            Check Ownership
-                    </button>
-                </fieldset>
-            </form>
-            <div> The address is {this.props.web3.isAddress(this.state.tokenContract) ? 'valid' : 'invalid'}. Ownership: {this.state.validContractAndTokenOwned ? 'True' : 'False'}</div>
+                  <Col sm={2}>
+                      <button
+                          disabled={this.ownershipButtonDisabled()}
+                          className="pure-button pure-button-primary"
+                          onClick={this.handleCheckOwnership}
+                      >
+                              Check Ownership
+                      </button>
+                 </Col>
+                </FormGroup>
+             </Form>
             </div>
         );
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -137,17 +175,22 @@ class NewTrade extends Component {
     handleTokenBuyIdChange(event) {
       this.setState({
           tokenBuyId: event.target.value,
-          tokenBuyIdExists: false
+          tokenBuyIdExists: ValidationStatus.unchecked,
+          withdrawalApproved: false,
+          tradeCreated: false
       });
     }
 
     handleCheckExistence(event) {
-        var ERC721Instance = this.instantiate(this.props.web3, ERC721abi, this.state.tokenContract)
+        var ERC721Instance = ContractUtils.getContractInstance(this.props.web3, ERC721abi, this.state.tokenContract)
         try {
             if(ERC721Instance.exists(this.state.tokenBuyId)) {
-                this.setState({tokenBuyIdExists: true});
+                this.setState({tokenBuyIdExists: ValidationStatus.valid});
+            } else {
+                this.setState({tokenBuyIdExists: ValidationStatus.invalid});
             }
         } catch(e) {
+            this.setState({tokenBuyIdExists: ValidationStatus.invalid});
             console.log("Checking existence failed: ", e);
         }
         event.preventDefault();
@@ -155,37 +198,42 @@ class NewTrade extends Component {
 
     // Util for step 1
     existenceButtonDisabled() {
-        return (!this.props.web3.isAddress(this.state.tokenContract) || this.state.tokenBuyId == null);
+        return (this.state.validContractAndTokenOwned != ValidationStatus.valid
+                || this.state.tokenBuyId == null);
     }
 
     stepTwo() {
         return (
             <div>
-            <h3> 2. Which token do you want? </h3>
-            <form className="pure-form">
-                <fieldset>
-                    <legend>Specify the token ID of the token you want. It should be of the same kind as the one you are trading away (i.e. same contract address) and should exist.</legend>
-                    <label> {"Token ID: "}
-                        <input
-                            className="pure-u-1-8"
+                <h5> 2. Which token do you want? </h5>
+                <Form>
+                    <FormGroup row>
+                      <Label for="tokenId" sm={2}>Token ID</Label>
+                      <Col sm={6}>
+                          <Input
                             type="number"
-                            placeholder="123"
-                            name="tokenBuyId"
+                            id="tokenId"
+                            valid={this.state.tokenBuyIdExists == ValidationStatus.valid}
+                            invalid={this.state.tokenBuyIdExists == ValidationStatus.invalid}
+                            disabled={this.state.validContractAndTokenOwned != ValidationStatus.valid}
                             onChange={this.handleTokenBuyIdChange}
-                        />
-                    </label>
+                          />
+                          <FormFeedback tooltip>The token you want must exist.</FormFeedback>
+                          <FormText>For the contract above, provide the ID of the token you want.</FormText>
+                      </Col>
 
-                    <button
-                        disabled={this.existenceButtonDisabled()}
-                        className="pure-button pure-button-primary"
-                        onClick={this.handleCheckExistence}
-                    >
-                            Check Existence
-                    </button>
-                </fieldset>
-            </form>
-            <div> Token exists: {this.state.tokenBuyIdExists? 'true' : 'false'} </div>
-            </div>
+                      <Col sm={2}>
+                          <button
+                              disabled={this.existenceButtonDisabled()}
+                              className="pure-button pure-button-primary"
+                              onClick={this.handleCheckExistence}
+                          >
+                                  Check Existence
+                          </button>
+                     </Col>
+                    </FormGroup>
+                </Form>
+         </div>
         )
     }
 
@@ -197,10 +245,17 @@ class NewTrade extends Component {
 
 
 
+
+
+
+
+
+
+
     // Step 3
     handleCreateTrade(event) {
-        var etheraryAddress = this.contractAddress(this.props.web3, EtheraryContract);
-        var EtheraryInstance = this.instantiate(this.props.web3, EtheraryContract.abi, etheraryAddress)
+        var etheraryAddress = ContractUtils.getContractAddress(this.props.web3, EtheraryContract);
+        var EtheraryInstance = ContractUtils.getContractInstance(this.props.web3, EtheraryContract.abi, etheraryAddress)
 
         EtheraryInstance.createERC721SellOrder(
             this.state.tokenContract,
@@ -215,7 +270,7 @@ class NewTrade extends Component {
             tokenWanted: this.state.tokenBuyId
         })
 
-        watchForEvent(creationEvent)
+        WatchForEvent(creationEvent)
         .then(results => {
             this.setState({
                 orderId: results.args.orderId.toNumber(),
@@ -231,9 +286,9 @@ class NewTrade extends Component {
     }
 
     handleApproval(event) {
-        var ERC721Instance = this.instantiate(this.props.web3, ERC721abi, this.state.tokenContract)
+        var ERC721Instance = ContractUtils.getContractInstance(this.props.web3, ERC721abi, this.state.tokenContract)
 
-        var etheraryAddress = this.contractAddress(this.props.web3, EtheraryContract);
+        var etheraryAddress = ContractUtils.getContractAddress(this.props.web3, EtheraryContract);
         ERC721Instance.approve(etheraryAddress, this.state.tokenSellId, {from: this.props.web3.eth.accounts[0]})
 
         var approvalEvent = ERC721Instance.Approval({
@@ -242,7 +297,7 @@ class NewTrade extends Component {
             _tokenId: this.state.tokenSellId
         })
 
-        watchForEvent(approvalEvent)
+        WatchForEvent(approvalEvent)
         .then(results => {
             this.setState({
                 withdrawalApproved: true
@@ -258,7 +313,8 @@ class NewTrade extends Component {
 
     // Util for step 3
     approvalButtonDisabled() {
-        return !(this.state.validContractAndTokenOwned && this.state.tokenBuyIdExists);
+        return (this.state.validContractAndTokenOwned != ValidationStatus.valid
+                || this.state.tokenBuyIdExists != ValidationStatus.valid);
     }
 
     createButtonDisabled() {
@@ -278,29 +334,33 @@ class NewTrade extends Component {
     stepThree() {
         return (
             <div>
-            <h3> 3. Create the trade </h3>
-            <form className="pure-form">
-                <fieldset>
-                    <legend>Good to go! Keep in mind we need your approval to withdraw your token before the trade can be created.</legend>
+            <h5> 3. Create the trade </h5>
 
+            <Form>
+                <FormGroup row>
+                <Col sm={2}>
                     <button
                         disabled={this.approvalButtonDisabled()}
                         className="pure-button pure-button-primary"
                         onClick={this.handleApproval}
                     >
-                        Approve
+                            Approve
                     </button>
+               </Col>
 
-                    <button
-                        disabled={this.createButtonDisabled()}
-                        className="pure-button pure-button-primary"
-                        onClick={this.handleCreateTrade}
-                    >
-                        Create Trade
-                    </button>
+                  <Col sm={2}>
+                      <button
+                          disabled={this.createButtonDisabled()}
+                          className="pure-button pure-button-primary"
+                          onClick={this.handleCreateTrade}
+                      >
+                              Create Trade
+                      </button>
+                 </Col>
+                </FormGroup>
+            </Form>
 
-                </fieldset>
-            </form>
+
             {this.tradeCreatedMessage()}
             </div>
         )
@@ -326,3 +386,4 @@ class NewTrade extends Component {
 }
 
 export default NewTrade
+//Specify a valid ERC721 contract address which handles the token you want to trade, as well as the token ID.
