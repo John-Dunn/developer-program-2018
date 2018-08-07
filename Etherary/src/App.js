@@ -20,15 +20,15 @@ class NavigationBar extends Component {
             <nav className="navbar pure-menu pure-menu-horizontal">
 
                 <Link to='/'>
-                    <span className="pure-menu-heading pure-menu-link">Truffle Box </span>
-                </Link>
-
-                <Link to='/newTrade'>
-                    <span className="pure-menu-item pure-menu-link">New Trade </span>
+                    <span className="pure-menu-heading pure-menu-link">Etherary </span>
                 </Link>
 
                 <Link to='/browseTrades'>
                     <span className="pure-menu-item pure-menu-link">Browse Trades </span>
+                </Link>
+
+                <Link to='/newTrade'>
+                    <span className="pure-menu-item pure-menu-link">New Trade </span>
                 </Link>
 
                 <Link to='/testing'>
@@ -99,12 +99,12 @@ class App extends Component {
                         <Home/>
                     )}/>
 
-                    <Route path='/newTrade' render={() => (
-                        <NewTrade web3={this.state.web3} web3Connected={this.state.web3Connected}/>
-                    )}/>
-
                     <Route path='/browseTrades' render={() => (
                         <BrowseTrades web3={this.state.web3} web3Connected={this.state.web3Connected}/>
+                    )}/>
+
+                    <Route path='/newTrade' render={() => (
+                        <NewTrade web3={this.state.web3} web3Connected={this.state.web3Connected}/>
                     )}/>
 
                     <Route path='/testing' render={() => (

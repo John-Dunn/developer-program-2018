@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import EtheraryContract from '../../build/contracts/Etherary.json'
 import ContractUtils from '../utils/contractUtils'
-import CardTest from './CardTest'
+import TradeCard from './TradeCard'
 
 class BrowseTrades extends Component {
 
@@ -15,7 +15,6 @@ class BrowseTrades extends Component {
 
         this.handleTradeIdChange = this.handleTradeIdChange.bind(this);
         this.handleTradeLookup = this.handleTradeLookup.bind(this);
-
     }
 
     handleTradeIdChange(event) {
@@ -25,7 +24,6 @@ class BrowseTrades extends Component {
     }
 
     handleTradeLookup(event) {
-
         var etheraryAddress = ContractUtils.getContractAddress(this.props.web3, EtheraryContract);
         var EtheraryInstance = ContractUtils.getContractInstance(this.props.web3, EtheraryContract.abi, etheraryAddress);
         try {
@@ -40,26 +38,6 @@ class BrowseTrades extends Component {
         event.preventDefault();
     }
 
-    displayTrade() {
-        if (this.state.trade == null) {
-            return(<div></div>);
-        }
-        if (this.state.trade != null && this.state.trade[0] == '0x0000000000000000000000000000000000000000') {
-            return(<div>Trade not found.</div>);
-        }
-        return(
-            <div>
-                <div>
-                    The trade with ID <strong>{this.state.orderId}</strong> was created by <strong>{this.state.trade[0]}</strong> and
-                    is <strong>{this.state.trade[4] ? 'active' : 'inactive'}</strong>.
-                </div>
-                <div>
-                    The ERC721 token contract is <strong>{this.state.trade[1]}</strong> and token <strong>{this.state.trade[2].toNumber()}</strong> is
-                    to be traded for token <strong>{this.state.trade[3].toNumber()}</strong>.
-                </div>
-            </div>
-        )
-    }
 
     render() {
         return (
@@ -85,8 +63,11 @@ class BrowseTrades extends Component {
                         </button>
                     </fieldset>
                 </form>
-                {this.displayTrade()}
-                <CardTest/>
+                {
+                    this.state.trade !== null
+                    ? <TradeCard orderId={this.state.orderId} trade={this.state.trade}/>
+                    : <div></div>
+                }
             </div>
 
         );

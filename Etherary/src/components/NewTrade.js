@@ -7,7 +7,7 @@ import ValidationStatus from '../utils/enums'
 
 
 
-import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col, Button} from 'reactstrap';
+import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col} from 'reactstrap';
 
 
 class NewTrade extends Component {
@@ -118,8 +118,8 @@ class NewTrade extends Component {
                       <Input
                         type="number"
                         id="tokenId"
-                        valid={this.state.validContractAndTokenOwned == ValidationStatus.valid}
-                        invalid={this.state.validContractAndTokenOwned == ValidationStatus.invalid}
+                        valid={this.state.validContractAndTokenOwned === ValidationStatus.valid}
+                        invalid={this.state.validContractAndTokenOwned === ValidationStatus.invalid}
                         disabled={!validContract}
                         onChange={this.handleTokenSellIdChange}
                       />
@@ -198,7 +198,7 @@ class NewTrade extends Component {
 
     // Util for step 1
     existenceButtonDisabled() {
-        return (this.state.validContractAndTokenOwned != ValidationStatus.valid
+        return (this.state.validContractAndTokenOwned !== ValidationStatus.valid
                 || this.state.tokenBuyId == null);
     }
 
@@ -213,9 +213,9 @@ class NewTrade extends Component {
                           <Input
                             type="number"
                             id="tokenId"
-                            valid={this.state.tokenBuyIdExists == ValidationStatus.valid}
-                            invalid={this.state.tokenBuyIdExists == ValidationStatus.invalid}
-                            disabled={this.state.validContractAndTokenOwned != ValidationStatus.valid}
+                            valid={this.state.tokenBuyIdExists === ValidationStatus.valid}
+                            invalid={this.state.tokenBuyIdExists === ValidationStatus.invalid}
+                            disabled={this.state.validContractAndTokenOwned !== ValidationStatus.valid}
                             onChange={this.handleTokenBuyIdChange}
                           />
                           <FormFeedback tooltip>The token you want must exist.</FormFeedback>
@@ -313,8 +313,8 @@ class NewTrade extends Component {
 
     // Util for step 3
     approvalButtonDisabled() {
-        return (this.state.validContractAndTokenOwned != ValidationStatus.valid
-                || this.state.tokenBuyIdExists != ValidationStatus.valid);
+        return (this.state.validContractAndTokenOwned !== ValidationStatus.valid
+                || this.state.tokenBuyIdExists !== ValidationStatus.valid);
     }
 
     createButtonDisabled() {
