@@ -2,6 +2,22 @@ import React, {Component} from 'react';
 import { Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
+
+class TradeInfo extends Component {
+    render() {
+        return(
+            <font size="2">
+                Creator: <strong>{this.props.trade[0]}</strong> <br></br>
+                Active: <strong>{this.props.trade[4] ? 'Yes' : 'No'}</strong>. <br></br>
+                ERC721 token contract: <strong>{this.props.trade[1]}</strong> <br></br>
+                Offers: <strong>Token #{this.props.trade[2].toNumber()}</strong> Wants: <strong>Token #{this.props.trade[3].toNumber()}</strong> <br></br>
+            </font>
+        )
+    }
+}
+
+
+
 class TradeCard extends Component {
 
     constructor(props) {
@@ -27,21 +43,16 @@ class TradeCard extends Component {
               <Card body>
                 <CardTitle>Trade #{this.props.orderId}</CardTitle>
                 <CardText>
-                    <font size="2">
-                        Creator: <strong>{this.props.trade[0]}</strong> <br></br>
-                        Active: <strong>{this.props.trade[4] ? 'active' : 'inactive'}</strong>. <br></br>
-                        ERC721 token contract: <strong>{this.props.trade[1]}</strong> <br></br>
-                        Offers: <strong>Token #{this.props.trade[2].toNumber()}</strong> Wants: <strong>Token #{this.props.trade[3].toNumber()}</strong> <br></br>
-                    </font>
+                        <TradeInfo trade={this.props.trade}/>
                     <Button>Cancel</Button>   <Button onClick={this.toggle}>Fill</Button>
                 </CardText>
               </Card>
             </Col>
 
             <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-              <ModalHeader toggle={this.toggle}>Modal title</ModalHeader>
+              <ModalHeader toggle={this.toggle}>Filling trade #{this.props.orderId}</ModalHeader>
               <ModalBody>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                <TradeInfo trade={this.props.trade} />
               </ModalBody>
               <ModalFooter>
                 <Button color="primary" onClick={this.toggle}>Do Something</Button>{' '}
