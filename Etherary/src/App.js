@@ -48,9 +48,10 @@ class Home extends Component {
     render() {
         return (
             <div>
-                <h1> Etherary can do everything!</h1>
+                <h2> Etherary can do everything!</h2>
                 <p>
-                    For example you can browse or create trades.
+                    For example you can browse or create trades.<br></br>
+
                     <Link to='/newTrade'>
                         <button className="pure-button pure-button-primary">Create Trade</button>
                     </Link>
