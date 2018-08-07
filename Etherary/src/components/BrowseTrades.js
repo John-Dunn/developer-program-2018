@@ -1,19 +1,9 @@
 import React, { Component } from 'react'
 import EtheraryContract from '../../build/contracts/Etherary.json'
+import ContractUtils from '../utils/contractUtils'
+import CardTest from './CardTest'
 
 class BrowseTrades extends Component {
-    instantiate(web3, abi, address) {
-        var contract = web3.eth.contract(abi);
-        return contract.at(address)
-    }
-
-    contractAddress(web3, contract) {
-        return contract.networks[web3.version.network].address;
-    }
-
-
-
-
 
     constructor(props) {
         super(props);
@@ -35,7 +25,9 @@ class BrowseTrades extends Component {
     }
 
     handleTradeLookup(event) {
-        var EtheraryInstance = this.instantiate(this.props.web3, EtheraryContract.abi, this.contractAddress(this.props.web3, EtheraryContract));
+
+        var etheraryAddress = ContractUtils.getContractAddress(this.props.web3, EtheraryContract);
+        var EtheraryInstance = ContractUtils.getContractInstance(this.props.web3, EtheraryContract.abi, etheraryAddress);
         try {
             var trade = EtheraryInstance.idToSellOrder(this.state.orderIdInput);
             this.setState({
@@ -94,6 +86,7 @@ class BrowseTrades extends Component {
                     </fieldset>
                 </form>
                 {this.displayTrade()}
+                <CardTest/>
             </div>
 
         );
