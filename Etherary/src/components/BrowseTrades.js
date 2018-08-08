@@ -86,7 +86,7 @@ class BrowseTrades extends Component {
 
                 {
                     this.tradeValid()
-                    ? <TradeCard orderId={this.state.orderId} trade={this.state.trade}/>
+                    ? <TradeCard web3={this.props.web3} orderId={this.state.orderId} trade={this.state.trade}/>
                     : <div></div>
                 }
             </div>
