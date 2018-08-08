@@ -65,6 +65,7 @@ contract Etherary {
         returns (uint256)
     {
         ERC721Basic tokenContract = ERC721Basic(_tokenContractAddress);
+        //TODO: token ids should be different
         require(
             tokenContract.supportsInterface(InterfaceId_ERC721),
             "Provided contract must support the ERC721 interface."
