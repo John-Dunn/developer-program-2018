@@ -29,9 +29,11 @@ MVP: One-to-one exchange of ERC721 token of the same contract (e.g. token with I
 ###### Second Phase: Frontend
 Using React, provide a visualisation of open trades and allow the use of all functionality mentioned above via the browser and Metamask.
 TODOs:
+- Fix issue with status persistence in trade Card
 - add cancel and fill functionality to card as modal, check for data integrity
 - display all trades
 - MVP status (i.e. fulfills all requirements to be submitted). Each following phase maintains this.
+- Usability: Make sure every form allows submit on enter
 
 ###### Third Phase: Trade for different contract
 Allow specifying a different ERC721 contract and token to receive
