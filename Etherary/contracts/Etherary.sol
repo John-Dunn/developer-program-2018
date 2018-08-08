@@ -35,7 +35,7 @@ contract Etherary {
     );
 
     event SellOrderFilled (
-        uint256 orderId
+        uint256 orderId // TODO: should include address of filler here
     );
 
     struct SellOrder {
