@@ -3,13 +3,16 @@ import EtheraryContract from '../../build/contracts/Etherary.json'
 import ContractUtils from '../utils/contractUtils'
 import TradeCard from './TradeCard'
 
+import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col} from 'reactstrap';
+
+
 class BrowseTrades extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             orderIdInput: -1,
-            orderId: -1,
+            orderId: null,
             trade: null
         }
 
@@ -38,33 +41,51 @@ class BrowseTrades extends Component {
         event.preventDefault();
     }
 
+    tradeValid() {
+        return this.state.trade !== null && this.state.trade[0] !== "0x0000000000000000000000000000000000000000";
+    }
+
+    tradeInvalid() {
+        if (this.state.orderId === null) {
+            return false;
+        } else {
+            return !this.tradeValid()
+        }
+    }
+
 
     render() {
         return (
             <div>
                 <h2> You can browse trades here!</h2>
-                <form className="pure-form">
-                    <fieldset>
-                        <legend>Specify the ID of the trade you want to look up.</legend>
-                        <label> {"Trade ID: "}
-                            <input
-                                className="pure-u-1-8"
-                                type="number"
-                                placeholder="123"
-                                onChange={this.handleTradeIdChange}
-                            />
-                        </label>
+                Some sample text here    .
 
-                        <button
-                            className="pure-button pure-button-primary"
-                            onClick={this.handleTradeLookup}
-                        >
-                                Lookup Trade
-                        </button>
-                    </fieldset>
-                </form>
+
+                <FormGroup row>
+                  <Label for="tokenId" sm={2}>Token ID</Label>
+                  <Col sm={6}>
+                      <Input
+                        type="number"
+                        id="tokenId"
+                        invalid={this.tradeInvalid()}
+                        onChange={this.handleTradeIdChange}
+                      />
+                      <FormFeedback tooltip>This trade ID does not exist.</FormFeedback>
+                      <FormText>Enter the ID of the trade you want to look up.</FormText>
+                  </Col>
+
+                  <Col sm={2}>
+                      <button
+                          className="pure-button pure-button-primary"
+                          onClick={this.handleTradeLookup}
+                      >
+                              Lookup Trade
+                      </button>
+                 </Col>
+                </FormGroup>
+
                 {
-                    this.state.trade !== null
+                    this.tradeValid()
                     ? <TradeCard orderId={this.state.orderId} trade={this.state.trade}/>
                     : <div></div>
                 }
