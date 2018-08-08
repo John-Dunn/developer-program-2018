@@ -117,6 +117,20 @@ class TradeCard extends Component {
         event.preventDefault();
     }
 
+    componentDidUpdate(prevProps) {
+        console.log("Prev ", prevProps);
+        console.log("Current", this.props);
+        if(prevProps.orderId !== this.props.orderId) {
+            console.log("We get here")
+            this.setState({
+                fillModal: false,
+                tradeFillable:false,
+                withdrawalApproved:false,
+                tradeFilled: false
+            })
+        }
+    }
+
     handleFillTrade(event) {
         var etheraryAddress = ContractUtils.getContractAddress(this.props.web3, EtheraryContract);
         var EtheraryInstance = ContractUtils.getContractInstance(this.props.web3, EtheraryContract.abi, etheraryAddress)
