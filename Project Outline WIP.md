@@ -29,11 +29,14 @@ MVP: One-to-one exchange of ERC721 token of the same contract (e.g. token with I
 ###### Second Phase: Frontend
 Using React, provide a visualisation of open trades and allow the use of all functionality mentioned above via the browser and Metamask.
 TODOs:
-- Fix issue with status persistence in trade Card
-- add cancel and fill functionality to card as modal, check for data integrity
-- display all trades
+- Move to truffle-contract for browsing trades.
+- implement drawn schema: at max 1 button, callbacks
+- finished trades are greyed out and have no buttons
+- add cancel functionality
+- let people withdraw their token (My trades menu) where all involved are listed?
+- browse contains a list of all active trades
 - MVP status (i.e. fulfills all requirements to be submitted). Each following phase maintains this.
-- Usability: Make sure every form allows submit on enter
+- Usability: Make sure every form allows submit on enter, proper gas estimates, display when MM locked
 
 ###### Third Phase: Trade for different contract
 Allow specifying a different ERC721 contract and token to receive
@@ -52,13 +55,3 @@ Now allow ERC20 token to be added to both sides of the trade, instead of provind
 - Expiration dates on trades
 - Open-ended orders (make me an offer! this may be better suited to be done off-chain)
 - Maybe UX improvements are possible? Currently 6 transactions are required to complete a trade, 3 by each participant (maker approves, maker creates order, taker approves, taker fills order, maker and taker withdraw). Maybe this can be reduced.
-
-
-
-
-
-<!-- ### 3. Background, Business Divers and Significance
-### 4. Benefits and Costs
-### 5. Implementation Method
-### 7. Requirements
-### 8. Expected Outcomes -->
