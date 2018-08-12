@@ -20,6 +20,11 @@ code {
   background: #eee;
 }
 
+.mintbutton {
+  display: flex;
+  justify-content: center;
+}
+
 .container {
   box-sizing: border-box;
   width: 100%;

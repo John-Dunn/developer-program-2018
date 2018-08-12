@@ -1,14 +1,16 @@
 import React, { Component } from 'react'
 
-class BrowseTrades extends Component {
+class MyTrades extends Component {
 
     render() {
         return (
             <div>
-                <h2> You can browse trades here!</h2>
+                <h2> You can browse your trades here!</h2>
+
             </div>
+
         );
     }
 }
 
-export default BrowseTrades
+export default MyTrades

@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 import { BrowserRouter, Route, Link } from 'react-router-dom';
 
 import Web3Status from './components/Web3Status'
-import NewTrade from './components/NewTrade'
-import Testing from './components/Testing'
+
 import BrowseTrades from './components/BrowseTrades'
+import NewTrade from './components/NewTrade'
+import MyTrades from './components/MyTrades'
+import Testing from './components/Testing'
 
 import getWeb3 from './utils/getWeb3'
-
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -29,6 +30,10 @@ class NavigationBar extends Component {
 
                 <Link to='/newTrade'>
                     <span className="pure-menu-item pure-menu-link">New Trade </span>
+                </Link>
+
+                <Link to='/myTrades'>
+                    <span className="pure-menu-item pure-menu-link">My Trades </span>
                 </Link>
 
                 <Link to='/testing'>
@@ -105,6 +110,10 @@ class App extends Component {
 
                     <Route path='/newTrade' render={() => (
                         <NewTrade web3={this.state.web3} web3Connected={this.state.web3Connected}/>
+                    )}/>
+
+                    <Route path='/myTrades' render={() => (
+                        <MyTrades web3={this.state.web3} web3Connected={this.state.web3Connected}/>
                     )}/>
 
                     <Route path='/testing' render={() => (
