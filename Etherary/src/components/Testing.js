@@ -4,6 +4,7 @@ import { Button } from 'reactstrap';
 var truffleContract = require("truffle-contract");
 
 import ERC721Faucet from '../../../ERC721Faucet/build/contracts/GenericERC721Token.json'
+import {getContractInstance} from '../utils/getContractInstance'
 
 import getLogs from '../utils/getLogs'
 
@@ -55,9 +56,8 @@ class Testing extends Component {
     // Tools
     instantiateContract() {
         var faucetAddress = ERC721Faucet.networks[this.props.web3.version.network].address;
-        var faucetContract = truffleContract(ERC721Faucet);
-        faucetContract.setProvider(this.props.web3.currentProvider)
-        var faucetInstance = faucetContract.at(faucetAddress);
+        console.log(getContractInstance)
+        var faucetInstance = getContractInstance(ERC721Faucet, this.props.web3);
 
         this.setState({
             faucetInstance: faucetInstance,

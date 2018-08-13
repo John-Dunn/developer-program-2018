@@ -5,6 +5,7 @@ var truffleContract = require("truffle-contract");
 import ValidationStatus from '../utils/enums'
 import didEventOccur from '../utils/didEventOccur'
 import getLogs from '../utils/getLogs'
+import {getContractInstance, instantiateContractAt} from '../utils/getContractInstance'
 
 import ERC721 from '../resources/ERC721Basic.json'
 import Etherary from '../../build/contracts/Etherary.json'
@@ -57,9 +58,7 @@ class NewTrade extends Component {
     }
 
     handleCheckOwnership(event) {
-        var ERC721Contract = truffleContract(ERC721);
-        ERC721Contract.setProvider(this.props.web3.currentProvider)
-        var ERC721Instance = ERC721Contract.at(this.state.tokenContract);
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, this.state.tokenContract);
 
         ERC721Instance.ownerOf(this.state.makerTokenId)
         .then(function(owner) {
@@ -178,9 +177,7 @@ class NewTrade extends Component {
     }
 
     handleCheckExistence(event) {
-        var ERC721Contract = truffleContract(ERC721);
-        ERC721Contract.setProvider(this.props.web3.currentProvider)
-        var ERC721Instance = ERC721Contract.at(this.state.tokenContract);
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, this.state.tokenContract);
 
         ERC721Instance.exists(this.state.takerTokenId)
         .then(function(exists) {
@@ -260,11 +257,7 @@ class NewTrade extends Component {
 
     // Step 3
     handleCreateTrade(event) {
-        var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
-
-        var EtheraryContract = truffleContract(Etherary);
-        EtheraryContract.setProvider(this.props.web3.currentProvider)
-        var EtheraryInstance = EtheraryContract.at(etheraryAddress);
+        var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
 
         EtheraryInstance.createERC721SellOrder(
             this.state.tokenContract,
@@ -285,9 +278,7 @@ class NewTrade extends Component {
     }
 
     handleApproval(event) {
-        var ERC721Contract = truffleContract(ERC721);
-        ERC721Contract.setProvider(this.props.web3.currentProvider)
-        var ERC721Instance = ERC721Contract.at(this.state.tokenContract);
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, this.state.tokenContract);
 
         var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
         ERC721Instance.approve(etheraryAddress, this.state.makerTokenId, {from: this.props.web3.eth.accounts[0]})
@@ -386,4 +377,3 @@ class NewTrade extends Component {
 }
 
 export default NewTrade
-//Specify a valid ERC721 contract address which handles the token you want to trade, as well as the token ID.

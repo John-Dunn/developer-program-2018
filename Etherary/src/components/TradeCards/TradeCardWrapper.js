@@ -9,7 +9,7 @@ import TradeModal from './TradeModal'
 
 import Etherary from '../../../build/contracts/Etherary.json'
 
-import getContractInstance from '../../utils/getContractInstance'
+import {getContractInstance, instantiateContractAt} from '../../utils/getContractInstance'
 import didEventOccur from '../../utils/didEventOccur'
 
 
@@ -26,7 +26,6 @@ class TradeCardWrapper extends Component {
 
     cancelCallback() {
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
-        console.log("Cancel", EtheraryInstance);
         EtheraryInstance.cancelERC721SellOrder(this.props.tradeId, {from:this.props.web3.eth.accounts[0]})
         .then(function(txid) {
             var expectedEvent = {
@@ -57,10 +56,7 @@ class TradeCardWrapper extends Component {
     }
 
     getTakerTokenOwner() {
-        var ERC721Contract = truffleContract(ERC721);
-        ERC721Contract.setProvider(this.props.web3.currentProvider)
-        var ERC721Instance = ERC721Contract.at(this.props.trade[1]);
-
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, this.props.trade[1]);
         ERC721Instance.ownerOf(this.props.trade[3].toNumber())
         .then(function(owner) {
             console.log("Token owner: ", owner);

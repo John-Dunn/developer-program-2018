@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col} from 'reactstrap';
 var truffleContract = require("truffle-contract");
+import {getContractInstance} from '../utils/getContractInstance'
 
 import TradeCardWrapper from './TradeCards/TradeCardWrapper'
 import Etherary from '../../build/contracts/Etherary.json'
@@ -26,12 +27,8 @@ class BrowseTrades extends Component {
 
     handleTradeLookup(event) {
         if (this.state.tradeIdInput === null) { return }
-        var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
 
-        var EtheraryContract = truffleContract(Etherary);
-        EtheraryContract.setProvider(this.props.web3.currentProvider)
-        var EtheraryInstance = EtheraryContract.at(etheraryAddress);
-
+        var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
         EtheraryInstance.idToSellOrder(this.state.tradeIdInput)
         .then(function(trade) {
             this.setState({

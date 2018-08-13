@@ -4,6 +4,7 @@ var truffleContract = require("truffle-contract");
 import ERC721 from '../../resources/ERC721Basic.json'
 import Etherary from '../../../build/contracts/Etherary.json'
 import didEventOccur from '../../utils/didEventOccur'
+import {getContractInstance, instantiateContractAt} from '../../utils/getContractInstance'
 
 import TradeCardContent from './TradeCardContent'
 
@@ -44,9 +45,7 @@ class TradeModal extends Component {
     }
 
     handleApproval(event) {
-        var ERC721Contract = truffleContract(ERC721);
-        ERC721Contract.setProvider(this.props.web3.currentProvider)
-        var ERC721Instance = ERC721Contract.at(this.props.contract);
+        var ERC721Instance = getContractInstance(ERC721, this.props.web3, this.props.contract);
 
         var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
         ERC721Instance.approve(etheraryAddress, this.props.takerTokenId, {from: this.props.web3.eth.accounts[0]})
@@ -71,11 +70,7 @@ class TradeModal extends Component {
     }
 
     handleCompleteTrade(event) {
-        var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
-
-        var EtheraryContract = truffleContract(Etherary);
-        EtheraryContract.setProvider(this.props.web3.currentProvider)
-        var EtheraryInstance = EtheraryContract.at(etheraryAddress);
+        var EtheraryInstance = instantiateContractAt(Etherary, this.props.web3, this.props.contract);
 
         EtheraryInstance.fillERC721SellOrder(
             this.props.tradeId,
