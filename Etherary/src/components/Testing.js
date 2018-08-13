@@ -130,7 +130,7 @@ class Testing extends Component {
                 <p>
                     A faucet for ERC721 token is deployed at <strong>{this.state.faucetAddress}</strong> where you currently own <strong>{this.state.tokenBalance}</strong> token. Token IDs are given out in order. Feel free to mint as many as you like and play around with the contract.
                 </p>
-                <div className="mintbutton">
+                <div className="centered">
                     <Button color="primary" size="lg" onClick={this.handleMint.bind(this)} >Mint</Button>
                 </div>
                 {this.mintMessage()}

@@ -20,7 +20,7 @@ code {
   background: #eee;
 }
 
-.mintbutton {
+.centered {
   display: flex;
   justify-content: center;
 }
