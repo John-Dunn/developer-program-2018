@@ -66,23 +66,6 @@ class Testing extends Component {
         return faucetInstance;
     }
 
-    // In theory the call to balanceOf should immediately return one more after minting,
-    // However the call does not get placed every once in a while (metamask still busy?)
-    updateBalanceRepeatedly(instance, account) {
-        instance.balanceOf.call(account)
-        .then(function(result) {
-            var balance = result.toNumber();
-            if (balance !== this.state.tokenBalance) {
-                console.log("Faucet token balance updated: ", balance);
-                this.setState({
-                    tokenBalance: result.toNumber()
-                })
-            } else {
-                setTimeout(function() { this.updateBalanceRepeatedly(instance, account); }.bind(this), 250);
-            }
-        }.bind(this))
-    }
-
     // Action handlers
     handleMint() {
         this.setState({
@@ -100,9 +83,17 @@ class Testing extends Component {
                 justMinted: true,
                 latestMintedToken: txLogs[0].args._tokenId.toNumber()
             })
-            this.updateBalanceRepeatedly(instance, account);
+            // The gas in the following line is to prevent caching
+            // see https://github.com/ethereum/web3.js/issues/1463
+            return instance.balanceOf.call(account, {gas: 500000+Math.floor(Math.random()*1001)})
         }.bind(this))
-
+        .then(function(result) {
+            var balance = result.toNumber();
+            console.log("Faucet token balance updated: ", balance);
+            this.setState({
+                tokenBalance: result.toNumber()
+            })
+        }.bind(this))
     }
 
 
