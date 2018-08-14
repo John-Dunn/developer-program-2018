@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col} from 'reactstrap';
 var truffleContract = require("truffle-contract");
-import {getContractInstance} from '../utils/getContractInstance'
+import {getContractInstance, instantiateContractAt} from '../utils/getContractInstance'
+import {tradeToMaker, tradeToContract, tradeToMakerTokenId, tradeToTakerTokenId, tradeToActive, tradeToTaker} from '../utils/tradeUnpacking'
 
 import TradeCardWrapper from './TradeCards/TradeCardWrapper'
 import Etherary from '../../build/contracts/Etherary.json'
+import ERC721 from '../resources/ERC721Basic.json'
 
 
 class BrowseTrades extends Component {
@@ -14,10 +16,16 @@ class BrowseTrades extends Component {
         this.state = {
             tradeIdInput: null,
             tradeId: null,
-            trade: null
+            trade: null,
+
+            makerTokenOwner: null,
+            makerTokenApproved: false,
+
+            takerTokenOwner: null,
+            takerTokenApproved: false
+
         }
     }
-
 
     handleTradeIdChange(event) {
       this.setState({
@@ -26,6 +34,72 @@ class BrowseTrades extends Component {
     }
 
     handleTradeLookup(event) {
+        this.updateTrade();
+        event.preventDefault();
+    }
+
+    tokenWithdrawable(approved, tokenOwner) {
+        var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
+        return approved && tokenOwner === etheraryAddress;
+    }
+
+
+    isTakerTokenApproved(trade) {
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToContract(trade));
+        ERC721Instance.getApproved(tradeToTakerTokenId(trade))
+        .then(function(approved) {
+            var isApproved = this.props.web3.eth.accounts[0] === approved;
+            this.setState({takerTokenApproved: isApproved});
+        }.bind(this))
+        .catch(function(err) {
+            console.log("Querying approval failed: ", err);
+        }.bind(this))
+    }
+
+    isMakerTokenApproved(trade) {
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToContract(trade));
+        ERC721Instance.getApproved(tradeToMakerTokenId(trade))
+        .then(function(approved) {
+            var isApproved = this.props.web3.eth.accounts[0] === approved;
+            this.setState({makerTokenApproved: isApproved});
+        }.bind(this))
+        .catch(function(err) {
+            console.log("Querying approval failed: ", err);
+        }.bind(this))
+    }
+
+
+
+
+
+    getTakerTokenOwner(trade) {
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToContract(trade));
+        ERC721Instance.ownerOf(tradeToTakerTokenId(trade))
+        .then(function(owner) {
+            this.setState({takerTokenOwner: owner});
+        }.bind(this))
+        .catch(function(err) {
+            console.log("Querying ownership failed: ", err);
+        }.bind(this))
+    }
+
+    getMakerTokenOwner(trade) {
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToContract(trade));
+        ERC721Instance.ownerOf(tradeToMakerTokenId(trade))
+        .then(function(owner) {
+            this.setState({makerTokenOwner: owner});
+        }.bind(this))
+        .catch(function(err) {
+            console.log("Querying ownership failed: ", err);
+        }.bind(this))
+    }
+
+
+
+
+
+
+    updateTrade() {
         if (this.state.tradeIdInput === null) { return }
 
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
@@ -35,15 +109,18 @@ class BrowseTrades extends Component {
                 tradeId: this.state.tradeIdInput,
                 trade: trade
             })
+            this.getMakerTokenOwner(trade);
+            this.getTakerTokenOwner(trade);
+            this.isTakerTokenApproved(trade);
+            this.isMakerTokenApproved(trade);
         }.bind(this))
         .catch(function(err) {
             console.log("Unable to get trade:", err);
         })
-        event.preventDefault();
     }
 
     tradeValid() {
-        return this.state.trade !== null && this.state.trade[0] !== "0x0000000000000000000000000000000000000000";
+        return this.state.trade !== null && tradeToMaker(this.state.trade) !== "0x0000000000000000000000000000000000000000";
     }
 
     tradeInvalid() {
@@ -83,7 +160,14 @@ class BrowseTrades extends Component {
             </div>
                 {
                     this.tradeValid()
-                    ? <TradeCardWrapper web3={this.props.web3} tradeId={this.state.tradeId} trade={this.state.trade}/>
+                    ? <TradeCardWrapper
+                        web3={this.props.web3}
+                        tradeId={this.state.tradeId}
+                        trade={this.state.trade}
+                        reloadCallback={this.updateTrade.bind(this)}
+                        makerTokenWithdrawable={this.tokenWithdrawable(this.state.makerTokenApproved, this.state.makerTokenOwner)}
+                        takerTokenWithdrawable={this.tokenWithdrawable(this.state.takerTokenApproved, this.state.takerTokenOwner)}
+                      />
                     : <div></div>
                 }
             </div>
