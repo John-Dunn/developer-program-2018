@@ -160,14 +160,19 @@ class BrowseTrades extends Component {
             </div>
                 {
                     this.tradeValid()
-                    ? <TradeCardWrapper
-                        web3={this.props.web3}
-                        tradeId={this.state.tradeId}
-                        trade={this.state.trade}
-                        reloadCallback={this.updateTrade.bind(this)}
-                        makerTokenWithdrawable={this.tokenWithdrawable(this.state.makerTokenApproved, this.state.makerTokenOwner)}
-                        takerTokenWithdrawable={this.tokenWithdrawable(this.state.takerTokenApproved, this.state.takerTokenOwner)}
-                      />
+                    ?
+                    <div className="centered">
+                        <Col sm="6">
+                        <TradeCardWrapper
+                            web3={this.props.web3}
+                            tradeId={this.state.tradeId}
+                            trade={this.state.trade}
+                            reloadCallback={this.updateTrade.bind(this)}
+                            makerTokenWithdrawable={this.tokenWithdrawable(this.state.makerTokenApproved, this.state.makerTokenOwner)}
+                            takerTokenWithdrawable={this.tokenWithdrawable(this.state.takerTokenApproved, this.state.takerTokenOwner)}
+                          />
+                        </Col>
+                    </div>
                     : <div></div>
                 }
             </div>

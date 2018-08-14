@@ -71,25 +71,23 @@ class TradeCardWrapper extends Component {
 
     render() {
         return (
-            <div className="centered">
-                <Col sm="6">
-                    <TradeCardBody
-                        account={this.props.web3.eth.accounts[0]}
-                        active={tradeToActive(this.props.trade)}
-                        tradeId={this.props.tradeId}
-                        maker={tradeToMaker(this.props.trade)}
-                        taker={tradeToTaker(this.props.trade)}
-                        makerTokenId={tradeToMakerTokenId(this.props.trade)}
-                        takerTokenId={tradeToTakerTokenId(this.props.trade)}
-                        contract={tradeToContract(this.props.trade)}
-                        cancelCallback={this.cancelCallback.bind(this)}
-                        tradeCallback={this.tradeCallback.bind(this)}
-                        reloadCallback={this.props.reloadCallback.bind(this)}
-                        makerTokenWithdrawable={this.props.makerTokenWithdrawable}
-                        takerTokenWithdrawable={this.props.takerTokenWithdrawable}
-                        web3={this.props.web3}
-                    />
-                </Col>
+            <div>
+                <TradeCardBody
+                    account={this.props.web3.eth.accounts[0]}
+                    active={tradeToActive(this.props.trade)}
+                    tradeId={this.props.tradeId}
+                    maker={tradeToMaker(this.props.trade)}
+                    taker={tradeToTaker(this.props.trade)}
+                    makerTokenId={tradeToMakerTokenId(this.props.trade)}
+                    takerTokenId={tradeToTakerTokenId(this.props.trade)}
+                    contract={tradeToContract(this.props.trade)}
+                    cancelCallback={this.cancelCallback.bind(this)}
+                    tradeCallback={this.tradeCallback.bind(this)}
+                    reloadCallback={this.props.reloadCallback.bind(this)}
+                    makerTokenWithdrawable={this.props.makerTokenWithdrawable}
+                    takerTokenWithdrawable={this.props.takerTokenWithdrawable}
+                    web3={this.props.web3}
+                />
                 <TradeModal
                     show={this.state.showTradeModal}
                     toggleCallback={this.toggleTradeModal.bind(this)}
