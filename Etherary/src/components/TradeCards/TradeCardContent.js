@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Card, Button, CardTitle, CardText } from 'reactstrap';
 
 // Receives props:
 // account={this.props.web3.eth.accounts[0]}

@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col} from 'reactstrap';
-var truffleContract = require("truffle-contract");
+import { FormGroup, Label, Input, FormFeedback, FormText, Col} from 'reactstrap';
+
 import {getContractInstance, instantiateContractAt} from '../utils/getContractInstance'
 import {tradeToMaker, tradeToContract, tradeToMakerTokenId, tradeToTakerTokenId, tradeToActive, tradeToTaker} from '../utils/tradeUnpacking'
 
 import TradeCardWrapper from './TradeCards/TradeCardWrapper'
+
 import Etherary from '../../build/contracts/Etherary.json'
 import ERC721 from '../resources/ERC721Basic.json'
 
@@ -53,7 +54,7 @@ class BrowseTrades extends Component {
         }.bind(this))
         .catch(function(err) {
             console.log("Querying approval failed: ", err);
-        }.bind(this))
+        })
     }
 
     isMakerTokenApproved(trade) {
@@ -65,7 +66,7 @@ class BrowseTrades extends Component {
         }.bind(this))
         .catch(function(err) {
             console.log("Querying approval failed: ", err);
-        }.bind(this))
+        })
     }
 
 
@@ -80,7 +81,7 @@ class BrowseTrades extends Component {
         }.bind(this))
         .catch(function(err) {
             console.log("Querying ownership failed: ", err);
-        }.bind(this))
+        })
     }
 
     getMakerTokenOwner(trade) {
@@ -91,7 +92,7 @@ class BrowseTrades extends Component {
         }.bind(this))
         .catch(function(err) {
             console.log("Querying ownership failed: ", err);
-        }.bind(this))
+        })
     }
 
 
@@ -100,6 +101,7 @@ class BrowseTrades extends Component {
 
 
     updateTrade() {
+        console.log("Updating trade");
         if (this.state.tradeIdInput === null) { return }
 
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);

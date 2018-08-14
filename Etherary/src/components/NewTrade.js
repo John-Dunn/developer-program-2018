@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col, Button} from 'reactstrap';
-var truffleContract = require("truffle-contract");
 
 import ValidationStatus from '../utils/enums'
 import didEventOccur from '../utils/didEventOccur'
@@ -326,7 +325,11 @@ class NewTrade extends Component {
         return (
             <div>
             <h5> 3. Create the trade </h5>
-
+            In order to create a trade, the Etherary contract must be approved to withdraw
+            your token. Once a trade is created, your token will be stored with the contract
+            until you cancel your trade or if somebody fills it.
+            <br></br>
+            <br></br>
             <Form>
                 <FormGroup row>
                 <Col sm={2}>

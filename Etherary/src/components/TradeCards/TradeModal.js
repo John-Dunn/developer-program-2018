@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Col } from 'reactstrap';
-var truffleContract = require("truffle-contract");
-import ERC721 from '../../resources/ERC721Basic.json'
-import Etherary from '../../../build/contracts/Etherary.json'
+
 import didEventOccur from '../../utils/didEventOccur'
 import {getContractInstance, instantiateContractAt} from '../../utils/getContractInstance'
 
 import TradeCardContent from './TradeCardContent'
+
+import ERC721 from '../../resources/ERC721Basic.json'
+import Etherary from '../../../build/contracts/Etherary.json'
 
 class TradeModal extends Component {
     constructor(props) {

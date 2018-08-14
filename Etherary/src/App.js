@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import { BrowserRouter, Route, Link } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 
 import Web3Status from './components/Web3Status'
 
 import BrowseTrades from './components/BrowseTrades'
 import NewTrade from './components/NewTrade'
-import MyTrades from './components/MyTrades'
+// import MyTrades from './components/MyTrades'
 import Testing from './components/Testing'
 
 import getWeb3 from './utils/getWeb3'

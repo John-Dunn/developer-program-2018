@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import { Button } from 'reactstrap';
 
-var truffleContract = require("truffle-contract");
+import {getContractInstance} from '../utils/getContractInstance'
+import getLogs from '../utils/getLogs'
 
 import ERC721Faucet from '../../../ERC721Faucet/build/contracts/GenericERC721Token.json'
-import {getContractInstance} from '../utils/getContractInstance'
 
-import getLogs from '../utils/getLogs'
 
 
 //Props: web3, web3Connected
