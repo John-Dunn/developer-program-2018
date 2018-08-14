@@ -12,6 +12,7 @@ import Etherary from '../../../build/contracts/Etherary.json'
 import {getContractInstance, instantiateContractAt} from '../../utils/getContractInstance'
 import didEventOccur from '../../utils/didEventOccur'
 
+import {tradeToMaker, tradeToContract, tradeToMakerTokenId, tradeToTakerTokenId, tradeToActive, tradeToTaker} from '../../utils/tradeUnpacking'
 
 
 class TradeCardWrapper extends Component {
@@ -33,6 +34,7 @@ class TradeCardWrapper extends Component {
             }
             if(didEventOccur(txid, expectedEvent)) {
                 console.log('Trade cancelled');
+                this.props.reloadCallback();
             }
         }.bind(this))
         .catch(function(error) {
@@ -56,8 +58,8 @@ class TradeCardWrapper extends Component {
     }
 
     getTakerTokenOwner() {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, this.props.trade[1]);
-        ERC721Instance.ownerOf(this.props.trade[3].toNumber())
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToContract(this.props.trade));
+        ERC721Instance.ownerOf(tradeToTakerTokenId(this.props.trade))
         .then(function(owner) {
             console.log("Token owner: ", owner);
             this.setState({takerTokenOwner: owner});
@@ -73,15 +75,19 @@ class TradeCardWrapper extends Component {
                 <Col sm="6">
                     <TradeCardBody
                         account={this.props.web3.eth.accounts[0]}
-                        active={this.props.trade[4]}
+                        active={tradeToActive(this.props.trade)}
                         tradeId={this.props.tradeId}
-                        maker={this.props.trade[0]}
-                        taker={this.props.trade[5]}
-                        makerTokenId={this.props.trade[2].toNumber()}
-                        takerTokenId={this.props.trade[3].toNumber()}
-                        contract={this.props.trade[1]}
+                        maker={tradeToMaker(this.props.trade)}
+                        taker={tradeToTaker(this.props.trade)}
+                        makerTokenId={tradeToMakerTokenId(this.props.trade)}
+                        takerTokenId={tradeToTakerTokenId(this.props.trade)}
+                        contract={tradeToContract(this.props.trade)}
                         cancelCallback={this.cancelCallback.bind(this)}
                         tradeCallback={this.tradeCallback.bind(this)}
+                        reloadCallback={this.props.reloadCallback.bind(this)}
+                        makerTokenWithdrawable={this.props.makerTokenWithdrawable}
+                        takerTokenWithdrawable={this.props.takerTokenWithdrawable}
+                        web3={this.props.web3}
                     />
                 </Col>
                 <TradeModal
@@ -89,14 +95,15 @@ class TradeCardWrapper extends Component {
                     toggleCallback={this.toggleTradeModal.bind(this)}
                     tradeId={this.props.tradeId}
                     account={this.props.web3.eth.accounts[0]}
-                    active={this.props.trade[4]}
-                    maker={this.props.trade[0]}
-                    taker={this.props.trade[5]}
-                    makerTokenId={this.props.trade[2].toNumber()}
-                    takerTokenId={this.props.trade[3].toNumber()}
-                    contract={this.props.trade[1]}
+                    active={tradeToActive(this.props.trade)}
+                    maker={tradeToMaker(this.props.trade)}
+                    taker={tradeToTaker(this.props.trade)}
+                    makerTokenId={tradeToMakerTokenId(this.props.trade)}
+                    takerTokenId={tradeToTakerTokenId(this.props.trade)}
+                    contract={tradeToContract(this.props.trade)}
                     takerTokenOwner={this.state.takerTokenOwner}
                     web3={this.props.web3}
+                    reloadCallback={this.props.reloadCallback}
                 />
             </div>
 
