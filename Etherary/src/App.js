@@ -32,9 +32,6 @@ class NavigationBar extends Component {
                     <span className="pure-menu-item pure-menu-link">New Trade </span>
                 </Link>
 
-                <Link to='/myTrades'>
-                    <span className="pure-menu-item pure-menu-link">My Trades </span>
-                </Link>
 
                 <Link to='/testing'>
                     <span className="pure-menu-item pure-menu-link">Testing </span>
@@ -48,6 +45,9 @@ class NavigationBar extends Component {
         );
     }
 }
+// <Link to='/myTrades'>
+//     <span className="pure-menu-item pure-menu-link">My Trades </span>
+// </Link>
 
 class Home extends Component {
     render() {
@@ -116,9 +116,6 @@ class App extends Component {
                         <NewTrade web3={this.state.web3} web3Connected={this.state.web3Connected}/>
                     )}/>
 
-                    <Route path='/myTrades' render={() => (
-                        <MyTrades web3={this.state.web3} web3Connected={this.state.web3Connected}/>
-                    )}/>
 
                     <Route path='/testing' render={() => (
                         <Testing web3={this.state.web3} web3Connected={this.state.web3Connected}/>
@@ -128,5 +125,8 @@ class App extends Component {
         );
     }
 }
+// <Route path='/myTrades' render={() => (
+//     <MyTrades web3={this.state.web3} web3Connected={this.state.web3Connected}/>
+// )}/>
 
 export default App

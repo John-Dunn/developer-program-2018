@@ -56,7 +56,6 @@ class Testing extends Component {
     // Tools
     instantiateContract() {
         var faucetAddress = ERC721Faucet.networks[this.props.web3.version.network].address;
-        console.log(getContractInstance)
         var faucetInstance = getContractInstance(ERC721Faucet, this.props.web3);
 
         this.setState({
@@ -117,7 +116,6 @@ class Testing extends Component {
 
         return (
             <div>
-                <h2> Mint token to play around with</h2>
                 <p>
                     A faucet for ERC721 token is deployed at <strong>{this.state.faucetAddress}</strong> where you currently own <strong>{this.state.tokenBalance}</strong> token. Token IDs are given out in order. Feel free to mint as many as you like and play around with the contract.
                 </p>

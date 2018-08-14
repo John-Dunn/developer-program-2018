@@ -366,7 +366,6 @@ class NewTrade extends Component {
         }
         return (
             <div>
-                <h2> You can create a new trade!</h2>
                 <p> There are three steps to creating a new trade: </p>
                 {this.stepOne()}
                 {this.stepTwo()}
