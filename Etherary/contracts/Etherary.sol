@@ -47,7 +47,7 @@ contract Etherary {
         uint256 _tradeId
     );
 
-    event TradeFilled (
+    event TradeCompleted (
         uint256 _tradeId
     );
 
@@ -139,7 +139,7 @@ contract Etherary {
         makerTokenContract.approve(msg.sender, trade.makerTokenId);
         takerTokenContract.approve(trade.maker, trade.takerTokenId);
         trade.taker = msg.sender;
-        emit TradeFilled(_tradeId);
+        emit TradeCompleted(_tradeId);
     }
 
     function cancelERC721Trade(uint256 _tradeId)
@@ -157,7 +157,7 @@ contract Etherary {
     }
 
 
-    function validERC721Contract(ERC721Basic _tokenContract) private returns(bool) {
+    function validERC721Contract(ERC721Basic _tokenContract) private view returns(bool) {
         bool supportsInterface = _tokenContract.supportsInterface(InterfaceId_ERC721);
         bool supportsExist = _tokenContract.supportsInterface(InterfaceId_ERC721Exists);
         return supportsInterface && supportsExist;
@@ -165,6 +165,7 @@ contract Etherary {
 
     function callerOwnsTokenAndHasApproved(ERC721Basic _tokenContract, uint256 _tokenId)
         private
+        view
         returns (bool)
     {
         bool callerOwnsToken = _tokenContract.ownerOf(_tokenId) == msg.sender;

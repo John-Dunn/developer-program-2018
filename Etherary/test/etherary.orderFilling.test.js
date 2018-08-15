@@ -70,13 +70,13 @@ contract('Etherary', function(accounts) {
             await tokenB.approve.sendTransaction(etherary.address, tokenAliceWantsBobOwns, {from: bob});
             await etherary.fillERC721Trade.sendTransaction(tradeId, {from:bob});
 
-            // Check for TradeFilled event
-            const LogTradeFilled = await etherary.TradeFilled();
+            // Check for TradeCompleted event
+            const LogTradeCompleted = await etherary.TradeCompleted();
             const log = await new Promise(function(resolve, reject) {
-                LogTradeFilled.watch(function(error, log){ resolve(log); } );
+                LogTradeCompleted.watch(function(error, log){ resolve(log); } );
             });
             const logtradeId = log.args._tradeId.toNumber()
-            assert.equal(logtradeId, tradeId, "Should emit TradeFilled event with correct tradeId");
+            assert.equal(logtradeId, tradeId, "Should emit TradeCompleted event with correct tradeId");
         });
 
         it("should be possible to query a filled order's status", async function () {
