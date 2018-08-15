@@ -1,146 +1,176 @@
-pragma solidity 0.4.24;
-
 // TODO: import "openzeppelin-solidity/contracts/token/ERC721/ERC721Receiver.sol"; for safeTransfer
 
-/// @dev Provides ERC721 contract ionterface for querying ownership and manipulating approval status
+
+
+
+pragma solidity 0.4.24;
+
+
+/// @dev Provides ERC721 contract ionterface for querying ownership and manipulating approval
+/// status
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Basic.sol";
 
 /// @title Etherary trustless exchange of ERC721 token
-contract Etherary {
-    // Magix numbers for the xor-ed hashes of the interface https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/token/ERC721/ERC721Basic.sol
+// Terminology:
+//  - Trade: Struct where one party offers something and specifies what it wants in return, e.g.
+//           I offer token 2 of contract A and want token 3 of the same contract in exchange.
+//  - Maker: Creator of the trade
+//  - Maker token: Token the maker wants to trade away
+//  - Taker: Party that completes a trade, receiving the maker token, giving away the taker token
+//  - Taker token: Token the taker has that the maker wants
 
-    /// @dev Used for checking whether the provided ERC721 contract implements the neccessary
-    /// functions. These are private in ERC721Token.sol but could be imported in a better way
+contract Etherary {
+    /// @dev Magic numbers for the xor-ed hashes of the interface
+    /// https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/token/ERC721/ERC721Basic.sol
+    /// Used for checking whether the provided ERC721 contract implements the neccessary
+    /// functions. See EIP165
     bytes4 private constant InterfaceId_ERC721 = 0x80ac58cd;
     bytes4 private constant InterfaceId_ERC721Exists = 0x4f558e79;
 
-    mapping (uint256 => SellOrder) public idToSellOrder;
-    mapping (address => uint256[]) public sellerToOrders;
+    mapping (uint256 => Trade) public idToTrade;
 
-    // Increasing counter of order IDs
-    uint256 public orderId = 0;
+    // Increasing counter of trade IDs
+    uint256 public tradeId = 0;
 
-    // Do this later as part of an order?
+    // Do this later as part of an trade?
     // enum AssetType { ETHER, ERC20, ERC721 }
     // TODO: event arguments should start with underscores
-    event SellOrderCreated (
-        address tokenContract,
-        uint256 tokenForSale,
-        uint256 tokenWanted,
-        uint256 orderId
+    event TradeCreated (
+        address _makerTokenContract,
+        uint256 _makerTokenId,
+        address _takerTokenContract,
+        uint256 _takerTokenId,
+        uint256 _tradeId
     );
 
-    event SellOrderCancelled (
-        uint256 orderId
+    event TradeCancelled (
+        uint256 _tradeId
     );
 
-    event SellOrderFilled (
-        uint256 orderId // TODO: should include address of filler here
+    event TradeCompleted (
+        uint256 _tradeId
     );
 
-    struct SellOrder {
+    struct Trade {
         //AssetType assetType;
-        address seller;
-        address tokenContract;
-        uint256 tokenForSale; /// @dev only used for ERC721
-        uint256 tokenWanted; /// @dev only used for ERC721
+        address maker;
+        address taker;
+        address makerTokenContract;
+        address takerTokenContract;
+        uint256 makerTokenId; /// @dev only used for ERC721
+        uint256 takerTokenId; /// @dev only used for ERC721
         bool isActive;
-        address buyer;
     }
 
-    modifier onlyCreator(uint256 _orderId) {
+    modifier onlyMaker(uint256 _tradeId) {
         require(
-            idToSellOrder[_orderId].seller == msg.sender,
-            "Only order order creator can call this function.");
+            idToTrade[_tradeId].maker == msg.sender,
+            "Only the maker of the trade can call this function.");
         _;
     }
 
-    modifier deactivatesOrder(uint256 _orderId) {
-        SellOrder storage order = idToSellOrder[_orderId];
-        require(order.isActive, "Order is not active.");
+    modifier deactivatesTrade(uint256 _tradeId) {
+        Trade storage trade = idToTrade[_tradeId];
+        require(trade.isActive, "This function can only be called when the trade is active.");
         _;
-        order.isActive = false;
+        trade.isActive = false;
     }
 
-
-    // This contract must be an approved withdrawer for the token to sell
-    function createERC721SellOrder(
-        address _tokenContractAddress,
-        uint256 _tokenForSale,
-        uint256 _tokenWanted
+    /// @notice This contract must be an approved withdrawer for the maker token
+    function createERC721Trade(
+        address _makerTokenContractAddress,
+        uint256 _makerTokenId,
+        address _takerTokenContractAddress,
+        uint256 _takerTokenId
     )
         public
-        returns (uint256)
     {
-        ERC721Basic tokenContract = ERC721Basic(_tokenContractAddress);
-        //TODO: token ids should be different
-        require(
-            tokenContract.supportsInterface(InterfaceId_ERC721),
-            "Provided contract must support the ERC721 interface."
-        );
-        require(
-            tokenContract.supportsInterface(InterfaceId_ERC721Exists),
-            "Provided contract must support the ERC721 exists function."
-        );
-        require(tokenContract.exists(_tokenForSale), "Token ID does not exist.");
-        require(tokenContract.exists(_tokenWanted), "Token ID does not exist.");
-        require(
-            tokenContract.getApproved(_tokenForSale) == address(this),
-            "Not authorized to withdraw token for sale."
-        );
-        address tokenOwner = tokenContract.ownerOf(_tokenForSale);
-        // This below is necessary to avoid people starting auctions for people who were about to
-        // start auctions themselves. Alternatively, the sell order creation and token transfer
-        // may need to be adjusted.
-        require(tokenContract.ownerOf(_tokenForSale) == msg.sender);
+        ERC721Basic makerTokenContract = ERC721Basic(_makerTokenContractAddress);
+        ERC721Basic takerTokenContract = ERC721Basic(_takerTokenContractAddress);
 
-        tokenContract.transferFrom(tokenOwner, address(this), _tokenForSale);
-        SellOrder memory order = SellOrder(
-            msg.sender,
-            _tokenContractAddress,
-            _tokenForSale,
-            _tokenWanted,
-            true,
-            0x0000000000000000000000000000000000000000
+        require(
+            validERC721Contract(makerTokenContract) && validERC721Contract(takerTokenContract),
+            "Provided contracts must support the ERC721 interface."
         );
 
-        idToSellOrder[orderId] = order;
-        sellerToOrders[msg.sender].push(orderId);
-        emit SellOrderCreated(_tokenContractAddress, _tokenForSale, _tokenWanted, orderId);
-        return orderId++;
+        require(makerTokenContract.exists(_makerTokenId), "Maker token does not exist.");
+        require(takerTokenContract.exists(_takerTokenId), "Taker token does not exist.");
+        require(
+            callerOwnsTokenAndHasApproved(makerTokenContract, _makerTokenId),
+            "Maker must own the token and have approved this contract."
+        );
+
+        makerTokenContract.transferFrom(msg.sender, address(this), _makerTokenId);
+        Trade memory trade = Trade({
+            maker: msg.sender,
+            taker: 0x0000000000000000000000000000000000000000,
+            makerTokenContract: _makerTokenContractAddress,
+            takerTokenContract: _takerTokenContractAddress,
+            makerTokenId: _makerTokenId,
+            takerTokenId: _takerTokenId,
+            isActive: true
+        });
+
+        idToTrade[tradeId] = trade;
+        emit TradeCreated(
+            _makerTokenContractAddress,
+            _makerTokenId,
+            _takerTokenContractAddress,
+            _takerTokenId,
+            tradeId
+        );
+        tradeId++;
     }
 
-    function fillERC721SellOrder(uint256 _orderId)
+    function fillERC721Trade(uint256 _tradeId)
         public
-        deactivatesOrder(_orderId)
+        deactivatesTrade(_tradeId)
     {
-        SellOrder storage order = idToSellOrder[_orderId];
+        Trade storage trade = idToTrade[_tradeId];
 
-        ERC721Basic tokenContract = ERC721Basic(order.tokenContract);
+        ERC721Basic makerTokenContract = ERC721Basic(trade.makerTokenContract);
+        ERC721Basic takerTokenContract = ERC721Basic(trade.takerTokenContract);
+
         require(
-            tokenContract.getApproved(order.tokenWanted) == address(this),
-            "Not authorized to withdraw token for buy."
+            callerOwnsTokenAndHasApproved(takerTokenContract, trade.takerTokenId),
+            "Taker must own the token and have approved this contract."
         );
-        tokenContract.transferFrom(msg.sender, address(this), order.tokenWanted);
-        tokenContract.approve(msg.sender, order.tokenForSale);
-        tokenContract.approve(order.seller, order.tokenWanted);
-        order.buyer = msg.sender;
-        emit SellOrderFilled(_orderId);
+        takerTokenContract.transferFrom(msg.sender, address(this), trade.takerTokenId);
+        makerTokenContract.approve(msg.sender, trade.makerTokenId);
+        takerTokenContract.approve(trade.maker, trade.takerTokenId);
+        trade.taker = msg.sender;
+        emit TradeCompleted(_tradeId);
     }
 
-    function cancelERC721SellOrder(uint256 _orderId)
+    function cancelERC721Trade(uint256 _tradeId)
         public
-        onlyCreator(_orderId)
-        deactivatesOrder(_orderId)
+        onlyMaker(_tradeId)
+        deactivatesTrade(_tradeId)
     {
-        SellOrder storage order = idToSellOrder[_orderId];
+        Trade storage trade = idToTrade[_tradeId];
 
-        ERC721Basic tokenContract = ERC721Basic(order.tokenContract);
-        assert(tokenContract.ownerOf(order.tokenForSale) == address(this));
+        ERC721Basic makerTokenContract = ERC721Basic(trade.makerTokenContract);
+        assert(makerTokenContract.ownerOf(trade.makerTokenId) == address(this));
+        makerTokenContract.approve(msg.sender, trade.makerTokenId);
 
-        tokenContract.approve(msg.sender, order.tokenForSale);
+        emit TradeCancelled(_tradeId);
+    }
 
-        emit SellOrderCancelled(_orderId);
+
+    function validERC721Contract(ERC721Basic _tokenContract) private view returns(bool) {
+        bool supportsInterface = _tokenContract.supportsInterface(InterfaceId_ERC721);
+        bool supportsExist = _tokenContract.supportsInterface(InterfaceId_ERC721Exists);
+        return supportsInterface && supportsExist;
+    }
+
+    function callerOwnsTokenAndHasApproved(ERC721Basic _tokenContract, uint256 _tokenId)
+        private
+        view
+        returns (bool)
+    {
+        bool callerOwnsToken = _tokenContract.ownerOf(_tokenId) == msg.sender;
+        bool callerHasApproved = _tokenContract.getApproved(_tokenId) == address(this);
+        return callerOwnsToken && callerHasApproved;
     }
 
 }

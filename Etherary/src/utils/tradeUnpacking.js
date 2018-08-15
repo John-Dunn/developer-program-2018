@@ -2,22 +2,22 @@ export function tradeToMaker (trade) {
     return trade[0];
 }
 
-export function tradeToContract (trade) {
+export function tradeToTaker (trade) {
     return trade[1];
 }
 
-export function tradeToMakerTokenId (trade) {
-    return trade[2].toNumber();
+export function tradeToContract (trade) {
+    return trade[2];
 }
 
-export function tradeToTakerTokenId (trade) {
+export function tradeToMakerTokenId (trade) {
     return trade[3].toNumber();
 }
 
-export function tradeToActive (trade) {
-    return trade[4];
+export function tradeToTakerTokenId (trade) {
+    return trade[4].toNumber();
 }
 
-export function tradeToTaker (trade) {
+export function tradeToActive (trade) {
     return trade[5];
 }

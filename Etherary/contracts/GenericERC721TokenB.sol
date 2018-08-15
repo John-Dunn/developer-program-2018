@@ -3,13 +3,12 @@ pragma solidity ^0.4.23;
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Token.sol";
 
 
-contract GenericERC721Token is ERC721Token {
+contract GenericERC721TokenB is ERC721Token {
 
-    string private name = "GenericERC721Token";
-    string private symbol = "GET721";
+    string private name = "GenericERC721TokenB";
+    string private symbol = "GET721B";
 
-    constructor() public ERC721Token(name, symbol) {
-    }
+    constructor() public ERC721Token(name, symbol) {}
 
     function mint() public {
         mint(msg.sender);

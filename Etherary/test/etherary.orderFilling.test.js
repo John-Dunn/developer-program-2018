@@ -1,10 +1,8 @@
 var exceptions = require("./exceptions.js");
 
-var json = require("../../ERC721Faucet/build/contracts/GenericERC721Token.json");
-
-var GenericERC721Token = web3.eth.contract(json.abi);
-var Etherary = artifacts.require("../../../Etherary/build/contracts/Etherary");
-
+var GenericERC721TokenA = artifacts.require('GenericERC721TokenA');
+var GenericERC721TokenB = artifacts.require('GenericERC721TokenB');
+var Etherary = artifacts.require("Etherary");
 
 contract('Etherary', function(accounts) {
 
@@ -12,115 +10,94 @@ contract('Etherary', function(accounts) {
     const alice = accounts[1]
     const bob = accounts[2]
 
-    const gasEstimateDeployment = web3.eth.estimateGas({data: json.bytecode});
     const gasForMinting = 300000;
 
-
-    var token;
+    var tokenA;
+    var tokenB;
     var etherary;
 
-    // Deploy the ERC721 Faucet
-    before(function(done) {
-        token = GenericERC721Token.new(
-            {data: json.bytecode, from: deployer, gas: gasEstimateDeployment},
-            function(err, myContract) {
-                if(!err) {
-                    // NOTE: The callback will fire twice!
-                    // Once the contract has the transactionHash property set and once its deployed on an address.
-                    if (!myContract.address) { /* Tx hash is known */ } else { done(); }
-                }
-            }
-        )
-    });
+    // These tokens will be from faucet A
+    const tokenAliceSells = 0;
+    // Token from faucet B
+    const tokenAliceWantsBobOwns = 0;
+
+    const tradeId = 0;
+    const nonexistingToken = 10;
 
     before(async function() {
-        // Mint a couple of token for Alice and Bob
-        await token.mint.sendTransaction({from: alice, gas:gasForMinting});
-        await token.mint.sendTransaction({from: bob, gas:gasForMinting});
+        // Deploy two ERC721 Faucets
+        tokenA = await GenericERC721TokenA.new({gas: 5000000});
+        tokenB = await GenericERC721TokenB.new({gas: 5000000});
 
+        // Mint a couple of token for Alice and Bob
+        await tokenA.mint({from: alice, gas:gasForMinting});
+        await tokenB.mint({from: bob, gas:gasForMinting});
 
         // Deploy main contract
         etherary = await Etherary.new();
-    });
 
-    const tokenAliceSells = 0;
-    const tokenAliceWantsBobOwns = 1;
+        // Approve main contract to withdraw token to be sold
+        await tokenA.approve(etherary.address, tokenAliceSells, {from: alice});
 
-    const orderId = 0;
-
-    before(async function() {
-        // Approve main contract to withdraw token to be sold and bought
-        await token.approve.sendTransaction(etherary.address, tokenAliceSells, {from: alice});
-
-        // Create a sell order
-        await etherary.createERC721SellOrder.sendTransaction(
-            token.address,
+        // Create a trade
+        await etherary.createERC721Trade(
+            tokenA.address,
             tokenAliceSells,
+            tokenB.address,
             tokenAliceWantsBobOwns,
             {from: alice}
         );
     });
 
-    describe("Hook setup", function () {
 
-    });
-
-
-    describe("Filling a sell order", function () {
+    describe("Filling a trade", function () {
         it("should not be possible to fill a nonexisting order", async function () {
             await exceptions.tryCatch(
-                etherary.fillERC721SellOrder.sendTransaction(10, {from: bob}),
+                etherary.fillERC721Trade.sendTransaction(10, {from: bob}),
                 exceptions.errTypes.revert
             );
         });
 
         it("should not be possible for Bob to fill Alice's order without approving the token", async function () {
             await exceptions.tryCatch(
-                etherary.fillERC721SellOrder.sendTransaction(orderId, {from: bob}),
+                etherary.fillERC721Trade.sendTransaction(tradeId, {from: bob}),
                 exceptions.errTypes.revert
             );
         });
 
         it("should be possible to fill an order after approving the withdrawal", async function () {
             // Approve bob's token to be transferred by the contract
-            await token.approve.sendTransaction(etherary.address, tokenAliceWantsBobOwns, {from: bob});
-            await etherary.fillERC721SellOrder.sendTransaction(orderId, {from:bob});
+            await tokenB.approve.sendTransaction(etherary.address, tokenAliceWantsBobOwns, {from: bob});
+            await etherary.fillERC721Trade.sendTransaction(tradeId, {from:bob});
 
-            // Check for SellOrderFilled event
-            const LogSellOrderFilled = await etherary.SellOrderFilled();
+            // Check for TradeCompleted event
+            const LogTradeCompleted = await etherary.TradeCompleted();
             const log = await new Promise(function(resolve, reject) {
-                LogSellOrderFilled.watch(function(error, log){ resolve(log); } );
+                LogTradeCompleted.watch(function(error, log){ resolve(log); } );
             });
-            const logOrderId = log.args.orderId.toNumber()
-            assert.equal(logOrderId, orderId, "Should emit SellOrderFilled event with correct orderId");
+            const logtradeId = log.args._tradeId.toNumber()
+            assert.equal(logtradeId, tradeId, "Should emit TradeCompleted event with correct tradeId");
         });
 
         it("should be possible to query a filled order's status", async function () {
-            let sellOrder = await etherary.idToSellOrder.call(orderId);
-            // struct SellOrder {
-            //     address seller;
-            //     address tokenContract;
-            //     uint256 tokenForSale;
-            //     uint256 tokenWanted;
-            //     bool isActive;
-            // }
-            assert.equal(sellOrder[4], false, "Cancelled Order should be inactive");
+            let Trade = await etherary.idToTrade.call(tradeId);
+            assert.equal(Trade[6], false, "Cancelled Order should be inactive");
         })
 
         it("should be possible for seller to withdraw the token after order is filled", async function () {
             let alicesNewToken = tokenAliceWantsBobOwns;
-            let tokenOwnerBefore = await token.ownerOf.call(alicesNewToken);
-            let approvedAddressBefore = await token.getApproved.call(alicesNewToken);
+            let tokenOwnerBefore = await tokenB.ownerOf.call(alicesNewToken);
+            let approvedAddressBefore = await tokenB.getApproved.call(alicesNewToken);
 
-            await token.safeTransferFrom.sendTransaction(
+            await tokenB.safeTransferFrom.sendTransaction(
                 etherary.address,
                 alice,
                 alicesNewToken,
                 {from:alice, gas: gasForMinting}
             );
 
-            let tokenOwnerAfter = await token.ownerOf.call(alicesNewToken);
-            let approvedAddressAfter = await token.getApproved.call(alicesNewToken);
+            let tokenOwnerAfter = await tokenB.ownerOf.call(alicesNewToken);
+            let approvedAddressAfter = await tokenB.getApproved.call(alicesNewToken);
 
             assert.equal(tokenOwnerBefore, etherary.address, "Token should initially be owned by contract after trade");
             assert.equal(approvedAddressBefore, alice, "Alice should be approved to withdraw after order is filled");
@@ -131,18 +108,18 @@ contract('Etherary', function(accounts) {
         it("should be possible for buyer to withdraw the token after order is filled", async function () {
             let bobsNewToken = tokenAliceSells;
 
-            let tokenOwnerBefore = await token.ownerOf.call(bobsNewToken);
-            let approvedAddressBefore = await token.getApproved.call(bobsNewToken);
+            let tokenOwnerBefore = await tokenA.ownerOf.call(bobsNewToken);
+            let approvedAddressBefore = await tokenA.getApproved.call(bobsNewToken);
 
-            await token.safeTransferFrom.sendTransaction(
+            await tokenA.safeTransferFrom.sendTransaction(
                 etherary.address,
                 bob,
                 bobsNewToken,
                 {from:bob, gas: gasForMinting}
             );
 
-            let tokenOwnerAfter = await token.ownerOf.call(bobsNewToken);
-            let approvedAddressAfter = await token.getApproved.call(bobsNewToken);
+            let tokenOwnerAfter = await tokenA.ownerOf.call(bobsNewToken);
+            let approvedAddressAfter = await tokenA.getApproved.call(bobsNewToken);
 
             assert.equal(tokenOwnerBefore, etherary.address, "Token should initially be owned by contract after trade");
             assert.equal(approvedAddressBefore, bob, "Bob should be approved to withdraw after order is filled");
@@ -155,49 +132,36 @@ contract('Etherary', function(accounts) {
 
 
     describe("Filling a cancelled order", function () {
-        // Deploy a new token contract
-        before(function(done) {
-            token = GenericERC721Token.new(
-                {data: json.bytecode, from: deployer, gas: gasEstimateDeployment},
-                function(err, myContract) {
-                    if(!err) {
-                        // NOTE: The callback will fire twice!
-                        // Once the contract has the transactionHash property set and once its deployed on an address.
-                        if (!myContract.address) { /* Tx hash is known */ } else { done(); }
-                    }
-                }
-            )
-        });
-
         before(async function() {
-            // Mint token for Alice and Bob
-            await token.mint.sendTransaction({from: alice, gas:gasForMinting});
-            await token.mint.sendTransaction({from: bob, gas:gasForMinting});
+            // Deploy two ERC721 Faucets
+            tokenA = await GenericERC721TokenA.new({gas: 5000000});
+            tokenB = await GenericERC721TokenB.new({gas: 5000000});
 
-            // Deploy new main contract
+            // Mint a couple of token for Alice and Bob
+            await tokenA.mint({from: alice, gas:gasForMinting});
+            await tokenB.mint({from: bob, gas:gasForMinting});
+
+            // Deploy main contract
             etherary = await Etherary.new();
-        });
 
-        before(async function() {
-            // Approve main contract to withdraw token to be sold and bought
-            await token.approve.sendTransaction(etherary.address, tokenAliceSells, {from: alice});
-            await token.approve.sendTransaction(etherary.address, tokenAliceWantsBobOwns, {from: bob});
+            // Approve main contract to withdraw token to be sold
+            await tokenA.approve(etherary.address, tokenAliceSells, {from: alice});
+            await tokenB.approve(etherary.address, tokenAliceWantsBobOwns, {from: bob});
 
-            // Create a sell order
-            await etherary.createERC721SellOrder.sendTransaction(
-                token.address,
+            // Create a trade
+            await etherary.createERC721Trade(
+                tokenA.address,
                 tokenAliceSells,
+                tokenB.address,
                 tokenAliceWantsBobOwns,
                 {from: alice}
             );
-
-            // Cancel that order
-            await etherary.cancelERC721SellOrder.sendTransaction(orderId, {from: alice});
+            await etherary.cancelERC721Trade.sendTransaction(tradeId, {from: alice});
         });
 
         it("should not be possible to fill a cancelled order", async function () {
             await exceptions.tryCatch(
-                etherary.fillERC721SellOrder.sendTransaction(orderId, {from:bob}),
+                etherary.fillERC721Trade.sendTransaction(tradeId, {from:bob}),
                 exceptions.errTypes.revert
             );
         });

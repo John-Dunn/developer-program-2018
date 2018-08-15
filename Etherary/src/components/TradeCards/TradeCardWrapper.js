@@ -24,10 +24,10 @@ class TradeCardWrapper extends Component {
 
     handleCancelTrade() {
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
-        EtheraryInstance.cancelERC721SellOrder(this.props.tradeId, {from:this.props.web3.eth.accounts[0]})
+        EtheraryInstance.cancelERC721Trade(this.props.tradeId, {from:this.props.web3.eth.accounts[0]})
         .then(function(txid) {
             var expectedEvent = {
-                orderId: this.props.web3.toBigNumber(this.props.tradeId)
+                tradeId: this.props.web3.toBigNumber(this.props.tradeId)
             }
             if(didEventOccur(txid, expectedEvent)) {
                 console.log('Trade cancelled');

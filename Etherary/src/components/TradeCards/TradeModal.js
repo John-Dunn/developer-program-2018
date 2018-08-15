@@ -73,12 +73,12 @@ class TradeModal extends Component {
     handleCompleteTrade(event) {
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
 
-        EtheraryInstance.fillERC721SellOrder(
+        EtheraryInstance.fillERC721Trade(
             this.props.tradeId,
             {from: this.props.web3.eth.accounts[0], gas:500000}
         ).then(function(txid) {
             var expectedEvent = {
-                orderId: this.props.tradeId
+                _tradeId: this.props.tradeId
             }
             if(didEventOccur(txid, expectedEvent)) {
                 this.setState({

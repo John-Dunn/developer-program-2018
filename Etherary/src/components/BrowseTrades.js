@@ -105,16 +105,18 @@ class BrowseTrades extends Component {
         if (this.state.tradeIdInput === null) { return }
 
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
-        EtheraryInstance.idToSellOrder(this.state.tradeIdInput)
+        EtheraryInstance.idToTrade(this.state.tradeIdInput)
         .then(function(trade) {
             this.setState({
                 tradeId: this.state.tradeIdInput,
                 trade: trade
             })
-            this.getMakerTokenOwner(trade);
-            this.getTakerTokenOwner(trade);
-            this.isTakerTokenApproved(trade);
-            this.isMakerTokenApproved(trade);
+            if (tradeToMaker(this.state.trade) !== "0x0000000000000000000000000000000000000000") {
+                this.getMakerTokenOwner(trade);
+                this.getTakerTokenOwner(trade);
+                this.isTakerTokenApproved(trade);
+                this.isMakerTokenApproved(trade);
+            }
         }.bind(this))
         .catch(function(err) {
             console.log("Unable to get trade:", err);
