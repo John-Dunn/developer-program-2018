@@ -21,11 +21,11 @@ class MyTrades extends Component {
 
     getAllTrades() {
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
-        EtheraryInstance.orderId()
+        EtheraryInstance.tradeId()
         .then(function(numberOfTrades) {
 
             for (var i = 0; i<numberOfTrades.toNumber(); i++) {
-                EtheraryInstance.idToSellOrder(i)
+                EtheraryInstance.idToTrade(i)
                 .then(function(trade){
                     console.log("Trade Added", trade);
                     this.setState(prevState => ({

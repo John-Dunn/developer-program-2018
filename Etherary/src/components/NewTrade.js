@@ -258,14 +258,14 @@ class NewTrade extends Component {
     handleCreateTrade(event) {
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
 
-        EtheraryInstance.createERC721SellOrder(
+        EtheraryInstance.createERC721Trade(
             this.state.tokenContract,
             this.state.makerTokenId,
             this.state.takerTokenId,
             {from: this.props.web3.eth.accounts[0], gas:500000}
         ).then(function(txid) {
             var txLogs = getLogs(txid);
-            var id = txLogs[0].args.orderId.toNumber();
+            var id = txLogs[0].args._tradeId.toNumber();
             console.log("Trade created, id", id);
             this.setState({
                 tradeId: id,
