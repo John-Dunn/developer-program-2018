@@ -1,8 +1,13 @@
-pragma solidity 0.4.24;
-
 // TODO: import "openzeppelin-solidity/contracts/token/ERC721/ERC721Receiver.sol"; for safeTransfer
 
-/// @dev Provides ERC721 contract ionterface for querying ownership and manipulating approval status
+
+
+
+pragma solidity 0.4.24;
+
+
+/// @dev Provides ERC721 contract ionterface for querying ownership and manipulating approval
+/// status
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Basic.sol";
 
 /// @title Etherary trustless exchange of ERC721 token
@@ -31,8 +36,9 @@ contract Etherary {
     // enum AssetType { ETHER, ERC20, ERC721 }
     // TODO: event arguments should start with underscores
     event TradeCreated (
-        address _tokenContract,
+        address _makerTokenContract,
         uint256 _makerTokenId,
+        address _takerTokenContract,
         uint256 _takerTokenId,
         uint256 _tradeId
     );
@@ -49,7 +55,8 @@ contract Etherary {
         //AssetType assetType;
         address maker;
         address taker;
-        address tokenContract;
+        address makerTokenContract;
+        address takerTokenContract;
         uint256 makerTokenId; /// @dev only used for ERC721
         uint256 takerTokenId; /// @dev only used for ERC721
         bool isActive;
@@ -71,41 +78,47 @@ contract Etherary {
 
     /// @notice This contract must be an approved withdrawer for the maker token
     function createERC721Trade(
-        address _tokenContractAddress,
+        address _makerTokenContractAddress,
         uint256 _makerTokenId,
+        address _takerTokenContractAddress,
         uint256 _takerTokenId
     )
         public
     {
-        ERC721Basic tokenContract = ERC721Basic(_tokenContractAddress);
-        //TODO: token ids should be different
+        ERC721Basic makerTokenContract = ERC721Basic(_makerTokenContractAddress);
+        ERC721Basic takerTokenContract = ERC721Basic(_takerTokenContractAddress);
+
         require(
-            tokenContract.supportsInterface(InterfaceId_ERC721),
-            "Provided contract must support the ERC721 interface."
+            validERC721Contract(makerTokenContract) && validERC721Contract(takerTokenContract),
+            "Provided contracts must support the ERC721 interface."
         );
+
+        require(makerTokenContract.exists(_makerTokenId), "Maker token does not exist.");
+        require(takerTokenContract.exists(_takerTokenId), "Taker token does not exist.");
         require(
-            tokenContract.supportsInterface(InterfaceId_ERC721Exists),
-            "Provided contract must support the ERC721 exists function."
-        );
-        require(tokenContract.exists(_makerTokenId), "Maker token does not exist.");
-        require(tokenContract.exists(_takerTokenId), "Taker token does not exist.");
-        require(
-            callerOwnsTokenAndHasApproved(tokenContract, _makerTokenId),
+            callerOwnsTokenAndHasApproved(makerTokenContract, _makerTokenId),
             "Maker must own the token and have approved this contract."
         );
 
-        tokenContract.transferFrom(msg.sender, address(this), _makerTokenId);
+        makerTokenContract.transferFrom(msg.sender, address(this), _makerTokenId);
         Trade memory trade = Trade({
             maker: msg.sender,
             taker: 0x0000000000000000000000000000000000000000,
-            tokenContract: _tokenContractAddress,
+            makerTokenContract: _makerTokenContractAddress,
+            takerTokenContract: _takerTokenContractAddress,
             makerTokenId: _makerTokenId,
             takerTokenId: _takerTokenId,
             isActive: true
         });
 
         idToTrade[tradeId] = trade;
-        emit TradeCreated(_tokenContractAddress, _makerTokenId, _takerTokenId, tradeId);
+        emit TradeCreated(
+            _makerTokenContractAddress,
+            _makerTokenId,
+            _takerTokenContractAddress,
+            _takerTokenId,
+            tradeId
+        );
         tradeId++;
     }
 
@@ -115,14 +128,16 @@ contract Etherary {
     {
         Trade storage trade = idToTrade[_tradeId];
 
-        ERC721Basic tokenContract = ERC721Basic(trade.tokenContract);
+        ERC721Basic makerTokenContract = ERC721Basic(trade.makerTokenContract);
+        ERC721Basic takerTokenContract = ERC721Basic(trade.takerTokenContract);
+
         require(
-            callerOwnsTokenAndHasApproved(tokenContract, trade.takerTokenId),
+            callerOwnsTokenAndHasApproved(takerTokenContract, trade.takerTokenId),
             "Taker must own the token and have approved this contract."
         );
-        tokenContract.transferFrom(msg.sender, address(this), trade.takerTokenId);
-        tokenContract.approve(msg.sender, trade.makerTokenId);
-        tokenContract.approve(trade.maker, trade.takerTokenId);
+        takerTokenContract.transferFrom(msg.sender, address(this), trade.takerTokenId);
+        makerTokenContract.approve(msg.sender, trade.makerTokenId);
+        takerTokenContract.approve(trade.maker, trade.takerTokenId);
         trade.taker = msg.sender;
         emit TradeFilled(_tradeId);
     }
@@ -134,11 +149,18 @@ contract Etherary {
     {
         Trade storage trade = idToTrade[_tradeId];
 
-        ERC721Basic tokenContract = ERC721Basic(trade.tokenContract);
-        assert(tokenContract.ownerOf(trade.makerTokenId) == address(this));
-        tokenContract.approve(msg.sender, trade.makerTokenId);
+        ERC721Basic makerTokenContract = ERC721Basic(trade.makerTokenContract);
+        assert(makerTokenContract.ownerOf(trade.makerTokenId) == address(this));
+        makerTokenContract.approve(msg.sender, trade.makerTokenId);
 
         emit TradeCancelled(_tradeId);
+    }
+
+
+    function validERC721Contract(ERC721Basic _tokenContract) private returns(bool) {
+        bool supportsInterface = _tokenContract.supportsInterface(InterfaceId_ERC721);
+        bool supportsExist = _tokenContract.supportsInterface(InterfaceId_ERC721Exists);
+        return supportsInterface && supportsExist;
     }
 
     function callerOwnsTokenAndHasApproved(ERC721Basic _tokenContract, uint256 _tokenId)
