@@ -28,9 +28,20 @@ MVP: One-to-one exchange of ERC721 token of the same contract (e.g. token with I
 #### Upcoming:
 ###### Second Phase: Frontend
 Using React, provide a visualisation of open trades and allow the use of all functionality mentioned above via the browser and Metamask.
+TODOs:
+- let people withdraw their token (My trades menu) where all involved are listed?
+- browse contains a list of all active trades
+- MVP status (i.e. fulfills all requirements to be submitted). Each following phase maintains this.
+- Usability: Make sure every form allows submit on enter, proper gas estimates, display when MM locked
 
-###### Third Phase: n for m trades
-Extend the contract to allow specifying multiple tokens to be offered, both for making and taking the trade.
+###### Third Phase: Trade for different contract
+Allow specifying a different ERC721 contract and token to receive
+
+###### Fourth Phase: 1 for m trades
+Extend the contract to allow specifying multiple tokens to be received.
+
+###### Fifth Phase: n for m trades
+allow to offer multiple token as well as receive multiple token
 
 ###### Fourth Phase: ERC20
 Now allow ERC20 token to be added to both sides of the trade, instead of provinding a token ID an amount is required. This also covers ETH via WETH.
@@ -42,11 +53,11 @@ Now allow ERC20 token to be added to both sides of the trade, instead of provind
 - Maybe UX improvements are possible? Currently 6 transactions are required to complete a trade, 3 by each participant (maker approves, maker creates order, taker approves, taker fills order, maker and taker withdraw). Maybe this can be reduced.
 
 
+TODO:
+- clear up code so far
+- go to ERC20!
 
-
-
-<!-- ### 3. Background, Business Divers and Significance
-### 4. Benefits and Costs
-### 5. Implementation Method
-### 7. Requirements
-### 8. Expected Outcomes -->
+Quality of life:
+    - after cancelling go to withdraw always (sometimes not)
+    - withdrawal completed should be reset when new lookup
+    - State space becomes cumbersome, use redux

@@ -18,11 +18,11 @@ contract Etherary {
     mapping (address => uint256[]) public sellerToOrders;
 
     // Increasing counter of order IDs
-    uint256 private orderId = 0;
+    uint256 public orderId = 0;
 
     // Do this later as part of an order?
     // enum AssetType { ETHER, ERC20, ERC721 }
-
+    // TODO: event arguments should start with underscores
     event SellOrderCreated (
         address tokenContract,
         uint256 tokenForSale,
@@ -35,7 +35,7 @@ contract Etherary {
     );
 
     event SellOrderFilled (
-        uint256 orderId
+        uint256 orderId // TODO: should include address of filler here
     );
 
     struct SellOrder {
@@ -45,6 +45,14 @@ contract Etherary {
         uint256 tokenForSale; /// @dev only used for ERC721
         uint256 tokenWanted; /// @dev only used for ERC721
         bool isActive;
+        address buyer;
+    }
+
+    modifier onlyCreator(uint256 _orderId) {
+        require(
+            idToSellOrder[_orderId].seller == msg.sender,
+            "Only order order creator can call this function.");
+        _;
     }
 
     modifier deactivatesOrder(uint256 _orderId) {
@@ -65,6 +73,7 @@ contract Etherary {
         returns (uint256)
     {
         ERC721Basic tokenContract = ERC721Basic(_tokenContractAddress);
+        //TODO: token ids should be different
         require(
             tokenContract.supportsInterface(InterfaceId_ERC721),
             "Provided contract must support the ERC721 interface."
@@ -91,7 +100,8 @@ contract Etherary {
             _tokenContractAddress,
             _tokenForSale,
             _tokenWanted,
-            true
+            true,
+            0x0000000000000000000000000000000000000000
         );
 
         idToSellOrder[orderId] = order;
@@ -104,7 +114,7 @@ contract Etherary {
         public
         deactivatesOrder(_orderId)
     {
-        SellOrder memory order = idToSellOrder[_orderId];
+        SellOrder storage order = idToSellOrder[_orderId];
 
         ERC721Basic tokenContract = ERC721Basic(order.tokenContract);
         require(
@@ -114,15 +124,16 @@ contract Etherary {
         tokenContract.transferFrom(msg.sender, address(this), order.tokenWanted);
         tokenContract.approve(msg.sender, order.tokenForSale);
         tokenContract.approve(order.seller, order.tokenWanted);
+        order.buyer = msg.sender;
         emit SellOrderFilled(_orderId);
     }
 
     function cancelERC721SellOrder(uint256 _orderId)
         public
+        onlyCreator(_orderId)
         deactivatesOrder(_orderId)
     {
         SellOrder storage order = idToSellOrder[_orderId];
-        require(order.seller == msg.sender, "Only order creator can cancel.");
 
         ERC721Basic tokenContract = ERC721Basic(order.tokenContract);
         assert(tokenContract.ownerOf(order.tokenForSale) == address(this));
