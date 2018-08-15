@@ -13,30 +13,33 @@ contract('Etherary', function(accounts) {
     const gasEstimateDeployment = web3.eth.estimateGas({data: GenericERC721Token.bytecode});
     const gasForMinting = 300000;
 
-    var token;
+    var tokenA, tokenB
     var etherary;
 
     const tokenAliceSells = 0;
-    const tokenAliceWantsBobOwns = 1;
+    const tokenAliceWantsBobOwns = 0; // On other faucet
     const tradeId = 0;
 
     before(async function() {
         // Deploy the ERC721 Faucet
-        token = await GenericERC721Token.new();
+        tokenA = await GenericERC721Token.new({gas: 5000000});
+        tokenB = await GenericERC721Token.new({gas: 5000000});
+
         // Mint a couple of token for Alice and Bob
-        await token.mint({from: alice, gas:gasForMinting});
-        await token.mint({from: bob, gas:gasForMinting});
+        await tokenA.mint({from: alice, gas:gasForMinting});
+        await tokenB.mint({from: bob, gas:gasForMinting});
 
         // Deploy main contract
         etherary = await Etherary.new();
 
         // Approve main contract to withdraw token to be sold
-        await token.approve(etherary.address, tokenAliceSells, {from: alice});
+        await tokenA.approve(etherary.address, tokenAliceSells, {from: alice});
 
         // Create a trade
         await etherary.createERC721Trade(
-            token.address,
+            tokenA.address,
             tokenAliceSells,
+            tokenB.address,
             tokenAliceWantsBobOwns,
             {from: alice}
         );
@@ -61,7 +64,7 @@ contract('Etherary', function(accounts) {
 
         it("should be possible to cancel your own trade", async function () {
             await etherary.cancelERC721Trade.sendTransaction(tradeId, {from:alice});
-            let approvedForToken = await token.getApproved.call(tokenAliceSells);
+            let approvedForToken = await tokenA.getApproved.call(tokenAliceSells);
             assert.equal(approvedForToken, alice, "Alice should be approved to withdraw her token");
 
             // Check for TradeCancelled event
@@ -74,9 +77,9 @@ contract('Etherary', function(accounts) {
         });
 
 
-        it("should be possible to query a cancelled trade's status", async function () {
+        it("should be possible to query a cancelled trade's status, it should be inactive", async function () {
             let Trade = await etherary.idToTrade.call(tradeId);
-            assert.equal(Trade[5], false, "Cancelled trade should be inactive");
+            assert.equal(Trade[6], false, "Cancelled trade should be inactive");
         })
 
 
@@ -91,16 +94,16 @@ contract('Etherary', function(accounts) {
         });
 
         it("should be possible for Alice to withdraw her token after cancelling", async function () {
-            let tokenOwnerBefore = await token.ownerOf.call(tokenAliceSells);
-            let approvedAddressBefore = await token.getApproved.call(tokenAliceSells);
-            await token.safeTransferFrom.sendTransaction(
+            let tokenOwnerBefore = await tokenA.ownerOf.call(tokenAliceSells);
+            let approvedAddressBefore = await tokenA.getApproved.call(tokenAliceSells);
+            await tokenA.safeTransferFrom.sendTransaction(
                 etherary.address,
                 alice,
                 tokenAliceSells,
                 {from:alice, gas: gasForMinting}
             );
-            let tokenOwnerAfter = await token.ownerOf.call(tokenAliceSells);
-            let approvedAddressAfter = await token.getApproved.call(tokenAliceSells);
+            let tokenOwnerAfter = await tokenA.ownerOf.call(tokenAliceSells);
+            let approvedAddressAfter = await tokenA.getApproved.call(tokenAliceSells);
 
             assert.equal(tokenOwnerBefore, etherary.address, "Token should be owned by contract initially");
             assert.equal(approvedAddressBefore, alice, "Alice should be approved to withdraw after cancelling");
@@ -116,31 +119,25 @@ contract('Etherary', function(accounts) {
     describe("Cancelling a filled trade", function () {
         // Deploy a new token contract
         before(async function() {
-            token = await GenericERC721Token.new();
-        });
-
-        before(async function() {
+            // Mint a couple of token for Alice and Bob
+            await tokenA.mint({from: alice, gas:gasForMinting});
+            await tokenB.mint({from: bob, gas:gasForMinting});
             // Mint token for Alice and Bob
-            await token.mint.sendTransaction({from: alice, gas:gasForMinting});
-            await token.mint.sendTransaction({from: bob, gas:gasForMinting});
-
+            await tokenA.mint.sendTransaction({from: alice, gas:gasForMinting});
+            await tokenB.mint.sendTransaction({from: bob, gas:gasForMinting});
             // Deploy new main contract
             etherary = await Etherary.new();
-        });
-
-        before(async function() {
             // Approve main contract to withdraw token to be sold and bought
-            await token.approve.sendTransaction(etherary.address, tokenAliceSells, {from: alice});
-            await token.approve.sendTransaction(etherary.address, tokenAliceWantsBobOwns, {from: bob});
-
+            await tokenA.approve.sendTransaction(etherary.address, tokenAliceSells, {from: alice});
+            await tokenB.approve.sendTransaction(etherary.address, tokenAliceWantsBobOwns, {from: bob});
             // Create a trade
             await etherary.createERC721Trade.sendTransaction(
-                token.address,
+                tokenA.address,
                 tokenAliceSells,
+                tokenB.address,
                 tokenAliceWantsBobOwns,
                 {from: alice}
             );
-
             // Fill that trade
             await etherary.fillERC721Trade.sendTransaction(tradeId, {from: bob});
         });
