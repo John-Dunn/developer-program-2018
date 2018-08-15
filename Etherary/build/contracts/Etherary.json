@@ -216,7 +216,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 345,
-        "sourceUnit": 465,
+        "sourceUnit": 785,
         "src": "232:70:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -926,7 +926,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 479,
+                            "referencedDeclaration": 1789,
                             "src": "1955:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -987,10 +987,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "1899:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1213,10 +1213,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "2174:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1376,7 +1376,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                        "typeIdentifier": "t_contract$_ERC721Basic_$784",
                         "typeString": "contract ERC721Basic"
                       },
                       "typeName": {
@@ -1384,10 +1384,10 @@
                         "id": 103,
                         "name": "ERC721Basic",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 464,
+                        "referencedDeclaration": 784,
                         "src": "2559:11:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -1424,10 +1424,10 @@
                       "name": "ERC721Basic",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 464,
+                      "referencedDeclaration": 784,
                       "src": "2587:11:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$464_$",
+                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$784_$",
                         "typeString": "type(contract ERC721Basic)"
                       }
                     },
@@ -1441,7 +1441,7 @@
                     "nodeType": "FunctionCall",
                     "src": "2587:34:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                      "typeIdentifier": "t_contract$_ERC721Basic_$784",
                       "typeString": "contract ERC721Basic"
                     }
                   },
@@ -1485,7 +1485,7 @@
                             "referencedDeclaration": 104,
                             "src": "2701:13:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                              "typeIdentifier": "t_contract$_ERC721Basic_$784",
                               "typeString": "contract ERC721Basic"
                             }
                           },
@@ -1496,7 +1496,7 @@
                           "lValueRequested": false,
                           "memberName": "supportsInterface",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 353,
+                          "referencedDeclaration": 474,
                           "src": "2701:31:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_view$_t_bytes4_$returns$_t_bool_$",
@@ -1551,10 +1551,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "2679:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1616,7 +1616,7 @@
                             "referencedDeclaration": 104,
                             "src": "2865:13:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                              "typeIdentifier": "t_contract$_ERC721Basic_$784",
                               "typeString": "contract ERC721Basic"
                             }
                           },
@@ -1627,7 +1627,7 @@
                           "lValueRequested": false,
                           "memberName": "supportsInterface",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 353,
+                          "referencedDeclaration": 474,
                           "src": "2865:31:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_view$_t_bytes4_$returns$_t_bool_$",
@@ -1682,10 +1682,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "2843:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1747,7 +1747,7 @@
                             "referencedDeclaration": 104,
                             "src": "3027:13:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                              "typeIdentifier": "t_contract$_ERC721Basic_$784",
                               "typeString": "contract ERC721Basic"
                             }
                           },
@@ -1758,7 +1758,7 @@
                           "lValueRequested": false,
                           "memberName": "exists",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 404,
+                          "referencedDeclaration": 724,
                           "src": "3027:20:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_bool_$",
@@ -1813,10 +1813,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "3019:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -1878,7 +1878,7 @@
                             "referencedDeclaration": 104,
                             "src": "3110:13:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                              "typeIdentifier": "t_contract$_ERC721Basic_$784",
                               "typeString": "contract ERC721Basic"
                             }
                           },
@@ -1889,7 +1889,7 @@
                           "lValueRequested": false,
                           "memberName": "exists",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 404,
+                          "referencedDeclaration": 724,
                           "src": "3110:20:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_bool_$",
@@ -1944,10 +1944,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "3102:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -2020,7 +2020,7 @@
                               "referencedDeclaration": 104,
                               "src": "3206:13:0",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                                "typeIdentifier": "t_contract$_ERC721Basic_$784",
                                 "typeString": "contract ERC721Basic"
                               }
                             },
@@ -2031,7 +2031,7 @@
                             "lValueRequested": false,
                             "memberName": "getApproved",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 418,
+                            "referencedDeclaration": 738,
                             "src": "3206:25:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_address_$",
@@ -2063,7 +2063,7 @@
                               "name": "this",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 496,
+                              "referencedDeclaration": 1806,
                               "src": "3258:4:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_contract$_Etherary_$344",
@@ -2145,10 +2145,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "3184:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -2239,7 +2239,7 @@
                         "referencedDeclaration": 104,
                         "src": "3365:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -2250,7 +2250,7 @@
                       "lValueRequested": false,
                       "memberName": "ownerOf",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 397,
+                      "referencedDeclaration": 717,
                       "src": "3365:21:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_address_$",
@@ -2322,7 +2322,7 @@
                               "referencedDeclaration": 104,
                               "src": "3653:13:0",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                                "typeIdentifier": "t_contract$_ERC721Basic_$784",
                                 "typeString": "contract ERC721Basic"
                               }
                             },
@@ -2333,7 +2333,7 @@
                             "lValueRequested": false,
                             "memberName": "ownerOf",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 397,
+                            "referencedDeclaration": 717,
                             "src": "3653:21:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_address_$",
@@ -2364,7 +2364,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 479,
+                            "referencedDeclaration": 1789,
                             "src": "3693:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -2403,10 +2403,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 482,
+                      "referencedDeclaration": 1792,
                       "src": "3645:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -2457,7 +2457,7 @@
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 496,
+                            "referencedDeclaration": 1806,
                             "src": "3764:4:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_Etherary_$344",
@@ -2537,7 +2537,7 @@
                         "referencedDeclaration": 104,
                         "src": "3717:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -2548,7 +2548,7 @@
                       "lValueRequested": false,
                       "memberName": "transferFrom",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 443,
+                      "referencedDeclaration": 763,
                       "src": "3717:26:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_address_$_t_uint256_$returns$__$",
@@ -2619,7 +2619,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 479,
+                          "referencedDeclaration": 1789,
                           "src": "3845:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -2893,7 +2893,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 479,
+                            "referencedDeclaration": 1789,
                             "src": "4102:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -3331,7 +3331,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                        "typeIdentifier": "t_contract$_ERC721Basic_$784",
                         "typeString": "contract ERC721Basic"
                       },
                       "typeName": {
@@ -3339,10 +3339,10 @@
                         "id": 231,
                         "name": "ERC721Basic",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 464,
+                        "referencedDeclaration": 784,
                         "src": "4440:11:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -3395,10 +3395,10 @@
                       "name": "ERC721Basic",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 464,
+                      "referencedDeclaration": 784,
                       "src": "4468:11:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$464_$",
+                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$784_$",
                         "typeString": "type(contract ERC721Basic)"
                       }
                     },
@@ -3412,7 +3412,7 @@
                     "nodeType": "FunctionCall",
                     "src": "4468:32:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                      "typeIdentifier": "t_contract$_ERC721Basic_$784",
                       "typeString": "contract ERC721Basic"
                     }
                   },
@@ -3483,7 +3483,7 @@
                               "referencedDeclaration": 232,
                               "src": "4533:13:0",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                                "typeIdentifier": "t_contract$_ERC721Basic_$784",
                                 "typeString": "contract ERC721Basic"
                               }
                             },
@@ -3494,7 +3494,7 @@
                             "lValueRequested": false,
                             "memberName": "getApproved",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 418,
+                            "referencedDeclaration": 738,
                             "src": "4533:25:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_address_$",
@@ -3526,7 +3526,7 @@
                               "name": "this",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 496,
+                              "referencedDeclaration": 1806,
                               "src": "4589:4:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_contract$_Etherary_$344",
@@ -3608,10 +3608,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "4511:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -3648,7 +3648,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 479,
+                          "referencedDeclaration": 1789,
                           "src": "4701:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -3678,7 +3678,7 @@
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 496,
+                            "referencedDeclaration": 1806,
                             "src": "4721:4:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_Etherary_$344",
@@ -3774,7 +3774,7 @@
                         "referencedDeclaration": 232,
                         "src": "4674:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -3785,7 +3785,7 @@
                       "lValueRequested": false,
                       "memberName": "transferFrom",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 443,
+                      "referencedDeclaration": 763,
                       "src": "4674:26:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_address_$_t_uint256_$returns$__$",
@@ -3822,7 +3822,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 479,
+                          "referencedDeclaration": 1789,
                           "src": "4779:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -3893,7 +3893,7 @@
                         "referencedDeclaration": 232,
                         "src": "4757:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -3904,7 +3904,7 @@
                       "lValueRequested": false,
                       "memberName": "approve",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 411,
+                      "referencedDeclaration": 731,
                       "src": "4757:21:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$__$",
@@ -4012,7 +4012,7 @@
                         "referencedDeclaration": 232,
                         "src": "4821:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -4023,7 +4023,7 @@
                       "lValueRequested": false,
                       "memberName": "approve",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 411,
+                      "referencedDeclaration": 731,
                       "src": "4821:21:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$__$",
@@ -4095,7 +4095,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 479,
+                        "referencedDeclaration": 1789,
                         "src": "4900:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -4369,7 +4369,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                        "typeIdentifier": "t_contract$_ERC721Basic_$784",
                         "typeString": "contract ERC721Basic"
                       },
                       "typeName": {
@@ -4377,10 +4377,10 @@
                         "id": 310,
                         "name": "ERC721Basic",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 464,
+                        "referencedDeclaration": 784,
                         "src": "5177:11:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -4433,10 +4433,10 @@
                       "name": "ERC721Basic",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 464,
+                      "referencedDeclaration": 784,
                       "src": "5205:11:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$464_$",
+                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$784_$",
                         "typeString": "type(contract ERC721Basic)"
                       }
                     },
@@ -4450,7 +4450,7 @@
                     "nodeType": "FunctionCall",
                     "src": "5205:32:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                      "typeIdentifier": "t_contract$_ERC721Basic_$784",
                       "typeString": "contract ERC721Basic"
                     }
                   },
@@ -4521,7 +4521,7 @@
                               "referencedDeclaration": 311,
                               "src": "5255:13:0",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                                "typeIdentifier": "t_contract$_ERC721Basic_$784",
                                 "typeString": "contract ERC721Basic"
                               }
                             },
@@ -4532,7 +4532,7 @@
                             "lValueRequested": false,
                             "memberName": "ownerOf",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 397,
+                            "referencedDeclaration": 717,
                             "src": "5255:21:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_address_$",
@@ -4564,7 +4564,7 @@
                               "name": "this",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 496,
+                              "referencedDeclaration": 1806,
                               "src": "5308:4:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_contract$_Etherary_$344",
@@ -4624,7 +4624,7 @@
                       "name": "assert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 468,
+                      "referencedDeclaration": 1778,
                       "src": "5248:6:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_assert_pure$_t_bool_$returns$__$",
@@ -4661,7 +4661,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 479,
+                          "referencedDeclaration": 1789,
                           "src": "5349:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -4732,7 +4732,7 @@
                         "referencedDeclaration": 311,
                         "src": "5327:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -4743,7 +4743,7 @@
                       "lValueRequested": false,
                       "memberName": "approve",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 411,
+                      "referencedDeclaration": 731,
                       "src": "5327:21:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$__$",
@@ -4978,7 +4978,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 345,
-        "sourceUnit": 465,
+        "sourceUnit": 785,
         "src": "232:70:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -5688,7 +5688,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 479,
+                            "referencedDeclaration": 1789,
                             "src": "1955:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -5749,10 +5749,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "1899:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -5975,10 +5975,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "2174:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -6138,7 +6138,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                        "typeIdentifier": "t_contract$_ERC721Basic_$784",
                         "typeString": "contract ERC721Basic"
                       },
                       "typeName": {
@@ -6146,10 +6146,10 @@
                         "id": 103,
                         "name": "ERC721Basic",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 464,
+                        "referencedDeclaration": 784,
                         "src": "2559:11:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -6186,10 +6186,10 @@
                       "name": "ERC721Basic",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 464,
+                      "referencedDeclaration": 784,
                       "src": "2587:11:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$464_$",
+                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$784_$",
                         "typeString": "type(contract ERC721Basic)"
                       }
                     },
@@ -6203,7 +6203,7 @@
                     "nodeType": "FunctionCall",
                     "src": "2587:34:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                      "typeIdentifier": "t_contract$_ERC721Basic_$784",
                       "typeString": "contract ERC721Basic"
                     }
                   },
@@ -6247,7 +6247,7 @@
                             "referencedDeclaration": 104,
                             "src": "2701:13:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                              "typeIdentifier": "t_contract$_ERC721Basic_$784",
                               "typeString": "contract ERC721Basic"
                             }
                           },
@@ -6258,7 +6258,7 @@
                           "lValueRequested": false,
                           "memberName": "supportsInterface",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 353,
+                          "referencedDeclaration": 474,
                           "src": "2701:31:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_view$_t_bytes4_$returns$_t_bool_$",
@@ -6313,10 +6313,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "2679:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -6378,7 +6378,7 @@
                             "referencedDeclaration": 104,
                             "src": "2865:13:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                              "typeIdentifier": "t_contract$_ERC721Basic_$784",
                               "typeString": "contract ERC721Basic"
                             }
                           },
@@ -6389,7 +6389,7 @@
                           "lValueRequested": false,
                           "memberName": "supportsInterface",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 353,
+                          "referencedDeclaration": 474,
                           "src": "2865:31:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_view$_t_bytes4_$returns$_t_bool_$",
@@ -6444,10 +6444,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "2843:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -6509,7 +6509,7 @@
                             "referencedDeclaration": 104,
                             "src": "3027:13:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                              "typeIdentifier": "t_contract$_ERC721Basic_$784",
                               "typeString": "contract ERC721Basic"
                             }
                           },
@@ -6520,7 +6520,7 @@
                           "lValueRequested": false,
                           "memberName": "exists",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 404,
+                          "referencedDeclaration": 724,
                           "src": "3027:20:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_bool_$",
@@ -6575,10 +6575,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "3019:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -6640,7 +6640,7 @@
                             "referencedDeclaration": 104,
                             "src": "3110:13:0",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                              "typeIdentifier": "t_contract$_ERC721Basic_$784",
                               "typeString": "contract ERC721Basic"
                             }
                           },
@@ -6651,7 +6651,7 @@
                           "lValueRequested": false,
                           "memberName": "exists",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 404,
+                          "referencedDeclaration": 724,
                           "src": "3110:20:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_bool_$",
@@ -6706,10 +6706,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "3102:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -6782,7 +6782,7 @@
                               "referencedDeclaration": 104,
                               "src": "3206:13:0",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                                "typeIdentifier": "t_contract$_ERC721Basic_$784",
                                 "typeString": "contract ERC721Basic"
                               }
                             },
@@ -6793,7 +6793,7 @@
                             "lValueRequested": false,
                             "memberName": "getApproved",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 418,
+                            "referencedDeclaration": 738,
                             "src": "3206:25:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_address_$",
@@ -6825,7 +6825,7 @@
                               "name": "this",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 496,
+                              "referencedDeclaration": 1806,
                               "src": "3258:4:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_contract$_Etherary_$344",
@@ -6907,10 +6907,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "3184:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -7001,7 +7001,7 @@
                         "referencedDeclaration": 104,
                         "src": "3365:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -7012,7 +7012,7 @@
                       "lValueRequested": false,
                       "memberName": "ownerOf",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 397,
+                      "referencedDeclaration": 717,
                       "src": "3365:21:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_address_$",
@@ -7084,7 +7084,7 @@
                               "referencedDeclaration": 104,
                               "src": "3653:13:0",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                                "typeIdentifier": "t_contract$_ERC721Basic_$784",
                                 "typeString": "contract ERC721Basic"
                               }
                             },
@@ -7095,7 +7095,7 @@
                             "lValueRequested": false,
                             "memberName": "ownerOf",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 397,
+                            "referencedDeclaration": 717,
                             "src": "3653:21:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_address_$",
@@ -7126,7 +7126,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 479,
+                            "referencedDeclaration": 1789,
                             "src": "3693:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -7165,10 +7165,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 482,
+                      "referencedDeclaration": 1792,
                       "src": "3645:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -7219,7 +7219,7 @@
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 496,
+                            "referencedDeclaration": 1806,
                             "src": "3764:4:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_Etherary_$344",
@@ -7299,7 +7299,7 @@
                         "referencedDeclaration": 104,
                         "src": "3717:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -7310,7 +7310,7 @@
                       "lValueRequested": false,
                       "memberName": "transferFrom",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 443,
+                      "referencedDeclaration": 763,
                       "src": "3717:26:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_address_$_t_uint256_$returns$__$",
@@ -7381,7 +7381,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 479,
+                          "referencedDeclaration": 1789,
                           "src": "3845:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -7655,7 +7655,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 479,
+                            "referencedDeclaration": 1789,
                             "src": "4102:3:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -8093,7 +8093,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                        "typeIdentifier": "t_contract$_ERC721Basic_$784",
                         "typeString": "contract ERC721Basic"
                       },
                       "typeName": {
@@ -8101,10 +8101,10 @@
                         "id": 231,
                         "name": "ERC721Basic",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 464,
+                        "referencedDeclaration": 784,
                         "src": "4440:11:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -8157,10 +8157,10 @@
                       "name": "ERC721Basic",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 464,
+                      "referencedDeclaration": 784,
                       "src": "4468:11:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$464_$",
+                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$784_$",
                         "typeString": "type(contract ERC721Basic)"
                       }
                     },
@@ -8174,7 +8174,7 @@
                     "nodeType": "FunctionCall",
                     "src": "4468:32:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                      "typeIdentifier": "t_contract$_ERC721Basic_$784",
                       "typeString": "contract ERC721Basic"
                     }
                   },
@@ -8245,7 +8245,7 @@
                               "referencedDeclaration": 232,
                               "src": "4533:13:0",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                                "typeIdentifier": "t_contract$_ERC721Basic_$784",
                                 "typeString": "contract ERC721Basic"
                               }
                             },
@@ -8256,7 +8256,7 @@
                             "lValueRequested": false,
                             "memberName": "getApproved",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 418,
+                            "referencedDeclaration": 738,
                             "src": "4533:25:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_address_$",
@@ -8288,7 +8288,7 @@
                               "name": "this",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 496,
+                              "referencedDeclaration": 1806,
                               "src": "4589:4:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_contract$_Etherary_$344",
@@ -8370,10 +8370,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        482,
-                        483
+                        1792,
+                        1793
                       ],
-                      "referencedDeclaration": 483,
+                      "referencedDeclaration": 1793,
                       "src": "4511:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -8410,7 +8410,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 479,
+                          "referencedDeclaration": 1789,
                           "src": "4701:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -8440,7 +8440,7 @@
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 496,
+                            "referencedDeclaration": 1806,
                             "src": "4721:4:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_contract$_Etherary_$344",
@@ -8536,7 +8536,7 @@
                         "referencedDeclaration": 232,
                         "src": "4674:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -8547,7 +8547,7 @@
                       "lValueRequested": false,
                       "memberName": "transferFrom",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 443,
+                      "referencedDeclaration": 763,
                       "src": "4674:26:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_address_$_t_uint256_$returns$__$",
@@ -8584,7 +8584,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 479,
+                          "referencedDeclaration": 1789,
                           "src": "4779:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -8655,7 +8655,7 @@
                         "referencedDeclaration": 232,
                         "src": "4757:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -8666,7 +8666,7 @@
                       "lValueRequested": false,
                       "memberName": "approve",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 411,
+                      "referencedDeclaration": 731,
                       "src": "4757:21:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$__$",
@@ -8774,7 +8774,7 @@
                         "referencedDeclaration": 232,
                         "src": "4821:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -8785,7 +8785,7 @@
                       "lValueRequested": false,
                       "memberName": "approve",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 411,
+                      "referencedDeclaration": 731,
                       "src": "4821:21:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$__$",
@@ -8857,7 +8857,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 479,
+                        "referencedDeclaration": 1789,
                         "src": "4900:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -9131,7 +9131,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                        "typeIdentifier": "t_contract$_ERC721Basic_$784",
                         "typeString": "contract ERC721Basic"
                       },
                       "typeName": {
@@ -9139,10 +9139,10 @@
                         "id": 310,
                         "name": "ERC721Basic",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 464,
+                        "referencedDeclaration": 784,
                         "src": "5177:11:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -9195,10 +9195,10 @@
                       "name": "ERC721Basic",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 464,
+                      "referencedDeclaration": 784,
                       "src": "5205:11:0",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$464_$",
+                        "typeIdentifier": "t_type$_t_contract$_ERC721Basic_$784_$",
                         "typeString": "type(contract ERC721Basic)"
                       }
                     },
@@ -9212,7 +9212,7 @@
                     "nodeType": "FunctionCall",
                     "src": "5205:32:0",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                      "typeIdentifier": "t_contract$_ERC721Basic_$784",
                       "typeString": "contract ERC721Basic"
                     }
                   },
@@ -9283,7 +9283,7 @@
                               "referencedDeclaration": 311,
                               "src": "5255:13:0",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                                "typeIdentifier": "t_contract$_ERC721Basic_$784",
                                 "typeString": "contract ERC721Basic"
                               }
                             },
@@ -9294,7 +9294,7 @@
                             "lValueRequested": false,
                             "memberName": "ownerOf",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 397,
+                            "referencedDeclaration": 717,
                             "src": "5255:21:0",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_address_$",
@@ -9326,7 +9326,7 @@
                               "name": "this",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 496,
+                              "referencedDeclaration": 1806,
                               "src": "5308:4:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_contract$_Etherary_$344",
@@ -9386,7 +9386,7 @@
                       "name": "assert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 468,
+                      "referencedDeclaration": 1778,
                       "src": "5248:6:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_assert_pure$_t_bool_$returns$__$",
@@ -9423,7 +9423,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 479,
+                          "referencedDeclaration": 1789,
                           "src": "5349:3:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -9494,7 +9494,7 @@
                         "referencedDeclaration": 311,
                         "src": "5327:13:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_ERC721Basic_$464",
+                          "typeIdentifier": "t_contract$_ERC721Basic_$784",
                           "typeString": "contract ERC721Basic"
                         }
                       },
@@ -9505,7 +9505,7 @@
                       "lValueRequested": false,
                       "memberName": "approve",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 411,
+                      "referencedDeclaration": 731,
                       "src": "5327:21:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_uint256_$returns$__$",
@@ -9904,8 +9904,14 @@
       "links": {},
       "address": "0x65e310d5947afc19562594735469a212310b52ac",
       "transactionHash": "0x55df32ae1c7cd2cefdf9d450ece16995ee9f8a90a00b03d4dad59f735a44dd1a"
+    },
+    "1534319058947": {
+      "events": {},
+      "links": {},
+      "address": "0xf88753381ac163f859e1d2d396f9b3a9d9db3014",
+      "transactionHash": "0x55df32ae1c7cd2cefdf9d450ece16995ee9f8a90a00b03d4dad59f735a44dd1a"
     }
   },
   "schemaVersion": "2.0.1",
-  "updatedAt": "2018-08-14T05:11:31.775Z"
+  "updatedAt": "2018-08-15T07:48:33.440Z"
 }

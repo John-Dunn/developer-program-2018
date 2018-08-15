@@ -58,6 +58,7 @@ TODO:
 - go to ERC20!
 
 Quality of life:
-    - after cancelling go to withdraw always (sometimes not)
+    - after cancelling or completing go to withdraw always (sometimes it does not happen)
     - withdrawal completed should be reset when new lookup
     - State space becomes cumbersome, use redux
+    - Faucet is suggested in create trade menu

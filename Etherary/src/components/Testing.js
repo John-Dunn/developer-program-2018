@@ -4,7 +4,7 @@ import { Button } from 'reactstrap';
 import {getContractInstance} from '../utils/getContractInstance'
 import getLogs from '../utils/getLogs'
 
-import ERC721Faucet from '../../../ERC721Faucet/build/contracts/GenericERC721Token.json'
+import ERC721Faucet from '../../build/contracts/GenericERC721Token.json'
 
 
 
