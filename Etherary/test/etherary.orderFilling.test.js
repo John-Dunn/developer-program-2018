@@ -1,6 +1,7 @@
 var exceptions = require("./exceptions.js");
 
-var GenericERC721Token = artifacts.require('GenericERC721Token')
+var GenericERC721TokenA = artifacts.require('GenericERC721TokenA');
+var GenericERC721TokenB = artifacts.require('GenericERC721TokenB');
 var Etherary = artifacts.require("Etherary");
 
 contract('Etherary', function(accounts) {
@@ -9,7 +10,6 @@ contract('Etherary', function(accounts) {
     const alice = accounts[1]
     const bob = accounts[2]
 
-    const gasEstimateDeployment = web3.eth.estimateGas({data: GenericERC721Token.bytecode});
     const gasForMinting = 300000;
 
     var tokenA;
@@ -26,8 +26,8 @@ contract('Etherary', function(accounts) {
 
     before(async function() {
         // Deploy two ERC721 Faucets
-        tokenA = await GenericERC721Token.new({gas: 5000000});
-        tokenB = await GenericERC721Token.new({gas: 5000000});
+        tokenA = await GenericERC721TokenA.new({gas: 5000000});
+        tokenB = await GenericERC721TokenB.new({gas: 5000000});
 
         // Mint a couple of token for Alice and Bob
         await tokenA.mint({from: alice, gas:gasForMinting});
@@ -134,8 +134,8 @@ contract('Etherary', function(accounts) {
     describe("Filling a cancelled order", function () {
         before(async function() {
             // Deploy two ERC721 Faucets
-            tokenA = await GenericERC721Token.new({gas: 5000000});
-            tokenB = await GenericERC721Token.new({gas: 5000000});
+            tokenA = await GenericERC721TokenA.new({gas: 5000000});
+            tokenB = await GenericERC721TokenB.new({gas: 5000000});
 
             // Mint a couple of token for Alice and Bob
             await tokenA.mint({from: alice, gas:gasForMinting});
