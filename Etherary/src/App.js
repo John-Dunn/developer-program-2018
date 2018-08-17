@@ -8,6 +8,7 @@ import NewTrade from './components/NewTrade'
 // import MyTrades from './components/MyTrades'
 import Testing from './components/Testing'
 
+
 import getWeb3 from './utils/getWeb3'
 
 import './css/oswald.css'
@@ -56,14 +57,6 @@ class Home extends Component {
                 <h2> Etherary can do everything!</h2>
                 <p>
                     For example you can browse or create trades.<br></br>
-
-                    <Link to='/newTrade'>
-                        <button className="pure-button pure-button-primary">Create Trade</button>
-                    </Link>
-
-                    <Link to='/browseTrades'>
-                        <button className="pure-button pure-button-primary">Browse Trades</button>
-                    </Link>
                 </p>
             </div>
         );
@@ -115,7 +108,6 @@ class App extends Component {
                     <Route path='/newTrade' render={() => (
                         <NewTrade web3={this.state.web3} web3Connected={this.state.web3Connected}/>
                     )}/>
-
 
                     <Route path='/testing' render={() => (
                         <Testing web3={this.state.web3} web3Connected={this.state.web3Connected}/>
