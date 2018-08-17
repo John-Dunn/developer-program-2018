@@ -31,25 +31,26 @@ One can browse trades by id and cancel own trades or fill others.
 There is also a component that allows minting of different ERC721 token for testing purposes.
 
 ###### Third Phase: Trade for different contract
-The taker token no longer must be from the same contract. Included this functionality in the smart contract, the tests, and the testing component in the frontend.
+The taker token no longer must be from the same contract. Included this functionality in the smart contract, the tests, and frontend components component in the frontend.
 
 #### Upcoming:
-- Complete the frontend transition to the two-contract state (i.e. creating and browsing)
+Frontend Functionality TODOs:
+- Display all trades [checkbox with my trades, checkbox active inactive]
 
-Frontend TODOs:
-- Make sure every form allows submit on enter
+Functionality Freeze, get project ready:
 - proper gas estimates
 - display when MM locked
-- Testing: display token owned
+- reload when mm switch account
 - after cancelling or completing go to withdraw always (sometimes it does not happen)
 - withdrawal completed should be reset when new lookup
-- Faucet is suggested in create trade menu
+
+Finally:
+- MVP status (i.e. fulfills all requirements to be submitted). Each following phase maintains this.
+
 
 Quality of life:
     - State space becomes cumbersome, use redux
-    - List of trades, allow withdrawal etc. there
 
-- MVP status (i.e. fulfills all requirements to be submitted). Each following phase maintains this.
 
 
 
@@ -67,3 +68,7 @@ Now allow ERC20 token to be added to both sides of the trade, instead of provind
 - Expiration dates on trades
 - Open-ended orders (make me an offer! this may be better suited to be done off-chain)
 - Maybe UX improvements are possible? Currently 6 transactions are required to complete a trade, 3 by each participant (maker approves, maker creates order, taker approves, taker fills order, maker and taker withdraw). Maybe this can be reduced.
+
+
+### Setup:
+ganache-cli -m "voice inch endorse recycle absurd claim ripple receive section same exist profit"
