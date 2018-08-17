@@ -3,7 +3,7 @@ import { Card, Button, CardTitle, CardText  } from 'reactstrap';
 
 import {getContractInstance, instantiateContractAt} from '../../utils/getContractInstance'
 import didEventOccur from '../../utils/didEventOccur'
-import {tradeToMaker, tradeToContract, tradeToMakerTokenId, tradeToTakerTokenId, tradeToActive, tradeToTaker} from '../../utils/tradeUnpacking'
+import {tradeToMaker, tradeToMakerContract, tradeToTakerContract, tradeToMakerTokenId, tradeToTakerTokenId, tradeToActive, tradeToTaker} from '../../utils/tradeUnpacking'
 
 import TradeCardContent from './TradeCardContent'
 import TradeModal from './TradeModal'
@@ -55,7 +55,7 @@ class TradeCardWrapper extends Component {
     }
 
     getTakerTokenOwner() {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToContract(this.props.trade));
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(this.props.trade));
         ERC721Instance.ownerOf(tradeToTakerTokenId(this.props.trade))
         .then(function(owner) {
             console.log("Token owner: ", owner);
@@ -96,7 +96,8 @@ class TradeCardWrapper extends Component {
                     taker={tradeToTaker(this.props.trade)}
                     makerTokenId={tradeToMakerTokenId(this.props.trade)}
                     takerTokenId={tradeToTakerTokenId(this.props.trade)}
-                    contract={tradeToContract(this.props.trade)}
+                    makerContract={tradeToMakerContract(this.props.trade)}
+                    takerContract={tradeToTakerContract(this.props.trade)}
                 />
                 {this.cardButtonRow()}
             </CardText>
@@ -161,9 +162,9 @@ class TradeCardWrapper extends Component {
         return;
     }
 
-    withdrawToken(tokenId) {
+    withdrawToken(tokenId, tokenContract) {
         var account = this.props.web3.eth.accounts[0];
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToContract(this.props.trade));
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tokenContract);
         var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
         ERC721Instance.transferFrom(etheraryAddress, account, tokenId, {from: account, gas:500000})
         .then(function(txid) {
@@ -186,11 +187,11 @@ class TradeCardWrapper extends Component {
     }
 
     withdrawMaker() {
-        this.withdrawToken(tradeToMakerTokenId(this.props.trade));
+        this.withdrawToken(tradeToMakerTokenId(this.props.trade), tradeToMakerContract(this.props.trade));
     }
 
     withdrawTaker() {
-        this.withdrawToken(tradeToTakerTokenId(this.props.trade));
+        this.withdrawToken(tradeToTakerTokenId(this.props.trade), tradeToTakerContract(this.props.trade));
     }
 
 
@@ -213,7 +214,8 @@ class TradeCardWrapper extends Component {
                     taker={tradeToTaker(this.props.trade)}
                     makerTokenId={tradeToMakerTokenId(this.props.trade)}
                     takerTokenId={tradeToTakerTokenId(this.props.trade)}
-                    contract={tradeToContract(this.props.trade)}
+                    makerContract={tradeToMakerContract(this.props.trade)}
+                    takerContract={tradeToTakerContract(this.props.trade)}
                     takerTokenOwner={this.state.takerTokenOwner}
                     web3={this.props.web3}
                     reloadCallback={this.props.reloadCallback}

@@ -28,18 +28,17 @@ class TradeCardContent extends Component {
     }
 
 
-    // Card content
-    contractLine() {
-        return (<span>ERC721 token contract: <strong>{this.props.contract}</strong> <br></br> </span>);
+    makerTokenLine() {
+        return (<span><strong>Token Offered:</strong> <br></br>  #{this.props.makerTokenId} from ERC721 contract {this.props.makerContract}. <br></br></span>)
     }
 
-    offerLine() {
-        return (<span>Offers: <strong>Token #{this.props.makerTokenId}</strong> Wants: <strong>Token #{this.props.takerTokenId}</strong> <br></br></span>)
+    takerTokenLine() {
+        return (<span><strong>Token Wanted:</strong> <br></br>  #{this.props.takerTokenId} from ERC721 contract {this.props.takerContract}. <br></br></span>)
     }
 
     makerLine() {
         return (
-            <span> Maker: <strong>{this.isMaker() ? <font color="#0077ff"> You </font> : this.props.maker}</strong>  <br></br></span>
+            <span> <strong>Maker: </strong>{this.isMaker() ? <font color="#0077ff"> <strong>You</strong> </font> : this.props.maker}  <br></br></span>
         )
     }
 
@@ -49,21 +48,21 @@ class TradeCardContent extends Component {
         }
 
         return (
-            <span> Taker: <strong>{this.isTaker() ? <font color="#0077ff"> You </font> : this.props.taker}</strong>  <br></br></span>
+            <span> <strong>Taker: </strong>{this.isTaker() ? <font color="#0077ff"> <strong>You</strong> </font> : this.props.taker}  <br></br></span>
         )
     }
 
     statusLine() {
         if (this.props.active) {
-            return (<span> Status: <strong> Active </strong> <br></br></span>);
+            return (<span> <strong>Status:</strong>  Active  <br></br></span>);
         }
 
         if (this.isTradeCancelled()) {
-            return (<span> Status: <strong> Cancelled </strong> <br></br></span>);
+            return (<span> <strong>Status:</strong> Cancelled  <br></br></span>);
         }
 
         if (this.isTradeCompleted()) {
-            return (<span> Status: <strong> Completed </strong> <br></br></span>);
+            return (<span> <strong>Status:</strong> Completed  <br></br></span>);
         }
 
     }
@@ -71,8 +70,8 @@ class TradeCardContent extends Component {
     render() {
         return (
             <font size="2">
-                {this.contractLine()}
-                {this.offerLine()}
+                {this.makerTokenLine()}
+                {this.takerTokenLine()}
                 {this.makerLine()}
                 {this.takerLine()}
                 {this.statusLine()}

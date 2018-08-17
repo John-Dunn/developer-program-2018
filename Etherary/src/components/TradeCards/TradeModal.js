@@ -46,7 +46,7 @@ class TradeModal extends Component {
     }
 
     handleApproval(event) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, this.props.contract);
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, this.props.takerContract);
 
         var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
         ERC721Instance.approve(etheraryAddress, this.props.takerTokenId, {from: this.props.web3.eth.accounts[0]})
@@ -140,7 +140,8 @@ class TradeModal extends Component {
                     taker={this.props.taker}
                     makerTokenId={this.props.makerTokenId}
                     takerTokenId={this.props.takerTokenId}
-                    contract={this.props.contract}
+                    makerContract={this.props.makerContract}
+                    takerContract={this.props.takerContract}
                 />
               </ModalBody>
 
