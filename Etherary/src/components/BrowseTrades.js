@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { FormGroup, Label, Input, FormFeedback, FormText, Col} from 'reactstrap';
+import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col, Button, InputGroupButtonDropdown, DropdownToggle, DropdownMenu} from 'reactstrap';
 
 import {getContractInstance, instantiateContractAt} from '../utils/getContractInstance'
-import {tradeToMaker, tradeToContract, tradeToMakerTokenId, tradeToTakerTokenId, tradeToActive, tradeToTaker} from '../utils/tradeUnpacking'
+import {tradeToMaker, tradeToMakerContract, tradeToTakerContract, tradeToMakerTokenId, tradeToTakerTokenId, tradeToActive, tradeToTaker, DropdownItem} from '../utils/tradeUnpacking'
 
 import TradeCardWrapper from './TradeCards/TradeCardWrapper'
 
@@ -24,7 +24,6 @@ class BrowseTrades extends Component {
 
             takerTokenOwner: null,
             takerTokenApproved: false
-
         }
     }
 
@@ -46,7 +45,7 @@ class BrowseTrades extends Component {
 
 
     isTakerTokenApproved(trade) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToContract(trade));
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(trade));
         ERC721Instance.getApproved(tradeToTakerTokenId(trade))
         .then(function(approved) {
             var isApproved = this.props.web3.eth.accounts[0] === approved;
@@ -58,7 +57,7 @@ class BrowseTrades extends Component {
     }
 
     isMakerTokenApproved(trade) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToContract(trade));
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToMakerContract(trade));
         ERC721Instance.getApproved(tradeToMakerTokenId(trade))
         .then(function(approved) {
             var isApproved = this.props.web3.eth.accounts[0] === approved;
@@ -74,7 +73,7 @@ class BrowseTrades extends Component {
 
 
     getTakerTokenOwner(trade) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToContract(trade));
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(trade));
         ERC721Instance.ownerOf(tradeToTakerTokenId(trade))
         .then(function(owner) {
             this.setState({takerTokenOwner: owner});
@@ -85,7 +84,7 @@ class BrowseTrades extends Component {
     }
 
     getMakerTokenOwner(trade) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToContract(trade));
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(trade));
         ERC721Instance.ownerOf(tradeToMakerTokenId(trade))
         .then(function(owner) {
             this.setState({makerTokenOwner: owner});
@@ -139,28 +138,33 @@ class BrowseTrades extends Component {
         return (
             <div>
             <div className="centered">
+                <Form>
                 <FormGroup row>
-                  <Label for="tokenId" sm={2}>Trade ID</Label>
-                  <Col sm={8}>
+                  <Label for="tokenId" sm={3}>Trade ID</Label>
+                  <Col sm={7}>
                       <Input
                         type="number"
                         id="tokenId"
+                        placeholder="123"
                         invalid={this.tradeInvalid()}
                         onChange={this.handleTradeIdChange.bind(this)}
                       />
+
                       <FormFeedback tooltip>This trade ID does not exist.</FormFeedback>
                       <FormText>Enter the ID of the trade you want to look up.</FormText>
                   </Col>
 
                   <Col sm={2}>
-                      <button
-                          className="pure-button pure-button-primary"
+                      <Button
+                          type="submit"
+                          color="primary"
                           onClick={this.handleTradeLookup.bind(this)}
                       >
-                              Lookup Trade
-                      </button>
+                        Lookup Trade
+                      </Button>
                  </Col>
                 </FormGroup>
+                </Form>
             </div>
                 {
                     this.tradeValid()
@@ -180,6 +184,11 @@ class BrowseTrades extends Component {
                     : <div></div>
                 }
             </div>
+
+
+
+
+
         );
     }
 }
