@@ -26,52 +26,50 @@ class TradeCardWrapper extends Component {
         };
     }
 
-    handleCancelTrade() {
-        var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
-        EtheraryInstance.cancelERC721Trade(this.props.tradeId, {from:this.props.web3.eth.accounts[0]})
-        .then(function(txid) {
-            var expectedEvent = {
-                tradeId: this.props.web3.toBigNumber(this.props.tradeId)
-            }
-            if(didEventOccur(txid, expectedEvent)) {
-                console.log('Trade cancelled');
-                this.props.reloadCallback();
-            }
-        }.bind(this))
-        .catch(function(error) {
-            console.log('Error cancelling: ', error);
-        });
-    }
-
-
-    handleWithdrawModal() {
-        this.getTakerTokenOwner();
-        this.isTakerTokenApproved(this.props.trade);
-        this.isMakerTokenApproved(this.props.trade);
+    // Inactive Trade Modal
+    handleInactiveTradeModal() {
+        this.isTokenApproved(this.props.trade, true);
+        this.isTokenApproved(this.props.trade, false);
         this.setState({
             showInactiveTradeModal: true
-        })
-    }
-
-    // Modal handling
-    handleCompleteTrade() {
-        this.getTakerTokenOwner();
-        this.setState({
-            showActiveTradeModal: true
-        })
-    }
-
-
-
-    toggleActiveTradeModal() {
-        this.setState({
-            showActiveTradeModal: !this.state.showActiveTradeModal
         })
     }
 
     toggleInactiveTradeModal() {
         this.setState({
             showInactiveTradeModal: !this.state.showInactiveTradeModal
+        })
+    }
+
+    isTokenApproved(trade, isMaker) {
+        var address = isMaker ? tradeToMakerContract(trade) : tradeToTakerContract(trade);
+        var tokenId = isMaker ? tradeToMakerTokenId(trade) : tradeToTakerTokenId(trade);
+
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, address);
+
+        ERC721Instance.getApproved(tokenId)
+        .then(function(approved) {
+            var isApproved = this.props.web3.eth.accounts[0] === approved;
+            var newState = isMaker ? {makerTokenApproved: isApproved} : {takerTokenApproved: isApproved};
+            this.setState(newState);
+        }.bind(this))
+        .catch(function(err) {
+            console.log("Querying approval failed: ", err);
+        })
+    }
+
+
+    // Active Trade Modal
+    handleTradeModal() {
+        this.getTakerTokenOwner();
+        this.setState({
+            showActiveTradeModal: true
+        })
+    }
+
+    toggleActiveTradeModal() {
+        this.setState({
+            showActiveTradeModal: !this.state.showActiveTradeModal
         })
     }
 
@@ -87,8 +85,25 @@ class TradeCardWrapper extends Component {
     }
 
 
-/// NEW
 
+    // Button onClick
+    handleCancelTrade() {
+        var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
+        EtheraryInstance.cancelERC721Trade(this.props.tradeId, {from:this.props.web3.eth.accounts[0]})
+        .then(function(txid) {
+            var expectedEvent = { tradeId: this.props.web3.toBigNumber(this.props.tradeId) }
+            if(didEventOccur(txid, expectedEvent)) {
+                console.log('Trade cancelled');
+                this.props.reloadCallback();
+            }
+        }.bind(this))
+        .catch(function(error) {
+            console.log('Error cancelling: ', error);
+        });
+    }
+
+    
+    // Button Row
     isMaker() {
         return tradeToMaker(this.props.trade) === this.props.web3.eth.accounts[0];
     }
@@ -97,6 +112,34 @@ class TradeCardWrapper extends Component {
         return tradeToTaker(this.props.trade) === this.props.web3.eth.accounts[0];
     }
 
+    cardButtonRow() {
+        // Active trades:
+        // Maker can cancel
+        if (tradeToActive(this.props.trade) && this.isMaker()) {
+            return( <span><br></br><Button onClick={() => {this.handleCancelTrade()}}> Cancel </Button></span> );
+        }
+
+        // Others can fill
+        if (tradeToActive(this.props.trade) && !this.isMaker()) {
+            return( <span><br></br><Button color="primary" onClick={() => {this.handleTradeModal()}}> Trade </Button> </span>);
+        }
+
+        // Inactive trades:
+        // After cancelling: If maker is approved for own token  can withdraw token
+        if (!tradeToActive(this.props.trade) && (this.isMaker() || this.isTaker())) {
+            return(
+                <span className="centered"><br></br>
+                    <Button onClick={() => {this.handleInactiveTradeModal()}} color="primary">
+                        Check whether you can withdraw.
+                    </Button>
+                </span>
+            );
+        }
+        return;
+    }
+
+
+    // Render helper
     cardStyle(isActive) {
         return (
             {
@@ -111,70 +154,12 @@ class TradeCardWrapper extends Component {
             <CardText>
                 <TradeCardContent
                     account={this.props.web3.eth.accounts[0]}
-                    active={tradeToActive(this.props.trade)}
-                    maker={tradeToMaker(this.props.trade)}
-                    taker={tradeToTaker(this.props.trade)}
-                    makerTokenId={tradeToMakerTokenId(this.props.trade)}
-                    takerTokenId={tradeToTakerTokenId(this.props.trade)}
-                    makerContract={tradeToMakerContract(this.props.trade)}
-                    takerContract={tradeToTakerContract(this.props.trade)}
+                    trade={this.props.trade}
                 />
                 {this.cardButtonRow()}
             </CardText>
         )
     }
-
-    cardButtonRow() {
-        // Active trades:
-        // Maker can cancel
-        if (tradeToActive(this.props.trade) && this.isMaker()) {
-            return( <span><br></br><Button onClick={() => {this.handleCancelTrade()}}> Cancel </Button></span> );
-        }
-
-        // Others can fill
-        if (tradeToActive(this.props.trade) && !this.isMaker()) {
-            return( <span><br></br><Button color="primary" onClick={() => {this.handleCompleteTrade()}}> Trade </Button> </span>);
-        }
-
-        // Inactive trades:
-        // After cancelling: If maker is approved for own token  can withdraw token
-        if (!tradeToActive(this.props.trade) && (this.isMaker() || this.isTaker())) {
-            return(
-                <span className="centered"><br></br>
-                    <Button onClick={() => {this.handleWithdrawModal()}} color="primary">
-                        Check whether you can withdraw.
-                    </Button>
-                </span>
-            );
-        }
-        return;
-    }
-
-
-    isTakerTokenApproved(trade) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(trade));
-        ERC721Instance.getApproved(tradeToTakerTokenId(trade))
-        .then(function(approved) {
-            var isApproved = this.props.web3.eth.accounts[0] === approved;
-            this.setState({takerTokenApproved: isApproved});
-        }.bind(this))
-        .catch(function(err) {
-            console.log("Querying approval failed: ", err);
-        })
-    }
-
-    isMakerTokenApproved(trade) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToMakerContract(trade));
-        ERC721Instance.getApproved(tradeToMakerTokenId(trade))
-        .then(function(approved) {
-            var isApproved = this.props.web3.eth.accounts[0] === approved;
-            this.setState({makerTokenApproved: isApproved});
-        }.bind(this))
-        .catch(function(err) {
-            console.log("Querying approval failed: ", err);
-        })
-    }
-
 
 
     render() {
@@ -191,13 +176,7 @@ class TradeCardWrapper extends Component {
                     toggleCallback={this.toggleActiveTradeModal.bind(this)}
                     tradeId={this.props.tradeId}
                     account={this.props.web3.eth.accounts[0]}
-                    active={tradeToActive(this.props.trade)}
-                    maker={tradeToMaker(this.props.trade)}
-                    taker={tradeToTaker(this.props.trade)}
-                    makerTokenId={tradeToMakerTokenId(this.props.trade)}
-                    takerTokenId={tradeToTakerTokenId(this.props.trade)}
-                    makerContract={tradeToMakerContract(this.props.trade)}
-                    takerContract={tradeToTakerContract(this.props.trade)}
+                    trade={this.props.trade}
                     takerTokenOwner={this.state.takerTokenOwner}
                     web3={this.props.web3}
                     reloadCallback={this.props.reloadCallback}
@@ -209,14 +188,6 @@ class TradeCardWrapper extends Component {
                     toggleCallback={this.toggleInactiveTradeModal.bind(this)}
                     tradeId={this.props.tradeId}
                     account={this.props.web3.eth.accounts[0]}
-                    active={tradeToActive(this.props.trade)}
-                    maker={tradeToMaker(this.props.trade)}
-                    taker={tradeToTaker(this.props.trade)}
-                    makerTokenId={tradeToMakerTokenId(this.props.trade)}
-                    takerTokenId={tradeToTakerTokenId(this.props.trade)}
-                    makerContract={tradeToMakerContract(this.props.trade)}
-                    takerContract={tradeToTakerContract(this.props.trade)}
-                    takerTokenOwner={this.state.takerTokenOwner}
                     web3={this.props.web3}
                     reloadCallback={this.props.reloadCallback}
                     makerTokenApproved={this.state.makerTokenApproved}

@@ -1,15 +1,30 @@
 import React, { Component } from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Col } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 
-import didEventOccur from '../../utils/didEventOccur'
-import {getContractInstance, instantiateContractAt} from '../../utils/getContractInstance'
-import {tradeToMaker, tradeToMakerContract, tradeToTakerContract, tradeToMakerTokenId, tradeToTakerTokenId, tradeToActive, tradeToTaker} from '../../utils/tradeUnpacking'
-
+// Custom Components
 import TradeCardContent from './TradeCardContent'
 
+// Utils
+import didEventOccur from '../../utils/didEventOccur'
+import {instantiateContractAt} from '../../utils/getContractInstance'
+import {
+    tradeToMaker,
+    tradeToMakerContract,
+    tradeToTakerContract,
+    tradeToMakerTokenId,
+    tradeToTakerTokenId,
+    tradeToActive,
+    tradeToTaker
+} from '../../utils/tradeUnpacking'
+
+// Contracts
 import ERC721 from '../../resources/ERC721Basic.json'
 import Etherary from '../../../build/contracts/Etherary.json'
 
+
+
+// This modal pops up when looking up details on inactive trades. Displays trade details
+// and allows withdrawal of the traded token.
 class InactiveTradeModal extends Component {
     constructor(props) {
         super(props);
@@ -19,7 +34,7 @@ class InactiveTradeModal extends Component {
     }
 
     withdrawToken(tokenId, tokenContract) {
-        var account = this.props.web3.eth.accounts[0];
+        var account = this.props.account;
         var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tokenContract);
         var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
         ERC721Instance.transferFrom(etheraryAddress, account, tokenId, {from: account, gas:500000})
@@ -71,23 +86,23 @@ class InactiveTradeModal extends Component {
         return;
     }
 
+    withdrawButton(onClickFunction) {
+        return (<Button
+                    color={this.state.withdrawalComplete? "success" : "primary"}
+                    onClick={onClickFunction}>
+                Withdraw
+                </Button>
+        );
+    }
+
     buttonRow() {
         if(this.props.makerTokenApproved) {
-            return <Button
-                        color={this.state.withdrawalComplete? "success" : "primary"}
-                        onClick={this.withdrawMakerToken.bind(this)}>
-                    Withdraw
-                    </Button>
+            return this.withdrawButton(this.withdrawMakerToken.bind(this));
         }
 
-        if(this.props.takerTokenApproved) {
-            return <Button
-                        color={this.state.withdrawalComplete? "success" : "primary"}
-                        onClick={this.withdrawTakerToken.bind(this)}>
-                    Withdraw
-                    </Button>
+        if(this.props.TakerTokenApproved) {
+            return this.withdrawButton(this.withdrawTakerToken.bind(this));
         }
-
         return <Button onClick={this.props.toggleCallback}>Go Back</Button>
     }
 
@@ -102,13 +117,7 @@ class InactiveTradeModal extends Component {
                 <br></br> <br></br>
                 <TradeCardContent
                     account={this.props.account}
-                    active={this.props.active}
-                    maker={this.props.maker}
-                    taker={this.props.taker}
-                    makerTokenId={this.props.makerTokenId}
-                    takerTokenId={this.props.takerTokenId}
-                    makerContract={this.props.makerContract}
-                    takerContract={this.props.takerContract}
+                    trade={this.props.trade}
                 />
               </ModalBody>
 
@@ -119,5 +128,6 @@ class InactiveTradeModal extends Component {
         )
     }
 }
+
 
 export default InactiveTradeModal;

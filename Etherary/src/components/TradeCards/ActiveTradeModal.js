@@ -1,14 +1,30 @@
 import React, { Component } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Col } from 'reactstrap';
 
-import didEventOccur from '../../utils/didEventOccur'
-import {getContractInstance, instantiateContractAt} from '../../utils/getContractInstance'
-
+// Custom Components
 import TradeCardContent from './TradeCardContent'
 
+// Utils
+import didEventOccur from '../../utils/didEventOccur'
+import {getContractInstance, instantiateContractAt} from '../../utils/getContractInstance'
+import {
+    tradeToMaker,
+    tradeToMakerContract,
+    tradeToTakerContract,
+    tradeToMakerTokenId,
+    tradeToTakerTokenId,
+    tradeToActive,
+    tradeToTaker
+} from '../../utils/tradeUnpacking'
+
+// Contracts
 import ERC721 from '../../resources/ERC721Basic.json'
 import Etherary from '../../../build/contracts/Etherary.json'
 
+
+
+// This modal pops up when pressing the Trade button on an active trade. If owning the
+// wanted token, allows approving it and completing the trade
 class ActiveTradeModal extends Component {
     constructor(props) {
         super(props);
@@ -24,9 +40,9 @@ class ActiveTradeModal extends Component {
 
     ownershipMessage() {
         if(this.state.tradeCompleted) {
-            return (<font color="green"> <strong> Trade completed! You now own token #{this.props.makerTokenId}.
-                Go to your trades to withdraw your token.</strong>
-              </font>);
+            return (<font color="green"> <strong> Trade completed! You now own
+                    token #{tradeToMakerTokenId(this.props.trade)}. Go to your trades to
+                    withdraw your token.</strong> </font>);
         }
         if (this.isTokenOwner()) {
             return (<font color="green"> <strong>You own this token. </strong>   </font>);
@@ -46,15 +62,15 @@ class ActiveTradeModal extends Component {
     }
 
     handleApproval(event) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, this.props.takerContract);
-
+        var takerTokenId = tradeToTakerTokenId(this.props.trade);
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(this.props.trade));
         var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
-        ERC721Instance.approve(etheraryAddress, this.props.takerTokenId, {from: this.props.web3.eth.accounts[0]})
+        ERC721Instance.approve(etheraryAddress, takerTokenId, {from: this.props.web3.eth.accounts[0]})
         .then(function(txid) {
             var expectedEvent = {
                 _owner: this.props.web3.eth.accounts[0],
                 _approved: etheraryAddress,
-                _tokenId: this.props.web3.toBigNumber(this.props.takerTokenId)
+                _tokenId: this.props.web3.toBigNumber(takerTokenId)
             }
             if(didEventOccur(txid, expectedEvent)) {
                 this.setState({
@@ -95,62 +111,56 @@ class ActiveTradeModal extends Component {
     buttonRow() {
         if(!this.isTokenOwner()) {
             return <Button onClick={this.props.toggleCallback}>Go Back</Button>
-        } else {
-            return (
-                <Form>
-                    <FormGroup row>
-                    <Col sm={5}>
-                        <Button
-                            color={this.state.withdrawalApproved ? "success" : "primary"}
-                            onClick={this.handleApproval.bind(this)}
-                        >
-                                Approve
-                        </Button>
-                   </Col>
-
-                      <Col sm={4}>
-                          <Button
-                              disabled={!this.state.withdrawalApproved}
-                              color={this.state.tradeCompleted ? "success" : "primary"}
-                              onClick={this.handleCompleteTrade.bind(this)}
-                          >
-                                  Complete Trade
-                          </Button>
-                     </Col>
-                    </FormGroup>
-                </Form>
-            )
         }
-    }
 
+        return (
+            <Form>
+                <FormGroup row>
+                <Col sm={5}>
+                    <Button
+                        color={this.state.withdrawalApproved ? "success" : "primary"}
+                        onClick={this.handleApproval.bind(this)}
+                    >
+                            Approve
+                    </Button>
+               </Col>
+
+                  <Col sm={4}>
+                      <Button
+                          disabled={!this.state.withdrawalApproved}
+                          color={this.state.tradeCompleted ? "success" : "primary"}
+                          onClick={this.handleCompleteTrade.bind(this)}
+                      >
+                              Complete Trade
+                      </Button>
+                 </Col>
+                </FormGroup>
+            </Form>
+        )
+    }
 
     render() {
         return (
             <Modal isOpen={this.props.show} toggle={this.props.toggleCallback}>
-              <ModalHeader>Complete Trade #{this.props.tradeId}</ModalHeader>
+                <ModalHeader> Complete Trade #{this.props.tradeId} </ModalHeader>
 
-              <ModalBody>
-                {this.ownershipMessage()}
-                <br></br> <br></br>
-                {this.instructionMessage()}
-                <TradeCardContent
-                    account={this.props.account}
-                    active={this.props.active}
-                    maker={this.props.maker}
-                    taker={this.props.taker}
-                    makerTokenId={this.props.makerTokenId}
-                    takerTokenId={this.props.takerTokenId}
-                    makerContract={this.props.makerContract}
-                    takerContract={this.props.takerContract}
-                />
-              </ModalBody>
+                <ModalBody>
+                    {this.ownershipMessage()}
+                    <br></br> <br></br>
+                    {this.instructionMessage()}
+                    <TradeCardContent
+                        account={this.props.account}
+                        trade={this.props.trade}
+                    />
+                </ModalBody>
 
-              <ModalFooter>
+                <ModalFooter>
                 {this.buttonRow()}
-              </ModalFooter>
+                </ModalFooter>
             </Modal>
         )
     }
 }
+
 
 export default ActiveTradeModal;
