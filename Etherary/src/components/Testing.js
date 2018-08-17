@@ -268,7 +268,7 @@ class Testing extends Component {
 
                 <h5> CryptoBeavers </h5>
                 <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressB}</strong> where you currently
-                own the token <strong> {this.state.tokenOwnedB.toString()} </strong> (in total <strong>{this.state.tokenBalanceB}</strong> ant
+                own the token <strong> {this.state.tokenOwnedB.toString()} </strong> (in total <strong>{this.state.tokenBalanceB}</strong> beaver
                 token).</p>
                 <br></br>
 
