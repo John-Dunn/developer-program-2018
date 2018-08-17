@@ -9,7 +9,7 @@ import TradeCardContent from './TradeCardContent'
 import ERC721 from '../../resources/ERC721Basic.json'
 import Etherary from '../../../build/contracts/Etherary.json'
 
-class TradeModal extends Component {
+class ActiveTradeModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -153,4 +153,4 @@ class TradeModal extends Component {
     }
 }
 
-export default TradeModal;
+export default ActiveTradeModal;

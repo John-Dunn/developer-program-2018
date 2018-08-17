@@ -6,7 +6,7 @@ import didEventOccur from '../../utils/didEventOccur'
 import {tradeToMaker, tradeToMakerContract, tradeToTakerContract, tradeToMakerTokenId, tradeToTakerTokenId, tradeToActive, tradeToTaker} from '../../utils/tradeUnpacking'
 
 import TradeCardContent from './TradeCardContent'
-import TradeModal from './TradeModal'
+import ActiveTradeModal from './ActiveTradeModal'
 
 import Etherary from '../../../build/contracts/Etherary.json'
 import ERC721 from '../../resources/ERC721Basic.json'
@@ -16,7 +16,7 @@ class TradeCardWrapper extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          showTradeModal: false,
+          showActiveTradeModal: false,
           takerTokenOwner: null,
           withdrawalSuccessful: false
         };
@@ -44,13 +44,13 @@ class TradeCardWrapper extends Component {
     handleCompleteTrade() {
         this.getTakerTokenOwner();
         this.setState({
-            showTradeModal: true
+            showActiveTradeModal: true
         })
     }
 
-    toggleTradeModal() {
+    toggleActiveTradeModal() {
         this.setState({
-            showTradeModal: !this.state.showTradeModal
+            showActiveTradeModal: !this.state.showActiveTradeModal
         })
     }
 
@@ -204,9 +204,9 @@ class TradeCardWrapper extends Component {
                     {this.cardContent()}
                 </Card>
 
-                <TradeModal
-                    show={this.state.showTradeModal}
-                    toggleCallback={this.toggleTradeModal.bind(this)}
+                <ActiveTradeModal
+                    show={this.state.showActiveTradeModal}
+                    toggleCallback={this.toggleActiveTradeModal.bind(this)}
                     tradeId={this.props.tradeId}
                     account={this.props.web3.eth.accounts[0]}
                     active={tradeToActive(this.props.trade)}
@@ -226,21 +226,6 @@ class TradeCardWrapper extends Component {
     }
 
 };
-// <TradeCardBody
-//     account={this.props.web3.eth.accounts[0]}
-//     active={tradeToActive(this.props.trade)}
-//     tradeId={this.props.tradeId}
-//     maker={tradeToMaker(this.props.trade)}
-//     taker={tradeToTaker(this.props.trade)}
-//     makerTokenId={tradeToMakerTokenId(this.props.trade)}
-//     takerTokenId={tradeToTakerTokenId(this.props.trade)}
-//     contract={tradeToContract(this.props.trade)}
-//     cancelCallback={this.cancelCallback.bind(this)}
-//     tradeCallback={this.tradeCallback.bind(this)}
-//     reloadCallback={this.props.reloadCallback.bind(this)}
-//     makerTokenWithdrawable={this.props.makerTokenWithdrawable}
-//     takerTokenWithdrawable={this.props.takerTokenWithdrawable}
-//     web3={this.props.web3}
-// />
+
 
 export default TradeCardWrapper;
