@@ -7,6 +7,7 @@ import {tradeToMaker, tradeToMakerContract, tradeToTakerContract, tradeToMakerTo
 
 import TradeCardContent from './TradeCardContent'
 import ActiveTradeModal from './ActiveTradeModal'
+import InactiveTradeModal from './InactiveTradeModal'
 
 import Etherary from '../../../build/contracts/Etherary.json'
 import ERC721 from '../../resources/ERC721Basic.json'
@@ -17,8 +18,11 @@ class TradeCardWrapper extends Component {
         super(props);
         this.state = {
           showActiveTradeModal: false,
+          showInactiveTradeModal: false,
           takerTokenOwner: null,
-          withdrawalSuccessful: false
+
+          takerTokenApproved: false,
+          makerTokenApproved: false
         };
     }
 
@@ -40,6 +44,15 @@ class TradeCardWrapper extends Component {
     }
 
 
+    handleWithdrawModal() {
+        this.getTakerTokenOwner();
+        this.isTakerTokenApproved(this.props.trade);
+        this.isMakerTokenApproved(this.props.trade);
+        this.setState({
+            showInactiveTradeModal: true
+        })
+    }
+
     // Modal handling
     handleCompleteTrade() {
         this.getTakerTokenOwner();
@@ -48,9 +61,17 @@ class TradeCardWrapper extends Component {
         })
     }
 
+
+
     toggleActiveTradeModal() {
         this.setState({
             showActiveTradeModal: !this.state.showActiveTradeModal
+        })
+    }
+
+    toggleInactiveTradeModal() {
+        this.setState({
+            showInactiveTradeModal: !this.state.showInactiveTradeModal
         })
     }
 
@@ -58,7 +79,6 @@ class TradeCardWrapper extends Component {
         var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(this.props.trade));
         ERC721Instance.ownerOf(tradeToTakerTokenId(this.props.trade))
         .then(function(owner) {
-            console.log("Token owner: ", owner);
             this.setState({takerTokenOwner: owner});
         }.bind(this))
         .catch(function(err) {
@@ -118,81 +138,43 @@ class TradeCardWrapper extends Component {
 
         // Inactive trades:
         // After cancelling: If maker is approved for own token  can withdraw token
-        if (!tradeToActive(this.props.trade) && this.isMaker() && (this.props.makerTokenWithdrawable || this.state.withdrawalSuccessful)) {
+        if (!tradeToActive(this.props.trade) && (this.isMaker() || this.isTaker())) {
             return(
-                <span><br></br>
-                    <Button
-                        disabled={this.state.withdrawalSuccessful}
-                        color={this.state.withdrawalSuccessful ? "success" : "primary"}
-                        onClick={this.withdrawMaker.bind(this)}>
-                    Withdraw Token {tradeToMakerTokenId(this.props.trade)}
+                <span className="centered"><br></br>
+                    <Button onClick={() => {this.handleWithdrawModal()}} color="primary">
+                        Check whether you can withdraw.
                     </Button>
                 </span>
             );
         }
-
-        // Trade complete (as maker)
-        if (!tradeToActive(this.props.trade) && this.isMaker() && (this.props.takerTokenWithdrawable || this.state.withdrawalSuccessful)) {
-            return(
-                <span><br></br>
-                    <Button
-                        disabled={this.state.withdrawalSuccessful}
-                        color={this.state.withdrawalSuccessful ? "success" : "primary"}
-                        onClick={this.withdrawTaker.bind(this)}>
-                    Withdraw Token {tradeToTakerTokenId(this.props.trade)}
-                    </Button>
-                </span>
-            );
-        }
-
-        // If taker is approved for maker token (probably after trade complete) can withdraw token
-        if (!tradeToActive(this.props.trade) && this.isTaker() && (this.props.makerTokenWithdrawable || this.state.withdrawalSuccessful)) {
-            return(
-                <span><br></br>
-                    <Button
-                        disabled={this.state.withdrawalSuccessful}
-                        color={this.state.withdrawalSuccessful ? "success" : "primary"}
-                        onClick={this.withdrawMaker.bind(this)}>
-                    Withdraw Token {tradeToMakerTokenId(this.props.trade)}
-                    </Button>
-                </span>
-            );
-        }
-
         return;
     }
 
-    withdrawToken(tokenId, tokenContract) {
-        var account = this.props.web3.eth.accounts[0];
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tokenContract);
-        var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
-        ERC721Instance.transferFrom(etheraryAddress, account, tokenId, {from: account, gas:500000})
-        .then(function(txid) {
-            var expectedEvent = {
-                _from: etheraryAddress,
-                _to: account,
-                _tokenId: this.props.web3.toBigNumber(tokenId)
-            }
-            if(didEventOccur(txid, expectedEvent)) {
-                console.log('Withdrawal successful');
-                this.setState({
-                    withdrawalSuccessful: true
-                })
-                this.props.reloadCallback();
-            }
+
+    isTakerTokenApproved(trade) {
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(trade));
+        ERC721Instance.getApproved(tradeToTakerTokenId(trade))
+        .then(function(approved) {
+            var isApproved = this.props.web3.eth.accounts[0] === approved;
+            this.setState({takerTokenApproved: isApproved});
         }.bind(this))
-        .catch(function(error) {
-            console.log('Error withdrawing: ', error);
-        });
+        .catch(function(err) {
+            console.log("Querying approval failed: ", err);
+        })
     }
 
-    withdrawMaker() {
-        this.withdrawToken(tradeToMakerTokenId(this.props.trade), tradeToMakerContract(this.props.trade));
+    isMakerTokenApproved(trade) {
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToMakerContract(trade));
+        ERC721Instance.getApproved(tradeToMakerTokenId(trade))
+        .then(function(approved) {
+            var isApproved = this.props.web3.eth.accounts[0] === approved;
+            this.setState({makerTokenApproved: isApproved});
+        }.bind(this))
+        .catch(function(err) {
+            console.log("Querying approval failed: ", err);
+        })
     }
 
-    withdrawTaker() {
-        this.withdrawToken(tradeToTakerTokenId(this.props.trade), tradeToTakerContract(this.props.trade));
-    }
 
 
     render() {
@@ -219,6 +201,26 @@ class TradeCardWrapper extends Component {
                     takerTokenOwner={this.state.takerTokenOwner}
                     web3={this.props.web3}
                     reloadCallback={this.props.reloadCallback}
+                />
+
+                <InactiveTradeModal
+                    trade={this.props.trade}
+                    show={this.state.showInactiveTradeModal}
+                    toggleCallback={this.toggleInactiveTradeModal.bind(this)}
+                    tradeId={this.props.tradeId}
+                    account={this.props.web3.eth.accounts[0]}
+                    active={tradeToActive(this.props.trade)}
+                    maker={tradeToMaker(this.props.trade)}
+                    taker={tradeToTaker(this.props.trade)}
+                    makerTokenId={tradeToMakerTokenId(this.props.trade)}
+                    takerTokenId={tradeToTakerTokenId(this.props.trade)}
+                    makerContract={tradeToMakerContract(this.props.trade)}
+                    takerContract={tradeToTakerContract(this.props.trade)}
+                    takerTokenOwner={this.state.takerTokenOwner}
+                    web3={this.props.web3}
+                    reloadCallback={this.props.reloadCallback}
+                    makerTokenApproved={this.state.makerTokenApproved}
+                    takerTokenApproved={this.state.takerTokenApproved}
                 />
             </div>
 
