@@ -19,12 +19,14 @@ class Testing extends Component {
             faucetInstanceA: null,
             faucetAddressA: null,
             tokenBalanceA: null,
+            tokenOwnedA: [],
             justMintedA: false,
             latestMintedTokenA: null,
 
             faucetInstanceB: null,
             faucetAddressB: null,
             tokenBalanceB: null,
+            tokenOwnedB: [],
             justMintedB: false,
             latestMintedTokenB: null,
 
@@ -32,8 +34,15 @@ class Testing extends Component {
         }
     }
 
+    getAllToken(instance) {
+        instance.totalSupply()
+        .then(function(result) {
+            console.log("Supply: ", result)
+        })
+    }
+
     componentDidMount() {
-        if(this.props.web3Connected) {
+        if( this.props.web3Connected) {
             this.startup();
         }
     }
@@ -64,6 +73,33 @@ class Testing extends Component {
     }
 
 
+    toSomething(tokenOwner, account) {
+        var tokensOwnedByAccount = [];
+        for (var i = 0; i < tokenOwner.length; i++) {
+            if (tokenOwner[i] === account) {
+                tokensOwnedByAccount.push(i);
+            }
+        }
+        this.setState({
+            tokenOwnedA: tokensOwnedByAccount
+        })
+        console.log(tokensOwnedByAccount);
+    }
+
+    toSomethingB(tokenOwner, account) {
+        var tokensOwnedByAccount = [];
+        for (var i = 0; i < tokenOwner.length; i++) {
+            if (tokenOwner[i] === account) {
+                tokensOwnedByAccount.push(i);
+            }
+        }
+        this.setState({
+            tokenOwnedB: tokensOwnedByAccount
+        })
+        console.log(tokensOwnedByAccount);
+    }
+
+
     startup() {
         var account = this.props.web3.eth.accounts[0];
         this.setState({
@@ -81,12 +117,39 @@ class Testing extends Component {
             })
         }.bind(this))
 
+        instanceA.totalSupply()
+        .then(function(supply) {
+            var promises = [];
+            var addresses = [];
+            for (var i = 0; i<supply.toNumber(); i++){
+                promises.push(instanceA.ownerOf(i));
+            }
+            Promise.all(promises)
+            .then(function(resolvedPromises){
+                this.toSomething(resolvedPromises, account);
+            }.bind(this))
+        }.bind(this))
+
+
         instanceB.balanceOf(account)
         .then(function(result) {
             console.log("Faucet B token balance updated: ", result.toNumber());
             this.setState({
                 tokenBalanceB: result.toNumber()
             })
+        }.bind(this))
+
+        instanceB.totalSupply()
+        .then(function(supply) {
+            var promises = [];
+            var addresses = [];
+            for (var i = 0; i<supply.toNumber(); i++){
+                promises.push(instanceB.ownerOf(i));
+            }
+            Promise.all(promises)
+            .then(function(resolvedPromises){
+                this.toSomethingB(resolvedPromises, account);
+            }.bind(this))
         }.bind(this))
     }
 
@@ -105,9 +168,14 @@ class Testing extends Component {
         .then(function(result) {
             console.log("Minting successful", result);
             var txLogs = getLogs(result);
+            var mintedToken = txLogs[0].args._tokenId.toNumber();
+            var priorOwnedToken = this.state.tokenOwnedA
+            priorOwnedToken.push(mintedToken)
+
             this.setState({
                 justMintedA: true,
-                latestMintedTokenA: txLogs[0].args._tokenId.toNumber()
+                latestMintedTokenA: txLogs[0].args._tokenId.toNumber(),
+                tokenOwnedA: priorOwnedToken
             })
             // The gas in the following line is to prevent caching
             // see https://github.com/ethereum/web3.js/issues/1463
@@ -116,8 +184,9 @@ class Testing extends Component {
         .then(function(result) {
             var balance = result.toNumber();
             console.log("Faucet token balance updated: ", balance);
+
             this.setState({
-                tokenBalanceA: result.toNumber()
+                tokenBalanceA: result.toNumber(),
             })
         }.bind(this))
     }
@@ -135,9 +204,14 @@ class Testing extends Component {
         .then(function(result) {
             console.log("Minting successful", result);
             var txLogs = getLogs(result);
+            var mintedToken = txLogs[0].args._tokenId.toNumber();
+            var priorOwnedToken = this.state.tokenOwnedB
+            priorOwnedToken.push(mintedToken)
+
             this.setState({
                 justMintedB: true,
-                latestMintedTokenB: txLogs[0].args._tokenId.toNumber()
+                latestMintedTokenB: mintedToken,
+                tokenOwnedB: priorOwnedToken
             })
             // The gas in the following line is to prevent caching
             // see https://github.com/ethereum/web3.js/issues/1463
@@ -163,7 +237,7 @@ class Testing extends Component {
         }
 
         if (this.state.justMintedB) {
-            return(<p>Minting successful. You received the beaver token with id <strong>{this.state.latestMintedTokenA}</strong>.</p>)
+            return(<p>Minting successful. You received the beaver token with id <strong>{this.state.latestMintedTokenB}</strong>.</p>)
         }
     }
 
@@ -185,7 +259,8 @@ class Testing extends Component {
 
                 <h5> CryptoAnts </h5>
                 <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressA}</strong> where you currently
-                own <strong>{this.state.tokenBalanceA}</strong> ant token.</p>
+                own the token <strong> {this.state.tokenOwnedA.toString()} </strong> (in total <strong>{this.state.tokenBalanceA}</strong> ant
+                token).</p>
                 <br></br>
 
 
@@ -193,21 +268,22 @@ class Testing extends Component {
 
                 <h5> CryptoBeavers </h5>
                 <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressB}</strong> where you currently
-                own <strong>{this.state.tokenBalanceB}</strong> ant beaver token.</p>
+                own the token <strong> {this.state.tokenOwnedB.toString()} </strong> (in total <strong>{this.state.tokenBalanceB}</strong> ant
+                token).</p>
                 <br></br>
 
                 <div className="centered">
                 <br></br>
                     <FormGroup row>
                       <Col sm={3}>
-                      <Button color="primary" size="lg" onClick={this.handleMintA.bind(this)} >Mint an ant</Button>{'     '}
+                      <Button color="primary"  onClick={this.handleMintA.bind(this)} >Mint an ant</Button>{'     '}
                       </Col>
 
                       <Col sm={3}>
                       </Col>
 
                       <Col sm={3}>
-                      <Button color="primary" size="lg" onClick={this.handleMintB.bind(this)} >Mint a beaver</Button>
+                      <Button color="primary" onClick={this.handleMintB.bind(this)} >Mint a beaver</Button>
                       </Col>
 
                     </FormGroup>
