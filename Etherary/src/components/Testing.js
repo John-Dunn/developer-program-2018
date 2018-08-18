@@ -83,7 +83,6 @@ class Testing extends Component {
         this.setState({
             tokenOwnedA: tokensOwnedByAccount
         })
-        console.log(tokensOwnedByAccount);
     }
 
     toSomethingB(tokenOwner, account) {
@@ -96,7 +95,6 @@ class Testing extends Component {
         this.setState({
             tokenOwnedB: tokensOwnedByAccount
         })
-        console.log(tokensOwnedByAccount);
     }
 
 
@@ -258,31 +256,38 @@ class Testing extends Component {
                 </p>
 
                 <h5> CryptoAnts </h5>
-                <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressA}</strong> where you currently
-                own the token <strong> {this.state.tokenOwnedA.toString()} </strong> (in total <strong>{this.state.tokenBalanceA}</strong> ant
-                token).</p>
+                {
+                    this.state.tokenBalanceA == 0
+                    ? <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressA}</strong> where you currently
+                    own no token.</p>
+                    : <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressA}</strong> where you currently
+                    own the token <strong> {this.state.tokenOwnedA.toString()} </strong> (in total <strong>{this.state.tokenBalanceA}</strong> ant
+                    token).</p>
+                }
                 <br></br>
 
-
-
-
                 <h5> CryptoBeavers </h5>
-                <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressB}</strong> where you currently
-                own the token <strong> {this.state.tokenOwnedB.toString()} </strong> (in total <strong>{this.state.tokenBalanceB}</strong> beaver
-                token).</p>
+                {
+                    this.state.tokenBalanceA == 0
+                    ? <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressB}</strong> where you currently
+                    own no token.</p>
+                    : <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressB}</strong> where you currently
+                    own the token <strong> {this.state.tokenOwnedB.toString()} </strong> (in total <strong>{this.state.tokenBalanceB}</strong> beaver
+                    token).</p>
+                }
                 <br></br>
 
                 <div className="centered">
                 <br></br>
                     <FormGroup row>
-                      <Col sm={3}>
+                      <Col>
                       <Button color="primary"  onClick={this.handleMintA.bind(this)} >Mint an ant</Button>{'     '}
                       </Col>
 
-                      <Col sm={3}>
+                      <Col >
                       </Col>
 
-                      <Col sm={3}>
+                      <Col>
                       <Button color="primary" onClick={this.handleMintB.bind(this)} >Mint a beaver</Button>
                       </Col>
 
