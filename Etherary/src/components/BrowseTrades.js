@@ -1,11 +1,22 @@
 import React, { Component } from 'react'
 import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col, Button, InputGroupButtonDropdown, DropdownToggle, DropdownMenu} from 'reactstrap';
 
-import {getContractInstance, instantiateContractAt} from '../utils/getContractInstance'
-import {tradeToMaker, tradeToMakerContract, tradeToTakerContract, tradeToMakerTokenId, tradeToTakerTokenId, tradeToActive, tradeToTaker, DropdownItem} from '../utils/tradeUnpacking'
-
+// Custom components
 import TradeCardWrapper from './TradeCards/TradeCardWrapper'
 
+// Utils
+import {getContractInstance, instantiateContractAt} from '../utils/getContractInstance'
+import {
+    tradeToMaker,
+    tradeToMakerContract,
+    tradeToTakerContract,
+    tradeToMakerTokenId,
+    tradeToTakerTokenId,
+    tradeToActive,
+    tradeToTaker
+} from '../../utils/tradeUnpacking'
+
+// Contracts
 import Etherary from '../../build/contracts/Etherary.json'
 import ERC721 from '../resources/ERC721Basic.json'
 
@@ -18,12 +29,6 @@ class BrowseTrades extends Component {
             tradeIdInput: null,
             tradeId: null,
             trade: null,
-
-            makerTokenOwner: null,
-            makerTokenApproved: false,
-
-            takerTokenOwner: null,
-            takerTokenApproved: false
         }
     }
 
@@ -38,67 +43,6 @@ class BrowseTrades extends Component {
         event.preventDefault();
     }
 
-    tokenWithdrawable(approved, tokenOwner) {
-        var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
-        return approved && tokenOwner === etheraryAddress;
-    }
-
-
-    isTakerTokenApproved(trade) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(trade));
-        ERC721Instance.getApproved(tradeToTakerTokenId(trade))
-        .then(function(approved) {
-            var isApproved = this.props.web3.eth.accounts[0] === approved;
-            this.setState({takerTokenApproved: isApproved});
-        }.bind(this))
-        .catch(function(err) {
-            console.log("Querying approval failed: ", err);
-        })
-    }
-
-    isMakerTokenApproved(trade) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToMakerContract(trade));
-        ERC721Instance.getApproved(tradeToMakerTokenId(trade))
-        .then(function(approved) {
-            var isApproved = this.props.web3.eth.accounts[0] === approved;
-            this.setState({makerTokenApproved: isApproved});
-        }.bind(this))
-        .catch(function(err) {
-            console.log("Querying approval failed: ", err);
-        })
-    }
-
-
-
-
-
-    getTakerTokenOwner(trade) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(trade));
-        ERC721Instance.ownerOf(tradeToTakerTokenId(trade))
-        .then(function(owner) {
-            this.setState({takerTokenOwner: owner});
-        }.bind(this))
-        .catch(function(err) {
-            console.log("Querying ownership failed: ", err);
-        })
-    }
-
-    getMakerTokenOwner(trade) {
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(trade));
-        ERC721Instance.ownerOf(tradeToMakerTokenId(trade))
-        .then(function(owner) {
-            this.setState({makerTokenOwner: owner});
-        }.bind(this))
-        .catch(function(err) {
-            console.log("Querying ownership failed: ", err);
-        })
-    }
-
-
-
-
-
-
     updateTrade() {
         console.log("Updating trade");
         if (this.state.tradeIdInput === null) { return }
@@ -110,12 +54,6 @@ class BrowseTrades extends Component {
                 tradeId: this.state.tradeIdInput,
                 trade: trade
             })
-            if (tradeToMaker(this.state.trade) !== "0x0000000000000000000000000000000000000000") {
-                this.getMakerTokenOwner(trade);
-                this.getTakerTokenOwner(trade);
-                this.isTakerTokenApproved(trade);
-                this.isMakerTokenApproved(trade);
-            }
         }.bind(this))
         .catch(function(err) {
             console.log("Unable to get trade:", err);
@@ -165,6 +103,7 @@ class BrowseTrades extends Component {
                  </Col>
                 </FormGroup>
                 </Form>
+
             </div>
                 {
                     this.tradeValid()
@@ -176,18 +115,12 @@ class BrowseTrades extends Component {
                             tradeId={this.state.tradeId}
                             trade={this.state.trade}
                             reloadCallback={this.updateTrade.bind(this)}
-                            makerTokenWithdrawable={this.tokenWithdrawable(this.state.makerTokenApproved, this.state.makerTokenOwner)}
-                            takerTokenWithdrawable={this.tokenWithdrawable(this.state.takerTokenApproved, this.state.takerTokenOwner)}
                           />
                         </Col>
                     </div>
                     : <div></div>
                 }
             </div>
-
-
-
-
 
         );
     }

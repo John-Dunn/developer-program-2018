@@ -1,14 +1,25 @@
 import React, {Component} from 'react';
 import { Card, Button, CardTitle, CardText  } from 'reactstrap';
 
-import {getContractInstance, instantiateContractAt} from '../../utils/getContractInstance'
-import didEventOccur from '../../utils/didEventOccur'
-import {tradeToMaker, tradeToMakerContract, tradeToTakerContract, tradeToMakerTokenId, tradeToTakerTokenId, tradeToActive, tradeToTaker} from '../../utils/tradeUnpacking'
-
+// Custom Components
 import TradeCardContent from './TradeCardContent'
 import ActiveTradeModal from './ActiveTradeModal'
 import InactiveTradeModal from './InactiveTradeModal'
 
+// Utils
+import {getContractInstance, instantiateContractAt} from '../../utils/getContractInstance'
+import didEventOccur from '../../utils/didEventOccur'
+import {
+    tradeToMaker,
+    tradeToMakerContract,
+    tradeToTakerContract,
+    tradeToMakerTokenId,
+    tradeToTakerTokenId,
+    tradeToActive,
+    tradeToTaker
+} from '../../utils/tradeUnpacking'
+
+// Contracts 
 import Etherary from '../../../build/contracts/Etherary.json'
 import ERC721 from '../../resources/ERC721Basic.json'
 
@@ -102,7 +113,7 @@ class TradeCardWrapper extends Component {
         });
     }
 
-    
+
     // Button Row
     isMaker() {
         return tradeToMaker(this.props.trade) === this.props.web3.eth.accounts[0];
