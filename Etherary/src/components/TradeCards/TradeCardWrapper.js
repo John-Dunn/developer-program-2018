@@ -19,7 +19,7 @@ import {
     tradeToTaker
 } from '../../utils/tradeUnpacking'
 
-// Contracts 
+// Contracts
 import Etherary from '../../../build/contracts/Etherary.json'
 import ERC721 from '../../resources/ERC721Basic.json'
 
@@ -102,7 +102,7 @@ class TradeCardWrapper extends Component {
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
         EtheraryInstance.cancelERC721Trade(this.props.tradeId, {from:this.props.web3.eth.accounts[0]})
         .then(function(txid) {
-            var expectedEvent = { tradeId: this.props.web3.toBigNumber(this.props.tradeId) }
+            var expectedEvent = { _tradeId: this.props.web3.toBigNumber(this.props.tradeId) }
             if(didEventOccur(txid, expectedEvent)) {
                 console.log('Trade cancelled');
                 this.props.reloadCallback();

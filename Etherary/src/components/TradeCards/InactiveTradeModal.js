@@ -47,7 +47,7 @@ class InactiveTradeModal extends Component {
             if(didEventOccur(txid, expectedEvent)) {
                 console.log('Withdrawal successful');
                 this.setState({
-                    withdrawalSuccessful: true
+                    withdrawalComplete: true
                 })
                 this.props.reloadCallback();
             }
@@ -67,20 +67,20 @@ class InactiveTradeModal extends Component {
 
 
     statusMessage() {
-        if(this.props.account === this.props.maker && this.props.makerTokenApproved) {
+        if(this.props.account === tradeToMaker(this.props.trade) && this.props.makerTokenApproved) {
             return (<span> You created and cancelled this trade. You can withdraw your token.</span>);
         }
-        if(this.props.account === this.props.maker && this.props.takerTokenApproved) {
+        if(this.props.account === tradeToMaker(this.props.trade) && this.props.takerTokenApproved) {
             return (<span> Congratulations! You created this trade and it got filled. You can withdraw your token.</span>);
         }
-        if(this.props.account === this.props.maker) {
+        if(this.props.account === tradeToMaker(this.props.trade)) {
             return (<span> Congratulations! You created this trade and it got filled. You already withdrew your token.</span>);
         }
 
-        if(this.props.account === this.props.taker && this.props.makerTokenApproved) {
+        if(this.props.account === tradeToTaker(this.props.trade) && this.props.makerTokenApproved) {
             return (<span> Congratulations! You completed this trade and can withdraw your token.</span>);
         }
-        if(this.props.account === this.props.taker) {
+        if(this.props.account === tradeToTaker(this.props.trade)) {
             return (<span> Congratulations! You completed this trade. You already withdrew your token.</span>);
         }
         return;
@@ -100,7 +100,7 @@ class InactiveTradeModal extends Component {
             return this.withdrawButton(this.withdrawMakerToken.bind(this));
         }
 
-        if(this.props.TakerTokenApproved) {
+        if(this.props.takerTokenApproved) {
             return this.withdrawButton(this.withdrawTakerToken.bind(this));
         }
         return <Button onClick={this.props.toggleCallback}>Go Back</Button>
