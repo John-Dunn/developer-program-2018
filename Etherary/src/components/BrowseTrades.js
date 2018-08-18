@@ -29,8 +29,69 @@ class BrowseTrades extends Component {
             tradeIdInput: null,
             tradeId: null,
             trade: null,
+            trades: []
         }
     }
+
+    componentDidMount() {
+        if( this.props.web3Connected) {
+            this.getAllTrades();
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.web3 !== prevProps.web3) {
+            console.log("Web3 change: ", this.props.web3)
+            this.getAllTrades();
+        }
+    }
+
+    getAllTrades() {
+        var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
+
+        EtheraryInstance.tradeId()
+        .then(function(numberOfTrades) {
+            var promises = [];
+            for (var i = 0; i<numberOfTrades.toNumber(); i++){
+                promises.push(EtheraryInstance.idToTrade(i));
+            }
+            Promise.all(promises)
+            .then(function(resolvedPromises){
+                this.setState({
+                    trades: resolvedPromises
+                })
+                console.log("Trades: ", resolvedPromises)
+            }.bind(this))
+        }.bind(this))
+    }
+
+    displayTrades() {
+        var cards = [];
+        console.log("Displaying", this.state.trades.length);
+        for (var i = 0; i<this.state.trades.length; i++) {
+            var card = this.tradeToCard(this.state.trades[i], i);
+            console.log("Card", card);
+            cards.push(card);
+        }
+        console.log("Cards:",cards)
+        return cards;
+    }
+
+    tradeToCard(trade, id) {
+        return (
+            <Col sm="6" key={id}>
+            <TradeCardWrapper
+                web3={this.props.web3}
+                tradeId={id}
+                trade={trade}
+                reloadCallback={this.updateTrade.bind(this)}
+             />
+            </Col>
+        )
+    }
+
+
+
 
     handleTradeIdChange(event) {
       this.setState({
@@ -120,7 +181,12 @@ class BrowseTrades extends Component {
                     </div>
                     : <div></div>
                 }
+                {this.displayTrades()}
             </div>
+
+
+
+
 
         );
     }
