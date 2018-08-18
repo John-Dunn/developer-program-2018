@@ -14,7 +14,7 @@ import {
     tradeToTakerTokenId,
     tradeToActive,
     tradeToTaker
-} from '../../utils/tradeUnpacking'
+} from '../utils/tradeUnpacking'
 
 // Contracts
 import Etherary from '../../build/contracts/Etherary.json'
@@ -48,7 +48,7 @@ class BrowseTrades extends Component {
         if (this.state.tradeIdInput === null) { return }
 
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
-        EtheraryInstance.idToTrade(this.state.tradeIdInput)
+        EtheraryInstance.idToTrade.call(this.state.tradeIdInput, {gas: 500000+Math.floor(Math.random()*1001)})
         .then(function(trade) {
             this.setState({
                 tradeId: this.state.tradeIdInput,
