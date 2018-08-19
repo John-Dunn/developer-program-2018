@@ -4,8 +4,8 @@ import { Route, Link } from 'react-router-dom';
 import Web3Status from './components/Web3Status'
 
 import BrowseTrades from './components/BrowseTrades'
+import LookupTrades from './components/LookupTrades'
 import NewTrade from './components/NewTrade'
-// import MyTrades from './components/MyTrades'
 import Testing from './components/Testing'
 
 
@@ -27,6 +27,10 @@ class NavigationBar extends Component {
 
                 <Link to='/browseTrades'>
                     <span className="pure-menu-item pure-menu-link">Browse Trades </span>
+                </Link>
+
+                <Link to='/lookupTrades'>
+                    <span className="pure-menu-item pure-menu-link">Lookup a Trade </span>
                 </Link>
 
                 <Link to='/newTrade'>
@@ -83,13 +87,17 @@ class App extends Component {
                     web3Connected: results.web3 != null && results.web3.isConnected() && results.web3.eth.accounts.length > 0
                 })
             }.bind(this))
-
+            this.watchForAccountUpdate();
 
         })
         .catch((e) => {
             console.log('Error finding web3.', e)
         })
     }
+
+
+
+
 
     render() {
         return (
@@ -103,6 +111,10 @@ class App extends Component {
 
                     <Route path='/browseTrades' render={() => (
                         <BrowseTrades web3={this.state.web3} web3Connected={this.state.web3Connected}/>
+                    )}/>
+
+                    <Route path='/lookupTrades' render={() => (
+                        <LookupTrades web3={this.state.web3} web3Connected={this.state.web3Connected}/>
                     )}/>
 
                     <Route path='/newTrade' render={() => (

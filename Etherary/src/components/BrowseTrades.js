@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col, Button, InputGroupButtonDropdown, DropdownToggle, DropdownMenu} from 'reactstrap';
+import { CardColumns, FormGroup, Label, Input, Col, Row } from 'reactstrap';
 
 // Custom components
 import TradeCardWrapper from './TradeCards/TradeCardWrapper'
@@ -29,7 +29,10 @@ class BrowseTrades extends Component {
             tradeIdInput: null,
             tradeId: null,
             trade: null,
-            trades: []
+            trades: [],
+            showInactive: false,
+            showOnlyInvolved: false
+
         }
     }
 
@@ -57,36 +60,51 @@ class BrowseTrades extends Component {
             }
             Promise.all(promises)
             .then(function(resolvedPromises){
+
                 this.setState({
                     trades: resolvedPromises
                 })
-                console.log("Trades: ", resolvedPromises)
             }.bind(this))
         }.bind(this))
     }
 
     displayTrades() {
         var cards = [];
-        console.log("Displaying", this.state.trades.length);
-        for (var i = 0; i<this.state.trades.length; i++) {
-            var card = this.tradeToCard(this.state.trades[i], i);
-            console.log("Card", card);
+        var tradesWithId = this.state.trades.map(function(trade, index) { return [trade, index]});
+        var filteredTrades = tradesWithId.filter(this.activeFilter.bind(this));
+        var fTrades = filteredTrades.filter(this.involvedFilter.bind(this));
+
+        for (var i = 0; i<fTrades.length; i++) {
+            var card = this.tradeToCard(fTrades[i][0], fTrades[i][1]);
             cards.push(card);
         }
-        console.log("Cards:",cards)
         return cards;
+    }
+
+    activeFilter(trade) {
+        if (!this.state.showInactive && !tradeToActive(trade[0])) {
+            return false;
+        }
+        return true;
+    }
+
+    involvedFilter(trade) {
+        if (this.state.showOnlyInvolved) {
+            var account = this.props.web3.eth.accounts[0];
+            return tradeToMaker(trade[0]) === account || tradeToTaker(trade[0]) === account;
+        }
+
+        return true;
     }
 
     tradeToCard(trade, id) {
         return (
-            <Col sm="6" key={id}>
-            <TradeCardWrapper
+            <TradeCardWrapper key={id}
                 web3={this.props.web3}
                 tradeId={id}
                 trade={trade}
-                reloadCallback={this.updateTrade.bind(this)}
+                reloadCallback={this.getAllTrades.bind(this)}
              />
-            </Col>
         )
     }
 
@@ -104,90 +122,46 @@ class BrowseTrades extends Component {
         event.preventDefault();
     }
 
-    updateTrade() {
-        console.log("Updating trade");
-        if (this.state.tradeIdInput === null) { return }
-
-        var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
-        EtheraryInstance.idToTrade.call(this.state.tradeIdInput, {gas: 500000+Math.floor(Math.random()*1001)})
-        .then(function(trade) {
-            this.setState({
-                tradeId: this.state.tradeIdInput,
-                trade: trade
-            })
-        }.bind(this))
-        .catch(function(err) {
-            console.log("Unable to get trade:", err);
+    toggleShowInvalid() {
+        this.setState({
+            showInactive: !this.state.showInactive
         })
     }
 
-    tradeValid() {
-        return this.state.trade !== null && tradeToMaker(this.state.trade) !== "0x0000000000000000000000000000000000000000";
-    }
-
-    tradeInvalid() {
-        if (this.state.tradeId === null) {
-            return false;
-        } else {
-            return !this.tradeValid()
-        }
+    toggleOnlyInvolved() {
+        this.setState({
+            showOnlyInvolved: !this.state.showOnlyInvolved
+        })
     }
 
     render() {
         return (
             <div>
-            <div className="centered">
-                <Form>
-                <FormGroup row>
-                  <Label for="tokenId" sm={3}>Trade ID</Label>
-                  <Col sm={7}>
-                      <Input
-                        type="number"
-                        id="tokenId"
-                        placeholder="123"
-                        invalid={this.tradeInvalid()}
-                        onChange={this.handleTradeIdChange.bind(this)}
-                      />
-
-                      <FormFeedback tooltip>This trade ID does not exist.</FormFeedback>
-                      <FormText>Enter the ID of the trade you want to look up.</FormText>
-                  </Col>
-
-                  <Col sm={2}>
-                      <Button
-                          type="submit"
-                          color="primary"
-                          onClick={this.handleTradeLookup.bind(this)}
-                      >
-                        Lookup Trade
-                      </Button>
-                 </Col>
-                </FormGroup>
-                </Form>
-
-            </div>
                 {
-                    this.tradeValid()
-                    ?
-                    <div className="centered">
-                        <Col sm="6">
-                        <TradeCardWrapper
-                            web3={this.props.web3}
-                            tradeId={this.state.tradeId}
-                            trade={this.state.trade}
-                            reloadCallback={this.updateTrade.bind(this)}
-                          />
+                    this.state.trades.length > 0
+                    ? <div>
+                        <Row>
+                        <Col sm={{ size: 'auto', offset: 1 }}>
+                            <Label check>
+                            <Input type="checkbox" onClick={this.toggleShowInvalid.bind(this)}/>{' '}
+                                Show inactive
+                            </Label>
                         </Col>
-                    </div>
-                    : <div></div>
+                        <Col sm={{ size: 'auto', offset: 1 }}>
+                            <Label check>
+                            <Input type="checkbox" onClick={this.toggleOnlyInvolved.bind(this)}/>{' '}
+                                Only your trades
+                            </Label>
+                        </Col>
+                        </Row>
+
+                        <br/>
+
+                        <CardColumns> {this.displayTrades()}  </CardColumns>
+                      </div>
+                    : <div>No trades found.</div>
                 }
-                {this.displayTrades()}
             </div>
-
-
-
-
-
         );
     }
 }
