@@ -25,17 +25,31 @@ MVP: One-to-one exchange of ERC721 token of the same contract (e.g. token with I
 7. Once in possession of both token, the trade is completed and the maker and taker each are approved for their respective token
 8. Both parties withdraw their token.
 
-#### Upcoming:
 ###### Second Phase: Frontend
-Using React, provide a visualisation of open trades and allow the use of all functionality mentioned above via the browser and Metamask.
-TODOs:
-- let people withdraw their token (My trades menu) where all involved are listed?
-- browse contains a list of all active trades
-- MVP status (i.e. fulfills all requirements to be submitted). Each following phase maintains this.
-- Usability: Make sure every form allows submit on enter, proper gas estimates, display when MM locked
+An application where you can create a trade by specifying contract and id of the token you want to trade away, as well as what you want.
+One can browse trades by id and cancel own trades or fill others.
+There is also a component that allows minting of different ERC721 token for testing purposes.
 
 ###### Third Phase: Trade for different contract
-Allow specifying a different ERC721 contract and token to receive
+The taker token no longer must be from the same contract. Included this functionality in the smart contract, the tests, and frontend components component in the frontend.
+
+#### Upcoming:
+Functionality Freeze, get project ready:
+- proper gas estimates
+- display when MM locked
+- reload when mm switch account
+- after cancelling or completing go to withdraw always (sometimes it does not happen)
+- withdrawal completed should be reset when new lookup
+
+Finally:
+- MVP status (i.e. fulfills all requirements to be submitted). Each following phase maintains this.
+
+
+Quality of life:
+    - State space becomes cumbersome, use redux
+
+
+
 
 ###### Fourth Phase: 1 for m trades
 Extend the contract to allow specifying multiple tokens to be received.
@@ -53,12 +67,5 @@ Now allow ERC20 token to be added to both sides of the trade, instead of provind
 - Maybe UX improvements are possible? Currently 6 transactions are required to complete a trade, 3 by each participant (maker approves, maker creates order, taker approves, taker fills order, maker and taker withdraw). Maybe this can be reduced.
 
 
-TODO:
-- clear up code so far
-- go to ERC20!
-
-Quality of life:
-    - after cancelling or completing go to withdraw always (sometimes it does not happen)
-    - withdrawal completed should be reset when new lookup
-    - State space becomes cumbersome, use redux
-    - Faucet is suggested in create trade menu
+### Setup:
+ganache-cli -m "voice inch endorse recycle absurd claim ripple receive section same exist profit"
