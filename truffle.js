@@ -1,5 +1,5 @@
 var HDWalletProvider = require("truffle-hdwallet-provider");
-var accounts = require("../accounts.js");
+var accounts = require("./accounts.js");
 const rinkebyToken = "https://rinkeby.infura.io/" + accounts.infuraToken();
 
 
