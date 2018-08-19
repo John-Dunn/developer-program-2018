@@ -493,7 +493,7 @@ export default class NewTrade extends React.Component {
           return (<p></p>);
       } else {
           return(
-              <p>Trade successfully created! Trade id: <strong>{this.state.tradeId}</strong>.</p>
+              <p className="centered"> Trade successfully created! Trade id: &nbsp; <strong>{this.state.tradeId}</strong>.</p>
           )
       }
   }

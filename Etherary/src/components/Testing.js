@@ -15,6 +15,7 @@ class Testing extends Component {
     // Lifecycle methods
     constructor(props) {
         super(props);
+
         this.state = {
             faucetInstanceA: null,
             faucetAddressA: null,
@@ -73,7 +74,7 @@ class Testing extends Component {
     }
 
 
-    toSomething(tokenOwner, account) {
+    fetchTokenA(tokenOwner, account) {
         var tokensOwnedByAccount = [];
         for (var i = 0; i < tokenOwner.length; i++) {
             if (tokenOwner[i] === account) {
@@ -85,7 +86,7 @@ class Testing extends Component {
         })
     }
 
-    toSomethingB(tokenOwner, account) {
+    fetchTokenB(tokenOwner, account) {
         var tokensOwnedByAccount = [];
         for (var i = 0; i < tokenOwner.length; i++) {
             if (tokenOwner[i] === account) {
@@ -124,7 +125,7 @@ class Testing extends Component {
             }
             Promise.all(promises)
             .then(function(resolvedPromises){
-                this.toSomething(resolvedPromises, account);
+                this.fetchTokenA(resolvedPromises, account);
             }.bind(this))
         }.bind(this))
 
@@ -146,56 +147,27 @@ class Testing extends Component {
             }
             Promise.all(promises)
             .then(function(resolvedPromises){
-                this.toSomethingB(resolvedPromises, account);
+                this.fetchTokenB(resolvedPromises, account);
             }.bind(this))
         }.bind(this))
     }
 
-
-    // Action handlers
     handleMintA() {
-        this.setState({
-            justMintedA: false,
-            justMintedB: false
-        })
-
-        var instance = this.state.faucetInstanceA;
-        var account = this.state.account;
-        instance.mint({from:this.state.account})
-        // Get minted token number for UI
-        .then(function(result) {
-            console.log("Minting successful", result);
-            var txLogs = getLogs(result);
-            var mintedToken = txLogs[0].args._tokenId.toNumber();
-            var priorOwnedToken = this.state.tokenOwnedA
-            priorOwnedToken.push(mintedToken)
-
-            this.setState({
-                justMintedA: true,
-                latestMintedTokenA: txLogs[0].args._tokenId.toNumber(),
-                tokenOwnedA: priorOwnedToken
-            })
-            // The gas in the following line is to prevent caching
-            // see https://github.com/ethereum/web3.js/issues/1463
-            return instance.balanceOf.call(account, {gas: 500000+Math.floor(Math.random()*1001)})
-        }.bind(this))
-        .then(function(result) {
-            var balance = result.toNumber();
-            console.log("Faucet token balance updated: ", balance);
-
-            this.setState({
-                tokenBalanceA: result.toNumber(),
-            })
-        }.bind(this))
+        this.handleMint(true);
     }
 
     handleMintB() {
+        this.handleMint(false);
+    }
+
+
+    handleMint(isFaucetA) {
         this.setState({
             justMintedA: false,
             justMintedB: false
         })
 
-        var instance = this.state.faucetInstanceB;
+        var instance = isFaucetA ? this.state.faucetInstanceA : this.state.faucetInstanceB;
         var account = this.state.account;
         instance.mint({from:this.state.account})
         // Get minted token number for UI
@@ -203,14 +175,23 @@ class Testing extends Component {
             console.log("Minting successful", result);
             var txLogs = getLogs(result);
             var mintedToken = txLogs[0].args._tokenId.toNumber();
-            var priorOwnedToken = this.state.tokenOwnedB
+            var priorOwnedToken = isFaucetA ? this.state.tokenOwnedA : this.state.tokenOwnedB;
             priorOwnedToken.push(mintedToken)
 
-            this.setState({
-                justMintedB: true,
-                latestMintedTokenB: mintedToken,
-                tokenOwnedB: priorOwnedToken
-            })
+            if (isFaucetA) {
+                this.setState({
+                    justMintedA: true,
+                    latestMintedTokenA: txLogs[0].args._tokenId.toNumber(),
+                    tokenOwnedA: priorOwnedToken
+                })
+            } else {
+                this.setState({
+                    justMintedB: true,
+                    latestMintedTokenB: txLogs[0].args._tokenId.toNumber(),
+                    tokenOwnedB: priorOwnedToken
+                })
+            }
+
             // The gas in the following line is to prevent caching
             // see https://github.com/ethereum/web3.js/issues/1463
             return instance.balanceOf.call(account, {gas: 500000+Math.floor(Math.random()*1001)})
@@ -218,12 +199,18 @@ class Testing extends Component {
         .then(function(result) {
             var balance = result.toNumber();
             console.log("Faucet token balance updated: ", balance);
-            this.setState({
-                tokenBalanceB: result.toNumber()
-            })
+
+            if (isFaucetA) {
+                this.setState({
+                    tokenBalanceA: result.toNumber(),
+                })
+            } else {
+                this.setState({
+                    tokenBalanceB: result.toNumber(),
+                })
+            }
         }.bind(this))
     }
-
 
     mintMessage() {
         if (!this.state.justMintedA && !this.state.justMintedB) {
@@ -231,11 +218,13 @@ class Testing extends Component {
         }
 
         if (this.state.justMintedA) {
-            return(<p>Minting successful. You received the ant token with id <strong>{this.state.latestMintedTokenA}</strong>.</p>)
+            return(<div className="centered">Minting successful. You received the ant token with
+            id &nbsp; <strong>{this.state.latestMintedTokenA}</strong>.</div>)
         }
 
         if (this.state.justMintedB) {
-            return(<p>Minting successful. You received the beaver token with id <strong>{this.state.latestMintedTokenB}</strong>.</p>)
+            return(<div className="centered">Minting successful. You received the beaver token with
+             id &nbsp; <strong>{this.state.latestMintedTokenB}</strong>.</div>)
         }
     }
 
@@ -268,7 +257,7 @@ class Testing extends Component {
 
                 <h5> CryptoBeavers </h5>
                 {
-                    this.state.tokenBalanceA == 0
+                    this.state.tokenBalanceB == 0
                     ? <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressB}</strong> where you currently
                     own no token.</p>
                     : <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressB}</strong> where you currently
