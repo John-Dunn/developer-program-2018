@@ -87,8 +87,6 @@ class App extends Component {
                     web3Connected: results.web3 != null && results.web3.isConnected() && results.web3.eth.accounts.length > 0
                 })
             }.bind(this))
-            this.watchForAccountUpdate();
-
         })
         .catch((e) => {
             console.log('Error finding web3.', e)
@@ -129,8 +127,8 @@ class App extends Component {
         );
     }
 }
-// <Route path='/myTrades' render={() => (
-//     <MyTrades web3={this.state.web3} web3Connected={this.state.web3Connected}/>
-// )}/>
+
+
+
 
 export default App

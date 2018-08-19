@@ -95,7 +95,7 @@ class ActiveTradeModal extends Component {
         ).then(function(txid) {
             console.log('Completing trade', txid);
             var expectedEvent = {
-                _tradeId: this.props.web3.toBigNumber(this.props.tradeId);
+                _tradeId: this.props.web3.toBigNumber(this.props.tradeId)
             }
             if(didEventOccur(txid, expectedEvent)) {
                 this.setState({

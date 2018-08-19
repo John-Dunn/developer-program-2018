@@ -38,7 +38,7 @@ class Testing extends Component {
     getAllToken(instance) {
         instance.totalSupply()
         .then(function(result) {
-            console.log("Supply: ", result)
+            console.log("Supply: ", result);
         })
     }
 
@@ -119,7 +119,6 @@ class Testing extends Component {
         instanceA.totalSupply()
         .then(function(supply) {
             var promises = [];
-            var addresses = [];
             for (var i = 0; i<supply.toNumber(); i++){
                 promises.push(instanceA.ownerOf(i));
             }
@@ -141,7 +140,6 @@ class Testing extends Component {
         instanceB.totalSupply()
         .then(function(supply) {
             var promises = [];
-            var addresses = [];
             for (var i = 0; i<supply.toNumber(); i++){
                 promises.push(instanceB.ownerOf(i));
             }
@@ -246,7 +244,7 @@ class Testing extends Component {
 
                 <h5> CryptoAnts </h5>
                 {
-                    this.state.tokenBalanceA == 0
+                    this.state.tokenBalanceA === 0
                     ? <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressA}</strong> where you currently
                     own no token.</p>
                     : <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressA}</strong> where you currently
@@ -257,7 +255,7 @@ class Testing extends Component {
 
                 <h5> CryptoBeavers </h5>
                 {
-                    this.state.tokenBalanceB == 0
+                    this.state.tokenBalanceB === 0
                     ? <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressB}</strong> where you currently
                     own no token.</p>
                     : <p> The ERC721 token contract is deployed at <strong>{this.state.faucetAddressB}</strong> where you currently
