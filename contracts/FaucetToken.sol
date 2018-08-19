@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import "zeppelin/contracts/token/StandardToken.sol";
+import "openzeppelin-solidity/contracts/token/StandardToken.sol";
 
 /**
  * @title Faucet Token
