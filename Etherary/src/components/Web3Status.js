@@ -9,7 +9,7 @@ class Web3Status extends Component {
         }
 
         if (web3.currentProvider.isMetaMask){
-            return (<div> Web3 Connection via Metamask</div>);
+            return (<div> Web3 Connection via Metamask {web3.eth.accounts[0]}</div>);
         } else {
             return (<div> Web3 Connection via {web3.currentProvider.host}</div>);
         }
