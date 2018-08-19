@@ -110,7 +110,7 @@ class InactiveTradeModal extends Component {
     render() {
         return (
             <Modal isOpen={this.props.show} toggle={this.props.toggleCallback}>
-              <ModalHeader>Complete Trade #{this.props.tradeId}</ModalHeader>
+              <ModalHeader>Trade #{this.props.tradeId}</ModalHeader>
 
               <ModalBody>
                 {this.statusMessage()}
