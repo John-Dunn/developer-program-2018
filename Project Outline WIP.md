@@ -34,9 +34,6 @@ There is also a component that allows minting of different ERC721 token for test
 The taker token no longer must be from the same contract. Included this functionality in the smart contract, the tests, and frontend components component in the frontend.
 
 #### Upcoming:
-Frontend Functionality TODOs:
-- Display all trades [checkbox with my trades, checkbox active inactive]
-
 Functionality Freeze, get project ready:
 - proper gas estimates
 - display when MM locked
