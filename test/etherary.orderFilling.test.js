@@ -4,7 +4,7 @@ var GenericERC721TokenA = artifacts.require('GenericERC721TokenA');
 var GenericERC721TokenB = artifacts.require('GenericERC721TokenB');
 var Etherary = artifacts.require("Etherary");
 
-contract('Etherary', function(accounts) {
+contract('Etherary - Complete Trades', function(accounts) {
 
     const deployer = accounts[0]
     const alice = accounts[1]
@@ -162,6 +162,40 @@ contract('Etherary', function(accounts) {
         it("should not be possible to fill a cancelled order", async function () {
             await exceptions.tryCatch(
                 etherary.fillERC721Trade.sendTransaction(tradeId, {from:bob}),
+                exceptions.errTypes.revert
+            );
+        });
+    });
+
+
+    describe("Circuit Breaker", function () {
+        before(async function() {
+            // Deploy two ERC721 Faucets
+            tokenA = await GenericERC721TokenA.new({gas: 5000000});
+            tokenB = await GenericERC721TokenB.new({gas: 5000000});
+
+            // Mint a couple of token for Alice and Bob
+            await tokenA.mint({from: alice, gas:gasForMinting});
+            await tokenB.mint({from: bob, gas:gasForMinting});
+
+            // Deploy main contract
+            etherary = await Etherary.new();
+
+            // Approve main contract to withdraw token to be sold
+            await tokenA.approve(etherary.address, tokenAliceSells, {from: alice});
+            await tokenB.approve(etherary.address, tokenAliceWantsBobOwns, {from: bob});
+        });
+
+        it("should not be possible to create a trade while stopped", async function () {
+            await etherary.toggleContractActive.sendTransaction({from: deployer});
+            await exceptions.tryCatch(
+                etherary.createERC721Trade(
+                    tokenA.address,
+                    tokenAliceSells,
+                    tokenB.address,
+                    tokenAliceWantsBobOwns,
+                    {from: alice}
+                ),
                 exceptions.errTypes.revert
             );
         });

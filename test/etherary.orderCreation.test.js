@@ -5,7 +5,7 @@ var GenericERC721TokenB = artifacts.require('GenericERC721TokenB')
 var Etherary = artifacts.require("Etherary");
 
 
-contract('Etherary: Create Trade', function(accounts) {
+contract('Etherary - Createing Trades', function(accounts) {
 
     const deployer = accounts[0]
     const alice = accounts[1]

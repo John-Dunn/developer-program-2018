@@ -5,7 +5,7 @@ var GenericERC721TokenB = artifacts.require('GenericERC721TokenB')
 var Etherary = artifacts.require("Etherary");
 
 
-contract('Etherary', function(accounts) {
+contract('Etherary - Cancelling Trades', function(accounts) {
 
     const deployer = accounts[0]
     const alice = accounts[1]
@@ -149,5 +149,49 @@ contract('Etherary', function(accounts) {
             );
         });
 
+    });
+
+    describe("Circuit Breaker", function () {
+        // Deploy a new token contract
+        before(async function() {
+            // Deploy the ERC721 Faucet
+            tokenA = await GenericERC721TokenA.new({gas: 5000000});
+            tokenB = await GenericERC721TokenB.new({gas: 5000000});
+
+            // Mint a couple of token for Alice and Bob
+            await tokenA.mint({from: alice, gas:gasForMinting});
+            await tokenB.mint({from: bob, gas:gasForMinting});
+
+            // Deploy main contract
+            etherary = await Etherary.new();
+
+            // Approve main contract to withdraw token to be sold
+            await tokenA.approve(etherary.address, tokenAliceSells, {from: alice});
+
+            // Create a trade
+            await etherary.createERC721Trade(
+                tokenA.address,
+                tokenAliceSells,
+                tokenB.address,
+                tokenAliceWantsBobOwns,
+                {from: alice}
+            );
+        });
+
+        it("should be possible to cancel a trade and withdraw token while stopped", async function () {
+            const tokenOwnerBefore = await tokenA.ownerOf.call(tokenAliceSells);
+            await etherary.toggleContractActive.sendTransaction({from: deployer});
+            await etherary.cancelERC721Trade.sendTransaction(tradeId, {from:alice});
+            await tokenA.safeTransferFrom.sendTransaction(
+                etherary.address,
+                alice,
+                tokenAliceSells,
+                {from:alice, gas: gasForMinting}
+            );
+            const tokenOwnerAfter = await tokenA.ownerOf(tokenAliceSells);
+            assert.equal(tokenOwnerBefore, etherary.address, "Token should be owned by contract before cancelling");
+            assert.equal(tokenOwnerAfter, alice, "Token should be owned by alice after cancelling and withdrawing");
+            assert.isTrue(true);
+        });
     });
 });
