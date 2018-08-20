@@ -28,12 +28,57 @@ A trustless marketplace where one-to-one trades of ERC721 can take place without
 ## Running the project
 The following instructions have been tested on a fresh Ubuntu 16.04 LTS. If you have any trouble getting it to work please let me know.
 
-1. Running ganache: Run `ganache-cli` and remember the mnemonic for importing it in Metamask later (or run `ganache-cli -m "voice inch endorse recycle absurd claim ripple receive section same exist profit"` and use that mnemonic).
-2. Compile 
+1. Run `npm install` to install the dependencies.
+2. Run `ganache-cli` and remember the mnemonic for importing it in Metamask later (or run `ganache-cli -m "voice inch endorse recycle absurd claim ripple receive section same exist profit"` and use that mnemonic).
+3. `truffle compile` and `truffle migrate`
+4. Launch the frontend with `npm run start`. Your browser window at http://localhost:3000/ should open.
+5. Import the mnemonic to Metamask and connect to localhost 8545. You may need to refresh the page.
+
+## Things you can try
+In order to test the full functionality as maker and taker of a trade, you may want to create a second Metamask account. You can do so in the top right corner as shown in this image. Whenever you switch accounts, you need to refresh the page.
+
+![Account setup](/img/metamaskAccount.png)
+
+
+To make testing easier, there is a <b>Testing</b> section where you can mint different ERC721 token.
+For example mint two ant token for account 1, then switch to account 2, refresh the page and mint two beaver token for account 2.
+
+#### Creating a trade
+Go to the <b>New Trade</b> tab and fill out the form (if you followed the steps above you could create a trade giving away beaver token 0 for ant token 0). Once you created the trade, you see it in the <b>Browse Trades</b> tab or the <b>Lookup Trade</b> tab.
+
+#### Cancelling a trade
+Find your trade, either in the <b>Browse Trades</b> tab or the <b>Lookup Trade</b> tab. If you are the maker you will see a cancel button below your trade. Once a trade is cancelled and you look it up again (tick the `Show inactive` checkbox), you will have the option to withdraw your token.
+
+#### Filling a trade
+Once a trade is created, the owner of the wanted token can fill it. Create a trade as described above (if you just created and cancelled a trade, you can just create the same trade again), then switch to the other account and refresh the page. Find the trade in the <b>Browse Trades</b> tab or the <b>Lookup Trade</b> tab, where you will see a button to complete the trade. Once completed both maker and taker accounts can now lookup the trade under the inactive trades where and withdraw the traded token. You can check which token you own at any time by switching to the <b>Testing</b> tab.
+
+
+That's it! I hope you had a bit of fun playing around with it. If you read the project outline you will know I am planning on expanding the functionality and running the dApp on the mainnet. I would very much appreciate any feedback! Please let me know on Ryver (JohnDunn) or open an issue.
 
 
 
-Contains the following exercises and projects created in the context of the developer program:
-* Final Project (work in progress): Etherary - trustless exchange of arbitrary ERC721 Token
-* Supplementary for the final project: An implementation of a faucet for ERC20 token deployed on Rinkeby (for more details see the README in the respective directory) as well as an ERC721 faucet (not yet deployed)
-* Exercises: Simple bank and supply chain exercise
+## Grading Rubric
+In order to facilitate grading, for each of the rubrics I'll point to the corresponding piece of code or explain where to find the information required.
+
+#### User Interface Requirements
+If you have gotten the app to run as mentioned in the previous section, the first two requirements should not be a problem. For the third point, the current account can always be seen on the right side of the header. One example for signing transactions and reflecting the contract updates in the UI is the <b>Testing</b> tab where you sign a transaction to mint a token and the token ID as well as the total balance is updated in the UI.
+
+#### Testing
+If you run `truffle test` you will see Javascript tests running for the 3 contracts.
+There is the main contract (`Etherary.sol`), as well as token faucets for ERC20 (`GenericERC20Token.sol`) and ERC721 Token (`GenericERC721TokenA.sol`, `GenericERC721TokenB.sol` which only differn by name).
+
+As an example of test structure, you can have a look at e.g. `etherary.orderFilling.test.js` where the context is set up my minting token to two accounts and creating a trade before each test. Each test is for a different stage of the trade completion process. For example the third test in that file completes a transaction and checks whether the `TradeCompleted` event is being emitted.
+
+Each of the three main actions of the main contract is tested thoroughly (>5 tests for creating, cancelling and completing an order). The token faucets consist of very little code (they use the openzeppelin token contracts which are well-tested), yet are also tested for main functionality. Since the two ERC721 faucets are the same except the name, only one is tested.
+
+#### Design Pattern Requirements
+The main contract `Etherary.sol` is `Ownable` and allows the owner to toggle the `stopped` variable. The modifier `stopInEmergency` based on that prevents new trades from being created or existing trades from being completed when a contract is stopped. Contract owners still may cancel and withdraw their token, as well as withdraw their token from completed trades.
+
+TODO
+
+#### Common Attacks
+
+TODO
+
+#### Library
+Each contract uses some OpenZeppelin contract. The main contract uses `Ownable` for circuit breaker functionality, the token faucets rely heavily on the token definitions and SafeMath. The contracts and libraries are imported via npm as ethPM does not carry the latest version (1.03 vs. 1.13).
