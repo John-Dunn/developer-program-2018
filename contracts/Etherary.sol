@@ -1,14 +1,13 @@
-// TODO: import "openzeppelin-solidity/contracts/token/ERC721/ERC721Receiver.sol"; for safeTransfer
-
-
-
 
 pragma solidity 0.4.24;
 
+// TODO: import "openzeppelin-solidity/contracts/token/ERC721/ERC721Receiver.sol"; for safeTransfer
 
 /// @dev Provides ERC721 contract ionterface for querying ownership and manipulating approval
 /// status
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Basic.sol";
+/// @dev Used for circuit breaker pattern
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 /// @title Etherary trustless exchange of ERC721 token
 // Terminology:
@@ -19,18 +18,23 @@ import "openzeppelin-solidity/contracts/token/ERC721/ERC721Basic.sol";
 //  - Taker: Party that completes a trade, receiving the maker token, giving away the taker token
 //  - Taker token: Token the taker has that the maker wants
 
-contract Etherary {
+contract Etherary is Ownable {
+
+    mapping (uint256 => Trade) public idToTrade;
+
+    // Increasing counter of trade IDs
+    uint256 public tradeId = 0;
+
     /// @dev Magic numbers for the xor-ed hashes of the interface
     /// https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/token/ERC721/ERC721Basic.sol
     /// Used for checking whether the provided ERC721 contract implements the neccessary
     /// functions. See EIP165
     bytes4 private constant InterfaceId_ERC721 = 0x80ac58cd;
     bytes4 private constant InterfaceId_ERC721Exists = 0x4f558e79;
+    /// @dev in case something goes wrong this variable is set to true and all trades will no
+    /// longer be fillable, only cancelling and withdrawing is allowed then
+    bool private stopped = false;
 
-    mapping (uint256 => Trade) public idToTrade;
-
-    // Increasing counter of trade IDs
-    uint256 public tradeId = 0;
 
     // Do this later as part of an trade?
     // enum AssetType { ETHER, ERC20, ERC721 }
@@ -42,14 +46,11 @@ contract Etherary {
         uint256 _takerTokenId,
         uint256 _tradeId
     );
+    event TradeCancelled (uint256 _tradeId);
+    event TradeCompleted (uint256 _tradeId);
 
-    event TradeCancelled (
-        uint256 _tradeId
-    );
-
-    event TradeCompleted (
-        uint256 _tradeId
-    );
+    event ContractStopped();
+    event ContractResumed();
 
     struct Trade {
         //AssetType assetType;
@@ -61,6 +62,9 @@ contract Etherary {
         uint256 takerTokenId; /// @dev only used for ERC721
         bool isActive;
     }
+
+    // Modifier
+    modifier stopInEmergency() { require(!stopped); _; }
 
     modifier onlyMaker(uint256 _tradeId) {
         require(
@@ -76,6 +80,12 @@ contract Etherary {
         trade.isActive = false;
     }
 
+    function toggleContractActive() public onlyOwner {
+        stopped = !stopped;
+        if (stopped) { emit ContractStopped(); }
+        if (!stopped) { emit ContractResumed(); }
+    }
+
     /// @notice This contract must be an approved withdrawer for the maker token
     function createERC721Trade(
         address _makerTokenContractAddress,
@@ -84,6 +94,7 @@ contract Etherary {
         uint256 _takerTokenId
     )
         public
+        stopInEmergency
     {
         ERC721Basic makerTokenContract = ERC721Basic(_makerTokenContractAddress);
         ERC721Basic takerTokenContract = ERC721Basic(_takerTokenContractAddress);
@@ -125,6 +136,7 @@ contract Etherary {
     function fillERC721Trade(uint256 _tradeId)
         public
         deactivatesTrade(_tradeId)
+        stopInEmergency
     {
         Trade storage trade = idToTrade[_tradeId];
 
