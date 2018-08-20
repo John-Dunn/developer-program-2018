@@ -5,7 +5,7 @@ var GenericERC721TokenB = artifacts.require('GenericERC721TokenB')
 var Etherary = artifacts.require("Etherary");
 
 
-contract('Etherary', function(accounts) {
+contract('Etherary: Create Trade', function(accounts) {
 
     const deployer = accounts[0]
     const alice = accounts[1]
@@ -184,8 +184,9 @@ contract('Etherary', function(accounts) {
             );
         });
 
-
         it("should allow creation of another sell order", async function () {
+            await etherary.toggle
+
             await etherary.createERC721Trade.sendTransaction(
                 tokenB.address,
                 tokenBobSells,
@@ -235,5 +236,51 @@ contract('Etherary', function(accounts) {
             assert.equal(Trade[5], tokenAliceWantsBobOwns, "token to be bought should be as specified");
             assert.equal(Trade[6], true, "order should be active");
         });
+    });
+
+    describe("Circuit breaker", function () {
+        it("should allow contract to be stopped and resumed by owner", async function () {
+            await etherary.toggleContractActive.sendTransaction({from: deployer});
+
+            // Check for ContractStopped event
+            const LogContractStopped = await etherary.ContractStopped();
+            const log = await new Promise(function(resolve, reject) {
+                LogContractStopped.watch(function(error, log){ resolve(log); } );
+            });
+            assert.equal(log.event, 'ContractStopped', "contract should be stopped");
+
+            await etherary.toggleContractActive.sendTransaction({from: deployer});
+
+            // Check for ContractResumed event
+            const LogContractResumed = await etherary.ContractResumed();
+            const logResume = await new Promise(function(resolve, reject) {
+                LogContractResumed.watch(function(error, log){ resolve(log); } );
+            });
+            assert.equal(logResume.event, 'ContractResumed', "contract should be resumed");
+        });
+
+        it("should not allow contract to be stopped by non-owner", async function () {
+            await exceptions.tryCatch(
+                etherary.toggleContractActive.sendTransaction(
+                    {from: alice}
+                ),
+                exceptions.errTypes.revert
+            );
+        });
+
+        it("should not allow new trade when stopped", async function () {
+            await etherary.toggleContractActive.sendTransaction({from: deployer});
+            await exceptions.tryCatch(
+                etherary.createERC721Trade.sendTransaction(
+                    tokenA.address,
+                    tokenAliceSells,
+                    tokenB.address,
+                    tokenAliceWantsBobOwns,
+                    {from: alice}
+                ),
+                exceptions.errTypes.revert
+            );
+        });
+
     });
 });
