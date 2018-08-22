@@ -1,13 +1,8 @@
-
 pragma solidity 0.4.24;
 
-// TODO: import "openzeppelin-solidity/contracts/token/ERC721/ERC721Receiver.sol"; for safeTransfer
-
-/// @dev Provides ERC721 contract ionterface for querying ownership and manipulating approval
-/// status
-import "openzeppelin-solidity/contracts/token/ERC721/ERC721Basic.sol";
-/// @dev Used for circuit breaker pattern
+/// @dev Used for circuit breaker
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "./WrappedToken.sol";
 
 /// @title Etherary trustless exchange of ERC721 token
 // Terminology:
@@ -18,32 +13,22 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 //  - Taker: Party that completes a trade, receiving the maker token, giving away the taker token
 //  - Taker token: Token the taker has that the maker wants
 
-contract Etherary is Ownable {
+contract Etherary is Ownable, WrappedToken {
 
     mapping (uint256 => Trade) public idToTrade;
 
     // Increasing counter of trade IDs
     uint256 public tradeId = 0;
 
-    /// @dev Magic numbers for the xor-ed hashes of the interface
-    /// https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/token/ERC721/ERC721Basic.sol
-    /// Used for checking whether the provided ERC721 contract implements the neccessary
-    /// functions. See EIP165
-    bytes4 private constant InterfaceId_ERC721 = 0x80ac58cd;
-    bytes4 private constant InterfaceId_ERC721Exists = 0x4f558e79;
     /// @dev in case something goes wrong this variable is set to true and all trades will no
     /// longer be fillable, only cancelling and withdrawing is allowed then
     bool private stopped = false;
 
-
-    // Do this later as part of an trade?
-    // enum AssetType { ETHER, ERC20, ERC721 }
-    // TODO: event arguments should start with underscores
     event TradeCreated (
         address _makerTokenContract,
-        uint256 _makerTokenId,
+        uint256 _makerTokenIdOrAmount,
         address _takerTokenContract,
-        uint256 _takerTokenId,
+        uint256 _takerTokenIdOrAmount,
         uint256 _tradeId
     );
     event TradeCancelled (uint256 _tradeId);
@@ -53,23 +38,28 @@ contract Etherary is Ownable {
     event ContractResumed();
 
     struct Trade {
-        //AssetType assetType;
+        bool isMakerContractERC20; // If false, ERC721
+        bool isTakerContractERC20; // If false, ERC721
         address maker;
         address taker;
         address makerTokenContract;
         address takerTokenContract;
-        uint256 makerTokenId; /// @dev only used for ERC721
-        uint256 takerTokenId; /// @dev only used for ERC721
+        uint256 makerTokenIdOrAmount;
+        uint256 takerTokenIdOrAmount;
         bool isActive;
     }
 
     // Modifier
-    modifier stopInEmergency() { require(!stopped); _; }
+    modifier stopsInEmergency() {
+        require(!stopped, "This function cannot be called, contract stopped");
+        _;
+    }
 
     modifier onlyMaker(uint256 _tradeId) {
         require(
             idToTrade[_tradeId].maker == msg.sender,
-            "Only the maker of the trade can call this function.");
+            "Only the maker of the trade can call this function."
+        );
         _;
     }
 
@@ -82,107 +72,137 @@ contract Etherary is Ownable {
 
     function toggleContractActive() public onlyOwner {
         stopped = !stopped;
-        if (stopped) { emit ContractStopped(); }
-        if (!stopped) { emit ContractResumed(); }
+        if (stopped) {emit ContractStopped();}
+        if (!stopped) {emit ContractResumed();}
     }
 
     /// @notice This contract must be an approved withdrawer for the maker token
-    function createERC721Trade(
-        address _makerTokenContractAddress,
-        uint256 _makerTokenId,
-        address _takerTokenContractAddress,
-        uint256 _takerTokenId
+    function createTrade(
+        address _makerTokenContract,
+        bool _isMakerERC20,
+        uint256 _makerTokenIdOrAmount,
+        address _takerTokenContract,
+        bool _isTakerERC20,
+        uint256 _takerTokenIdOrAmount
     )
         public
-        stopInEmergency
+        stopsInEmergency
     {
-        ERC721Basic makerTokenContract = ERC721Basic(_makerTokenContractAddress);
-        ERC721Basic takerTokenContract = ERC721Basic(_takerTokenContractAddress);
-
         require(
-            validERC721Contract(makerTokenContract) && validERC721Contract(takerTokenContract),
-            "Provided contracts must support the ERC721 interface."
+            isOwned(_makerTokenContract, _isMakerERC20, msg.sender, _makerTokenIdOrAmount),
+            "Caller must own the maker token"
+        );
+        require(
+            isApproved(
+                _makerTokenContract,
+                _isMakerERC20,
+                msg.sender,
+                address(this),
+                _makerTokenIdOrAmount
+            ),
+            "This contract must be an approved spender of the maker token"
         );
 
-        require(makerTokenContract.exists(_makerTokenId), "Maker token does not exist.");
-        require(takerTokenContract.exists(_takerTokenId), "Taker token does not exist.");
-        require(
-            callerOwnsTokenAndHasApproved(makerTokenContract, _makerTokenId),
-            "Maker must own the token and have approved this contract."
+        transferFrom(
+            _makerTokenContract,
+            _isMakerERC20,
+            msg.sender,
+            address(this),
+            _makerTokenIdOrAmount
         );
 
-        makerTokenContract.transferFrom(msg.sender, address(this), _makerTokenId);
         Trade memory trade = Trade({
+            isMakerContractERC20: _isMakerERC20,
+            isTakerContractERC20: _isTakerERC20,
             maker: msg.sender,
-            taker: 0x0000000000000000000000000000000000000000,
-            makerTokenContract: _makerTokenContractAddress,
-            takerTokenContract: _takerTokenContractAddress,
-            makerTokenId: _makerTokenId,
-            takerTokenId: _takerTokenId,
+            taker: 0,
+            makerTokenContract: _makerTokenContract,
+            takerTokenContract: _takerTokenContract,
+            makerTokenIdOrAmount: _makerTokenIdOrAmount,
+            takerTokenIdOrAmount: _takerTokenIdOrAmount,
             isActive: true
         });
 
         idToTrade[tradeId] = trade;
         emit TradeCreated(
-            _makerTokenContractAddress,
-            _makerTokenId,
-            _takerTokenContractAddress,
-            _takerTokenId,
+            _makerTokenContract,
+            _makerTokenIdOrAmount,
+            _takerTokenContract,
+            _takerTokenIdOrAmount,
             tradeId
         );
         tradeId++;
     }
 
-    function fillERC721Trade(uint256 _tradeId)
-        public
-        deactivatesTrade(_tradeId)
-        stopInEmergency
-    {
-        Trade storage trade = idToTrade[_tradeId];
-
-        ERC721Basic makerTokenContract = ERC721Basic(trade.makerTokenContract);
-        ERC721Basic takerTokenContract = ERC721Basic(trade.takerTokenContract);
-
-        require(
-            callerOwnsTokenAndHasApproved(takerTokenContract, trade.takerTokenId),
-            "Taker must own the token and have approved this contract."
-        );
-        takerTokenContract.transferFrom(msg.sender, address(this), trade.takerTokenId);
-        makerTokenContract.approve(msg.sender, trade.makerTokenId);
-        takerTokenContract.approve(trade.maker, trade.takerTokenId);
-        trade.taker = msg.sender;
-        emit TradeCompleted(_tradeId);
-    }
-
-    function cancelERC721Trade(uint256 _tradeId)
+    function cancelTrade(uint256 _tradeId)
         public
         onlyMaker(_tradeId)
         deactivatesTrade(_tradeId)
     {
         Trade storage trade = idToTrade[_tradeId];
 
-        ERC721Basic makerTokenContract = ERC721Basic(trade.makerTokenContract);
-        assert(makerTokenContract.ownerOf(trade.makerTokenId) == address(this));
-        makerTokenContract.approve(msg.sender, trade.makerTokenId);
+        approve(
+            trade.makerTokenContract,
+            trade.isTakerContractERC20,
+            msg.sender,
+            trade.makerTokenIdOrAmount
+        );
 
         emit TradeCancelled(_tradeId);
     }
 
 
-    function validERC721Contract(ERC721Basic _tokenContract) private view returns(bool) {
-        bool supportsInterface = _tokenContract.supportsInterface(InterfaceId_ERC721);
-        bool supportsExist = _tokenContract.supportsInterface(InterfaceId_ERC721Exists);
-        return supportsInterface && supportsExist;
-    }
 
-    function callerOwnsTokenAndHasApproved(ERC721Basic _tokenContract, uint256 _tokenId)
-        private
-        view
-        returns (bool)
+    function fillTrade(uint256 _tradeId)
+        public
+        deactivatesTrade(_tradeId)
+        stopsInEmergency
     {
-        bool callerOwnsToken = _tokenContract.ownerOf(_tokenId) == msg.sender;
-        bool callerHasApproved = _tokenContract.getApproved(_tokenId) == address(this);
-        return callerOwnsToken && callerHasApproved;
+        Trade storage trade = idToTrade[_tradeId];
+
+        require(
+            isOwned(
+                trade.takerTokenContract,
+                trade.isTakerContractERC20,
+                msg.sender,
+                trade.takerTokenIdOrAmount
+            ),
+            "Caller must own the taker token."
+        );
+        require(
+            isApproved(
+                trade.takerTokenContract,
+                trade.isTakerContractERC20,
+                msg.sender,
+                address(this),
+                trade.takerTokenIdOrAmount
+            ),
+            "This contract must be an approved spender of the taker token"
+        );
+
+        transferFrom(
+            trade.takerTokenContract,
+            trade.isTakerContractERC20,
+            msg.sender,
+            address(this),
+            trade.takerTokenIdOrAmount
+        );
+        approve(
+            trade.takerTokenContract,
+            trade.isTakerContractERC20,
+            trade.maker,
+            trade.takerTokenIdOrAmount
+        );
+
+        approve(
+            trade.makerTokenContract,
+            trade.isMakerContractERC20,
+            msg.sender,
+            trade.makerTokenIdOrAmount
+        );
+
+        trade.taker = msg.sender;
+        emit TradeCompleted(_tradeId);
     }
 
 }
