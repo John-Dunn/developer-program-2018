@@ -145,7 +145,8 @@ contract Etherary is Ownable, WrappedToken {
             trade.makerTokenContract,
             trade.isTakerContractERC20,
             msg.sender,
-            trade.makerTokenIdOrAmount
+            trade.makerTokenIdOrAmount,
+            address(this)
         );
 
         emit TradeCancelled(_tradeId);
@@ -191,14 +192,16 @@ contract Etherary is Ownable, WrappedToken {
             trade.takerTokenContract,
             trade.isTakerContractERC20,
             trade.maker,
-            trade.takerTokenIdOrAmount
+            trade.takerTokenIdOrAmount,
+            address(this)
         );
 
         approve(
             trade.makerTokenContract,
             trade.isMakerContractERC20,
             msg.sender,
-            trade.makerTokenIdOrAmount
+            trade.makerTokenIdOrAmount,
+            address(this)
         );
 
         trade.taker = msg.sender;

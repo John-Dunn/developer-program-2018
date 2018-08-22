@@ -2,9 +2,11 @@ pragma solidity 0.4.24;
 
 import "./ERC20.sol";
 import "./ERC721.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 // Wrapper for approval and transfer of ERC721 and ERC20 token
 contract WrappedToken {
+    using SafeMath for uint256;
 
     function isOwned (
         address _contractAddress,
@@ -57,11 +59,21 @@ contract WrappedToken {
         address _contractAddress,
         bool _isERC20,
         address _spender,
-        uint256 _tokenAmountOrId
+        uint256 _tokenAmountOrId,
+        address _currentOwner
     )
         internal
     {
-        if (_isERC20) {assert(ERC20(_contractAddress).approve(_spender, _tokenAmountOrId));}
+        if (_isERC20) {
+            ERC20 token = ERC20(_contractAddress);
+            uint256 previousAllowance = token.allowance(_currentOwner, _spender);
+            assert(
+                ERC20(_contractAddress).approve(
+                    _spender,
+                    previousAllowance.add(_tokenAmountOrId)
+                )
+            );
+        }
         if (!_isERC20) {ERC721(_contractAddress).approve(_spender, _tokenAmountOrId);}
     }
 }
