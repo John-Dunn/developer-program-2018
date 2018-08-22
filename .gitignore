@@ -1,5 +1,6 @@
 **/installed_contracts
 **/node_modules
+**/build
 **/React
 accounts.js
 flattened.sol
