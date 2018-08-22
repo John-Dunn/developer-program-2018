@@ -85,7 +85,7 @@ contract('Etherary - Complete Trades (ERC721 for ERC721)', function(accounts) {
 
         it("should be possible to query a filled trade's status", async function () {
             let Trade = await etherary.idToTrade.call(tradeId);
-            assert.equal(Trade[6], false, "Cancelled trade should be inactive");
+            assert.equal(Trade[8], false, "Cancelled trade should be inactive");
         })
 
         it("should be possible for seller to withdraw the token after trade is filled", async function () {
