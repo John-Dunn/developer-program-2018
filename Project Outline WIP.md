@@ -38,12 +38,17 @@ Functionality Freeze, get project ready:
 - proper gas estimates
 - display when MM locked
 - reload when mm switch account
-- after cancelling or completing go to withdraw always (sometimes it does not happen)
 - withdrawal completed should be reset when new lookup
 
 Finally:
-- MVP status (i.e. fulfills all requirements to be submitted). Each following phase maintains this.
 
+- Improve contract
+- Improve two markdowns, Comment according to spec
+- Make sure does not fail if MM on wrong network (check if network id is in the deployed contracts)
+
+- Testnet deployment
+- Stretch Goals
+- Consistent naming
 
 Quality of life:
     - State space becomes cumbersome, use redux

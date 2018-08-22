@@ -10,7 +10,7 @@ A trustless marketplace where one-to-one trades of ERC721 can take place without
 
 
 #### User stories
-- As a owner of an ERC721 token, I want to trade it for some another token per smart contract so that I don't have to selling it first or trust a third party
+- As a owner of an ERC721 token, I want to trade it for some another token per smart contract so that I don't have to sell it first or trust a third party
 
 - As a owner of an ERC721 token, I want to create a trade by specifying my token as well as the token I want to trade my token for so that the owner of that token is able to complete the trade and we both get each other's token.
 
@@ -26,13 +26,14 @@ A trustless marketplace where one-to-one trades of ERC721 can take place without
 
 
 ## Running the project
-The following instructions have been tested on a fresh Ubuntu 16.04 LTS. If you have any trouble getting it to work please let me know.
+The following instructions have been tested on a fresh Ubuntu 16.04.05 LTS with git, nodejs (8.11.4), npm (5.6.0), ganache-cli (6.1.8), and truffle (4.1.14) installed. If you have any trouble getting the steps below to work please let me know.
 
-1. Run `npm install` to install the dependencies.
+1. Run `npm install` to install the dependencies (may take a bit)
 2. Run `ganache-cli` and remember the mnemonic for importing it in Metamask later (or run `ganache-cli -m "voice inch endorse recycle absurd claim ripple receive section same exist profit"` and use that mnemonic).
-3. `truffle compile` and `truffle migrate`
-4. Launch the frontend with `npm run start`. Your browser window at http://localhost:3000/ should open.
-5. Import the mnemonic to Metamask and connect to localhost 8545. You may need to refresh the page.
+3. Import the seed phrase to Metamask and switch to localhost:8545. You should see a balance just below 100 ETH. 
+4. `truffle compile` and `truffle migrate`
+5. Launch the frontend with `npm run start`. Your browser window at http://localhost:3000/ should open.
+and connect to localhost 8545. You may need to refresh the page.
 
 ## Things you can try
 In order to test the full functionality as maker and taker of a trade, you may want to create a second Metamask account. You can do so in the top right corner as shown in this image. Whenever you switch accounts, you need to refresh the page.
@@ -72,13 +73,13 @@ As an example of test structure, you can have a look at e.g. `etherary.orderFill
 Each of the three main actions of the main contract is tested thoroughly (>5 tests for creating, cancelling and completing an order). The token faucets consist of very little code (they use the openzeppelin token contracts which are well-tested), yet are also tested for main functionality. Since the two ERC721 faucets are the same except the name, only one is tested.
 
 #### Design Pattern Requirements
-The main contract `Etherary.sol` is `Ownable` and allows the owner to toggle the `stopped` variable. The modifier `stopInEmergency` based on that prevents new trades from being created or existing trades from being completed when a contract is stopped. Contract owners still may cancel and withdraw their token, as well as withdraw their token from completed trades.
+[TODO: mention for the following two that faucets are irrelevant]
+- Circuit Breaker : The main contract `Etherary.sol` is `Ownable` and allows the owner to toggle the `stopped` variable. The modifier `stopInEmergency` based on that prevents new trades from being created or existing trades from being completed when a contract is stopped. Contract owners still may cancel and withdraw their token, as well as withdraw their token from completed trades.
+- Other design decisions are explained in `design_pattern_decisions.md`
 
-TODO
 
 #### Common Attacks
-
-TODO
+Please see `avoiding_common_attacks.md`
 
 #### Library
 Each contract uses some OpenZeppelin contract. The main contract uses `Ownable` for circuit breaker functionality, the token faucets rely heavily on the token definitions and SafeMath. The contracts and libraries are imported via npm as ethPM does not carry the latest version (1.03 vs. 1.13).
