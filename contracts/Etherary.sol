@@ -143,7 +143,7 @@ contract Etherary is Ownable, WrappedToken {
 
         approve(
             trade.makerTokenContract,
-            trade.isTakerContractERC20,
+            trade.isMakerContractERC20,
             msg.sender,
             trade.makerTokenIdOrAmount,
             address(this)
