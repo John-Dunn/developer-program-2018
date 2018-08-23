@@ -15,6 +15,7 @@ contract WrappedToken {
         uint256 _tokenAmountOrId
     )
         internal
+        view
         returns (bool)
     {
         if (_isERC20) {return ERC20(_contractAddress).balanceOf(_caller) >= _tokenAmountOrId;}
@@ -30,6 +31,7 @@ contract WrappedToken {
         uint256 _tokenAmountOrId
     )
         internal
+        view
         returns (bool)
     {
         if (_isERC20) {
