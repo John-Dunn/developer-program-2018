@@ -11,6 +11,8 @@ import {
     tradeToMaker,
     tradeToMakerContract,
     tradeToTakerContract,
+    tradeToIsMakerContractERC20,
+    tradeToIsTakerContractERC20,
     tradeToMakerTokenId,
     tradeToTakerTokenId,
     tradeToActive,
@@ -19,6 +21,7 @@ import {
 
 // Contracts
 import ERC721 from '../../resources/ERC721Basic.json'
+import ERC20 from '../../resources/ERC20Basic.json'
 import Etherary from '../../../build/contracts/Etherary.json'
 
 
@@ -34,17 +37,21 @@ class ActiveTradeModal extends Component {
         }
     }
 
-    isTokenOwner() {
-        return this.props.takerTokenOwner === this.props.account;
-    }
 
     ownershipMessage() {
-        if(this.state.tradeCompleted) {
+        if(this.state.tradeCompleted && tradeToIsMakerContractERC20(this.props.trade)) {
+            return (<font color="green"> <strong> Trade completed! You now own
+                    token {this.props.web3.fromWei(tradeToMakerTokenId(this.props.trade))}. Go to your trades to
+                    withdraw your token.</strong> </font>);
+        }
+
+        if(this.state.tradeCompleted && tradeToIsMakerContractERC20(this.props.trade)) {
             return (<font color="green"> <strong> Trade completed! You now own
                     token #{tradeToMakerTokenId(this.props.trade)}. Go to your trades to
                     withdraw your token.</strong> </font>);
         }
-        if (this.isTokenOwner()) {
+
+        if (this.props.ownsTakerToken) {
             return (<font color="green"> <strong>You own this token. </strong>   </font>);
         } else {
             return (<font color="red"> <strong>You do not own the wanted token.</strong>  </font>);
@@ -52,7 +59,7 @@ class ActiveTradeModal extends Component {
     }
 
     instructionMessage() {
-        if(this.isTokenOwner()) {
+        if(this.props.ownsTakerToken) {
             return(<span> Please review the trade details. If you would like to continue,
                 you need to approve your token to be transferred before completing the trade.
                 <br></br>  <br></br>
@@ -61,16 +68,27 @@ class ActiveTradeModal extends Component {
         }
     }
 
+
+
     handleApproval(event) {
-        var takerTokenId = tradeToTakerTokenId(this.props.trade);
-        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(this.props.trade));
+        if (tradeToIsTakerContractERC20(this.props.trade)) {
+            this.handleApprovalERC20(event);
+        } else {
+            this.handleApprovalERC721(event);
+        }
+    }
+
+    handleApprovalERC721(event) {
+        var trade = this.props.trade;
+        var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(trade));
+
         var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
-        ERC721Instance.approve(etheraryAddress, takerTokenId, {from: this.props.web3.eth.accounts[0]})
+        ERC721Instance.approve(etheraryAddress, tradeToTakerTokenId(trade), {from: this.props.web3.eth.accounts[0]})
         .then(function(txid) {
             var expectedEvent = {
                 _owner: this.props.web3.eth.accounts[0],
                 _approved: etheraryAddress,
-                _tokenId: this.props.web3.toBigNumber(takerTokenId)
+                _tokenId: this.props.web3.toBigNumber(tradeToTakerTokenId(trade))
             }
             if(didEventOccur(txid, expectedEvent)) {
                 this.setState({
@@ -86,10 +104,42 @@ class ActiveTradeModal extends Component {
         event.preventDefault();
     }
 
+    handleApprovalERC20(event) {
+        var trade = this.props.trade;
+
+        var ERC20Instance = instantiateContractAt(ERC20, this.props.web3, tradeToTakerContract(trade));
+
+        var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
+        ERC20Instance.approve(etheraryAddress, tradeToTakerTokenId(trade), {from: this.props.web3.eth.accounts[0]})
+        .then(function(txid) {
+            var expectedEvent = {
+                owner: this.props.web3.eth.accounts[0],
+                spender: etheraryAddress,
+                value: this.props.web3.toBigNumber(tradeToTakerTokenId(trade))
+            }
+            if(didEventOccur(txid, expectedEvent)) {
+                this.setState({
+                    withdrawalApproved: true
+                })
+                console.log('Token approved');
+            }
+        }.bind(this))
+        .catch(function(error) {
+            console.log('Error approving: ', error);
+        });
+
+        event.preventDefault();
+    }
+
+
+
+
+
+
     handleCompleteTrade(event) {
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
 
-        EtheraryInstance.fillERC721Trade(
+        EtheraryInstance.fillTrade(
             this.props.tradeId,
             {from: this.props.web3.eth.accounts[0], gas:500000}
         ).then(function(txid) {
@@ -110,7 +160,7 @@ class ActiveTradeModal extends Component {
     }
 
     buttonRow() {
-        if(!this.isTokenOwner()) {
+        if(!this.props.ownsTakerToken) {
             return <Button onClick={this.props.toggleCallback}>Go Back</Button>
         }
 
@@ -150,6 +200,7 @@ class ActiveTradeModal extends Component {
                     <br></br> <br></br>
                     {this.instructionMessage()}
                     <TradeCardContent
+                        web3={this.props.web3}
                         account={this.props.account}
                         trade={this.props.trade}
                     />

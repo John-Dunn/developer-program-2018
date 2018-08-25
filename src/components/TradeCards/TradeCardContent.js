@@ -3,6 +3,8 @@ import {
     tradeToMaker,
     tradeToMakerContract,
     tradeToTakerContract,
+    tradeToIsMakerContractERC20,
+    tradeToIsTakerContractERC20,
     tradeToMakerTokenId,
     tradeToTakerTokenId,
     tradeToActive,
@@ -30,11 +32,21 @@ class TradeCardContent extends Component {
 
 
     makerTokenLine() {
-        return (<span><strong>Token Offered:</strong> <br></br>  #{tradeToMakerTokenId(this.props.trade)} from ERC721 contract {tradeToMakerContract(this.props.trade)}. <br></br></span>)
+        return (<span><strong>Token Offered:</strong> <br></br>
+            {tradeToIsMakerContractERC20(this.props.trade)
+             ? <span> {this.props.web3.fromWei(tradeToMakerTokenId(this.props.trade), "ether")} from ERC20 contract {tradeToMakerContract(this.props.trade)}. </span>
+             : <span> #{tradeToMakerTokenId(this.props.trade)} from ERC721 contract {tradeToMakerContract(this.props.trade)}. </span>
+            }
+        <br></br></span>)
     }
 
     takerTokenLine() {
-        return (<span><strong>Token Wanted:</strong> <br></br>  #{tradeToTakerTokenId(this.props.trade)} from ERC721 contract {tradeToTakerContract(this.props.trade)}. <br></br></span>)
+        return (<span><strong>Token Wanted:</strong> <br></br>
+            {tradeToIsTakerContractERC20(this.props.trade)
+             ? <span> {this.props.web3.fromWei(tradeToTakerTokenId(this.props.trade), "ether")} from ERC20 contract {tradeToTakerContract(this.props.trade)}. </span>
+             : <span> #{tradeToTakerTokenId(this.props.trade)} from ERC721 contract {tradeToTakerContract(this.props.trade)}. </span>
+            }
+        <br></br></span>)
     }
 
     makerLine() {
