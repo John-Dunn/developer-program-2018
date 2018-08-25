@@ -8,12 +8,14 @@ import TradeCardWrapper from './TradeCards/TradeCardWrapper'
 import {getContractInstance, instantiateContractAt} from '../utils/getContractInstance'
 import {
     tradeToMaker,
+    tradeToTaker,
     tradeToMakerContract,
+    tradeToIsMakerContractERC20,
+    tradeToIsTakerContractERC20,
     tradeToTakerContract,
     tradeToMakerTokenId,
     tradeToTakerTokenId,
-    tradeToActive,
-    tradeToTaker
+    tradeToActive
 } from '../utils/tradeUnpacking'
 
 // Contracts
@@ -30,7 +32,7 @@ class BrowseTrades extends Component {
             tradeId: null,
             trade: null,
             trades: [],
-            showInactive: false,
+            hideInactive: true,
             showOnlyInvolved: false
 
         }
@@ -50,6 +52,7 @@ class BrowseTrades extends Component {
     }
 
     getAllTrades() {
+        console.log("Updating trades")
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
 
         EtheraryInstance.tradeId()
@@ -82,7 +85,7 @@ class BrowseTrades extends Component {
     }
 
     activeFilter(trade) {
-        if (!this.state.showInactive && !tradeToActive(trade[0])) {
+        if (!this.state.hideInactive && !tradeToActive(trade[0])) {
             return false;
         }
         return true;
@@ -124,7 +127,7 @@ class BrowseTrades extends Component {
 
     toggleShowInvalid() {
         this.setState({
-            showInactive: !this.state.showInactive
+            hideInactive: !this.state.hideInactive
         })
     }
 
@@ -144,7 +147,7 @@ class BrowseTrades extends Component {
                         <Col sm={{ size: 'auto', offset: 1 }}>
                             <Label check>
                             <Input type="checkbox" onClick={this.toggleShowInvalid.bind(this)}/>{' '}
-                                Show inactive
+                                Hide inactive
                             </Label>
                         </Col>
                         <Col sm={{ size: 'auto', offset: 1 }}>
