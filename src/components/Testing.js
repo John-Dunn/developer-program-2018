@@ -186,7 +186,7 @@ class Testing extends Component {
 
         instanceD.balanceOf(account)
         .then(function(result) {
-            console.log("Faucet d token balance updated: ", this.props.web3.fromWei(result.toNumber()));
+            console.log("Faucet D token balance updated: ", this.props.web3.fromWei(result.toNumber()));
             this.setState({
                 tokenBalanceD: this.props.web3.fromWei(result.toNumber())
             })
@@ -253,11 +253,11 @@ class Testing extends Component {
 
             if (isFaucetA) {
                 this.setState({
-                    tokenBalanceA: this.props.web3.fromWei(result.toNumber()),
+                    tokenBalanceA: result.toNumber(),
                 })
             } else {
                 this.setState({
-                    tokenBalanceB:  this.props.web3.fromWei(result.toNumber()),
+                    tokenBalanceB:  result.toNumber(),
                 })
             }
         }.bind(this))
