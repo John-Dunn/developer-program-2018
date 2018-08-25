@@ -8,6 +8,7 @@ import {Row,
   InputGroupDropdown,
   Input,
   Button,
+  ButtonDropdown,
   Dropdown,
   DropdownToggle,
   DropdownMenu,
@@ -20,10 +21,14 @@ import {Row,
  import {getContractInstance, instantiateContractAt} from '../utils/getContractInstance'
 
  import ERC721 from '../resources/ERC721Basic.json'
+ import ERC20 from '../resources/ERC20Basic.json'
+
  import Etherary from '../../build/contracts/Etherary.json'
 
  import ERC721FaucetA from '../../build/contracts/GenericERC721TokenA.json'
  import ERC721FaucetB from '../../build/contracts/GenericERC721TokenB.json'
+ import ERC20FaucetA from '../../build/contracts/GenericERC20TokenA.json'
+ import ERC20FaucetB from '../../build/contracts/GenericERC20TokenB.json'
 
 
 
@@ -37,18 +42,24 @@ export default class NewTrade extends React.Component {
     this.state = {
         // Step 1
         tokenContractMaker: null,
-        makerTokenId: null,
+        makerTokenIdOrAmount: null,
         validContractAndTokenOwned: ValidationStatus.unchecked,
 
         makerDropdownOpen: false,
         makerSplitButtonOpen: false,
+        makerButtonDropdownOpen: false,
+        makerButtonDropdownMsg: "Pick token type",
+        makerContractTypeIsERC20: ValidationStatus.unchecked,
+
 
         // Step 2
         tokenContractTaker: null,
-        takerTokenId: null,
+        takerTokenIdOrAmount: '',
         takerTokenIdExists: ValidationStatus.unchecked,
         takerDropdownOpen: false,
         takerSplitButtonOpen: false,
+        takerButtonDropdownMsg: "Pick token type",
+        takerContractTypeIsERC20: ValidationStatus.unchecked,
 
         // Step 3
         withdrawalApproved: false,
@@ -78,9 +89,10 @@ export default class NewTrade extends React.Component {
       });
   }
 
-  handleMakerTokenIdChange(event) {
+  handlemakerTokenIdOrAmountChange(event) {
+    var isERC20 = this.state.makerContractTypeIsERC20 === ValidationStatus.valid;
     this.setState({
-        makerTokenId: event.target.value,
+        makerTokenIdOrAmount: (isERC20 ? this.props.web3.toWei(event.target.value) : event.target.value),
         validContractAndTokenOwned: ValidationStatus.unchecked,
         withdrawalApproved: false,
         tradeCreated: false
@@ -88,11 +100,41 @@ export default class NewTrade extends React.Component {
   }
 
   handleCheckOwnership(event) {
+      if (this.state.makerContractTypeIsERC20 === ValidationStatus.valid) {
+          this.handleCheckOwnershipERC20();
+      }
+
+      if (this.state.makerContractTypeIsERC20 === ValidationStatus.invalid) {
+          this.handleCheckOwnershipERC721();
+      }
+
+      event.preventDefault();
+  }
+
+
+  handleCheckOwnershipERC721() {
       var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, this.state.tokenContractMaker);
 
-      ERC721Instance.ownerOf(this.state.makerTokenId)
+      ERC721Instance.ownerOf(this.state.makerTokenIdOrAmount)
       .then(function(owner) {
           if(owner === this.props.web3.eth.accounts[0]) {
+              this.setState({validContractAndTokenOwned: ValidationStatus.valid});
+          } else {
+              console.log("setting invalida");
+              this.setState({validContractAndTokenOwned: ValidationStatus.invalid});
+          }
+      }.bind(this))
+      .catch(function(err) {
+          console.log("Querying ownership failed: ", err);
+          this.setState({validContractAndTokenOwned: ValidationStatus.invalid});
+      }.bind(this))
+  }
+
+  handleCheckOwnershipERC20() {
+      var ERC20Instance = instantiateContractAt(ERC20, this.props.web3, this.state.tokenContractMaker);
+      ERC20Instance.balanceOf(this.props.web3.eth.accounts[0])
+      .then(function(balance) {
+          if(parseInt(balance.toNumber()) >= this.state.makerTokenIdOrAmount) {
               this.setState({validContractAndTokenOwned: ValidationStatus.valid});
           } else {
               this.setState({validContractAndTokenOwned: ValidationStatus.invalid});
@@ -102,13 +144,15 @@ export default class NewTrade extends React.Component {
           console.log("Querying ownership failed: ", err);
           this.setState({validContractAndTokenOwned: ValidationStatus.invalid});
       }.bind(this))
-
-      event.preventDefault();
   }
 
   // Util for step 1
   ownershipButtonDisabled() {
-      return (!this.props.web3.isAddress(this.state.tokenContractMaker) || this.state.makerTokenId == null);
+      return (
+          !this.props.web3.isAddress(this.state.tokenContractMaker)
+          || this.state.makerTokenIdOrAmount == null
+          || this.state.makerContractTypeIsERC20 === ValidationStatus.unchecked
+      );
   }
 
   contractAndMakerTokenValid() {
@@ -120,6 +164,13 @@ export default class NewTrade extends React.Component {
       makerSplitButtonOpen: !this.state.makerSplitButtonOpen
     });
   }
+
+    toggleMakerButton() {
+        this.setState({
+            makerButtonDropdownOpen: !this.state.makerButtonDropdownOpen
+        });
+        document.getElementById("makerTokenIdOrAmount").value = '';
+    }
 
 
   handleMakerAntDropdown(event) {
@@ -138,6 +189,74 @@ export default class NewTrade extends React.Component {
       })
       document.getElementById("maker_token_input").value = faucetAddressB;
   }
+
+  handleMakerERCADropdown(event) {
+      var faucetAddressC = ERC20FaucetA.networks[this.props.web3.version.network].address;
+      this.setState({
+          tokenContractMaker: faucetAddressC
+      })
+      document.getElementById("maker_token_input").value = faucetAddressC;
+  }
+
+  handleMakerERCBDropdown(event) {
+      var faucetAddressD = ERC20FaucetB.networks[this.props.web3.version.network].address;
+      this.setState({
+          tokenContractMaker: faucetAddressD
+      })
+      document.getElementById("maker_token_input").value = faucetAddressD;
+  }
+
+  contractDropdown(isMakerContract) {
+      var isOpen = isMakerContract ? this.state.makerSplitButtonOpen : this.state.takerSplitButtonOpen;
+      var toggle = isMakerContract ? this.toggleMakerSplit : this.toggleTakerSplit;
+
+      var antHandler = isMakerContract ? this.handleMakerAntDropdown.bind(this) : this.handleTakerAntDropdown.bind(this);
+      var beaverHandler = isMakerContract ? this.handleMakerBeaverDropdown.bind(this) : this.handleTakerBeaverDropdown.bind(this);
+      var ercAHandler = isMakerContract ? this.handleMakerERCADropdown.bind(this) : this.handleTakerERCADropdown.bind(this);
+      var ercBHandler = isMakerContract ? this.handleMakerERCBDropdown.bind(this) : this.handleTakerERCBDropdown.bind(this);
+
+      return(
+          <InputGroupButtonDropdown addonType="append" isOpen={isOpen} toggle={toggle}>
+              <DropdownToggle split outline />
+              <DropdownMenu>
+                  <DropdownItem onClick={antHandler}> Ant Contract</DropdownItem>
+                  <DropdownItem onClick={beaverHandler}> Beaver Contract</DropdownItem>
+                  <DropdownItem onClick={ercAHandler}> ERC20 A</DropdownItem>
+                  <DropdownItem onClick={ercBHandler}> ERC20 B</DropdownItem>
+              </DropdownMenu>
+          </InputGroupButtonDropdown>
+      )
+  }
+
+  handleButtonDropdownERC20() {
+      this.setState({
+          makerButtonDropdownMsg: 'ERC20',
+          makerContractTypeIsERC20: ValidationStatus.valid,
+          validContractAndTokenOwned: ValidationStatus.unchecked
+      })
+  }
+
+  handleButtonDropdownERC721() {
+      this.setState({
+          makerButtonDropdownMsg: 'ERC721',
+          makerContractTypeIsERC20: ValidationStatus.invalid,
+          validContractAndTokenOwned: ValidationStatus.unchecked
+      })
+  }
+
+    buttonDropdown() {
+        return (
+            <ButtonDropdown color="primary" isOpen={this.state.makerButtonDropdownOpen} toggle={this.toggleMakerButton.bind(this)}>
+              <DropdownToggle color="primary" caret>
+                {this.state.makerButtonDropdownMsg}
+              </DropdownToggle>
+              <DropdownMenu>
+                <DropdownItem onClick={this.handleButtonDropdownERC20.bind(this)}>ERC20</DropdownItem>
+                <DropdownItem onClick={this.handleButtonDropdownERC721.bind(this)}>ERC721</DropdownItem>
+              </DropdownMenu>
+            </ButtonDropdown>
+        )
+    }
 
   stepOne() {
     var validContract = this.props.web3.isAddress(this.state.tokenContractMaker);
@@ -160,34 +279,32 @@ export default class NewTrade extends React.Component {
                                 onChange={this.handletokenContractMakerChange.bind(this)}
                             />
                             <FormFeedback tooltip>Please enter a valid address.</FormFeedback>
-
-                            <InputGroupButtonDropdown addonType="append" isOpen={this.state.makerSplitButtonOpen} toggle={this.toggleMakerSplit}>
-                                <DropdownToggle split outline />
-                                <DropdownMenu>
-                                    <DropdownItem onClick={this.handleMakerAntDropdown.bind(this)}> Ant Contract</DropdownItem>
-                                    <DropdownItem onClick={this.handleMakerBeaverDropdown.bind(this)}> Beaver Contract</DropdownItem>
-                                </DropdownMenu>
-                            </InputGroupButtonDropdown>
+                            {this.contractDropdown(true)}
                         </InputGroup>
 
-                        <FormText>Enter the ERC721 contract address of the token you want to trade.</FormText>
+                        <FormText>Enter the contract address of the token you want to trade.</FormText>
+                    </Col>
+
+                    <Col sm={2}>
+                        {this.buttonDropdown()}
                     </Col>
                 </FormGroup>
 
+
                 <FormGroup row>
-                    <Label for="makerTokenId" sm={2}>Token ID</Label>
+                    <Label for="makerTokenIdOrAmount" sm={2}>Token ID / Amount</Label>
                     <Col sm={6}>
                         <Input
                             type="number"
-                            id="makerTokenId"
-                            placeholder="123"
+                            id="makerTokenIdOrAmount"
+                            placeholder="E.g. 5 or 123145"
                             valid={this.contractAndMakerTokenValid()}
                             invalid={this.state.validContractAndTokenOwned === ValidationStatus.invalid}
-                            disabled={!validContract}
-                            onChange={this.handleMakerTokenIdChange.bind(this)}
+                            disabled={!validContract || this.state.makerContractTypeIsERC20 === ValidationStatus.unchecked}
+                            onChange={this.handlemakerTokenIdOrAmountChange.bind(this)}
                         />
                         <FormFeedback tooltip>You must own the token you want to trade.</FormFeedback>
-                        <FormText>For the contract above, provide the token ID.</FormText>
+                        <FormText>For the contract above, provide the token ID (ERC721) or amount (ERC20).</FormText>
                     </Col>
 
                     <Col sm={2}>
@@ -224,6 +341,14 @@ export default class NewTrade extends React.Component {
 
 
   // Step 2
+
+  toggleTakerButton() {
+      this.setState({
+          takerButtonDropdownOpen: !this.state.takerButtonDropdownOpen
+      });
+      document.getElementById("takerTokenIdOrAmount").value = '';
+  }
+
   handletokenContractTakerChange(event) {
       this.setState({
           tokenContractTaker: event.target.value,
@@ -233,47 +358,15 @@ export default class NewTrade extends React.Component {
   }
 
   handleTakerTokenIdChange(event) {
+    var isERC20 = this.state.takerContractTypeIsERC20 === ValidationStatus.valid;
+
     this.setState({
-        takerTokenId: event.target.value,
+        takerTokenIdOrAmount: (isERC20 ? this.props.web3.toWei(event.target.value) : event.target.value),
         takerTokenIdExists: ValidationStatus.unchecked,
         tradeCreated: false
     });
   }
 
-  contractAndTakerTokenValid() {
-      return this.state.takerTokenIdExists === ValidationStatus.valid;
-  }
-
-  handleCheckExistence(event) {
-      var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, this.state.tokenContractTaker);
-
-      ERC721Instance.exists(this.state.takerTokenId)
-      .then(function(exists) {
-          if (exists) {
-              console.log("Token exists");
-              this.setState({takerTokenIdExists: ValidationStatus.valid});
-          } else {
-              console.log("Token does not exist");
-              this.setState({takerTokenIdExists: ValidationStatus.invalid});
-          }
-      }.bind(this))
-      .catch(function(error){
-          console.log("Checking existence failed: ", error);
-          this.setState({takerTokenIdExists: ValidationStatus.invalid});
-      }.bind(this))
-
-      event.preventDefault();
-  }
-
-  // Util for step 1
-  existenceButtonDisabled() {
-      return (!this.props.web3.isAddress(this.state.tokenContractTaker)
-              || this.state.takerTokenId == null);
-  }
-
-  takerTokenExists() {
-      return this.state.takerTokenIdExists === ValidationStatus.valid;
-  }
 
   toggleTakerSplit() {
     this.setState({
@@ -299,65 +392,51 @@ export default class NewTrade extends React.Component {
       document.getElementById("taker_token_input").value = faucetAddressB;
   }
 
-
-
-  stepTwoOld() {
-      var validContract = this.props.web3.isAddress(this.state.tokenContractTaker);
-      return (
-          <div>
-              <h5> 2. Which token do you want? </h5>
-
-              <Form>
-                  <FormGroup row>
-                    <Label for="contract" sm={2}>Contract Address</Label>
-                    <Col sm={6}>
-                        <Input
-                          type="text"
-                          id="contract"
-                          placeholder="0x45b..."
-                          valid={validContract}
-                          invalid={this.state.tokenContractTaker !== null && !validContract}
-                          onChange={this.handletokenContractTakerChange.bind(this)}
-                        />
-                        <FormText>Enter the ERC721 contract address of the token you want.</FormText>
-                        <FormFeedback tooltip>Please enter a valid address.</FormFeedback>
-                    </Col>
-                  </FormGroup>
-
-                  <FormGroup row>
-                    <Label for="takerTokenId" sm={2}>Token ID</Label>
-                    <Col sm={6}>
-                        <Input
-                          type="number"
-                          id="takerTokenId"
-                          placeholder="345"
-                          valid={this.contractAndTakerTokenValid()}
-                          invalid={this.state.takerTokenIdExists === ValidationStatus.invalid}
-                          disabled={!validContract}
-                          onChange={this.handleTakerTokenIdChange.bind(this)}
-                        />
-                        <FormFeedback tooltip>The token you want must exist.</FormFeedback>
-                        <FormText>For the contract above, provide the token ID.</FormText>
-                    </Col>
-
-                    <Col sm={2}>
-                        <Button
-                            type="submit"
-                            disabled={this.existenceButtonDisabled()}
-                            onClick={this.handleCheckExistence.bind(this)}
-                            color={this.takerTokenExists() ? "success" : "primary"}
-                        >
-                                Check Existence
-                        </Button>
-                   </Col>
-                  </FormGroup>
-              </Form>
-
-
-       </div>
-      )
+  handleTakerERCADropdown(event) {
+      var faucetAddressC = ERC20FaucetA.networks[this.props.web3.version.network].address;
+      this.setState({
+          tokenContractTaker: faucetAddressC
+      })
+      document.getElementById("taker_token_input").value = faucetAddressC;
   }
 
+  handleTakerERCBDropdown(event) {
+      var faucetAddressD = ERC20FaucetB.networks[this.props.web3.version.network].address;
+      this.setState({
+          tokenContractTaker: faucetAddressD
+      })
+      document.getElementById("taker_token_input").value = faucetAddressD;
+  }
+
+
+
+  handleButtonDropdownTakerERC20() {
+      this.setState({
+          takerButtonDropdownMsg: 'ERC20',
+          takerContractTypeIsERC20: ValidationStatus.valid
+      })
+  }
+
+  handleButtonDropdownTakerERC721() {
+      this.setState({
+          takerButtonDropdownMsg: 'ERC721',
+          takerContractTypeIsERC20: ValidationStatus.invalid
+      })
+  }
+
+    buttonDropdownMaker() {
+        return (
+            <ButtonDropdown color="primary" isOpen={this.state.takerButtonDropdownOpen} toggle={this.toggleTakerButton.bind(this)}>
+              <DropdownToggle color="primary" caret>
+                {this.state.takerButtonDropdownMsg}
+              </DropdownToggle>
+              <DropdownMenu>
+                <DropdownItem onClick={this.handleButtonDropdownTakerERC20.bind(this)}>ERC20</DropdownItem>
+                <DropdownItem onClick={this.handleButtonDropdownTakerERC721.bind(this)}>ERC721</DropdownItem>
+              </DropdownMenu>
+            </ButtonDropdown>
+        )
+    }
 
 
   stepTwo() {
@@ -382,44 +461,33 @@ export default class NewTrade extends React.Component {
                             />
                             <FormFeedback tooltip>Please enter a valid address.</FormFeedback>
 
-                            <InputGroupButtonDropdown addonType="append" isOpen={this.state.takerSplitButtonOpen} toggle={this.toggleTakerSplit}>
-                                <DropdownToggle split outline />
-                                <DropdownMenu>
-                                    <DropdownItem onClick={this.handleTakerAntDropdown.bind(this)}> Ant Contract</DropdownItem>
-                                    <DropdownItem onClick={this.handleTakerBeaverDropdown.bind(this)}> Beaver Contract</DropdownItem>
-                                </DropdownMenu>
-                            </InputGroupButtonDropdown>
+                            {this.contractDropdown(false)}
                         </InputGroup>
 
-                        <FormText>Enter the ERC721 contract address of the token you want.</FormText>
+                        <FormText>Enter the contract address of the token you want.</FormText>
+                    </Col>
+
+                    <Col sm={2}>
+                        {this.buttonDropdownMaker()}
                     </Col>
                 </FormGroup>
 
                 <FormGroup row>
-                    <Label for="tokenId" sm={2}>Token ID</Label>
+                    <Label for="takerTokenIdOrAmount" sm={2}>Token ID</Label>
                     <Col sm={6}>
                         <Input
                           type="number"
-                          id="tokenId"
-                          placeholder="345"
-                          valid={this.contractAndTakerTokenValid()}
+                          id="takerTokenIdOrAmount"
+                          placeholder="E.g. 5 or 123145"
+                          valid={false}
                           invalid={this.state.takerTokenIdExists === ValidationStatus.invalid}
-                          disabled={!validContract}
+                          disabled={!validContract || this.state.takerContractTypeIsERC20 === ValidationStatus.unchecked}
                           onChange={this.handleTakerTokenIdChange.bind(this)}
                         />
                         <FormFeedback tooltip>The token you want must exist.</FormFeedback>
-                        <FormText>For the contract above, provide the token ID.</FormText>
+                        <FormText>For the contract above, provide the token ID (ERC721) or the amount (ERC20).</FormText>
                     </Col>
 
-                    <Col sm={2}>
-                        <Button
-                            disabled={this.existenceButtonDisabled()}
-                            onClick={this.handleCheckExistence.bind(this)}
-                            color={this.takerTokenExists() ? "success" : "primary"}
-                        >
-                            Check Existence
-                        </Button>
-                    </Col>
                 </FormGroup>
             </Form>
       </div>
@@ -430,15 +498,34 @@ export default class NewTrade extends React.Component {
 
 
 
+
+
+
+
+
+
+
+  // address _makerTokenContract,
+  // bool _isMakerERC20,
+  // uint256 _makerTokenIdOrAmount,
+  // address _takerTokenContract,
+  // bool _isTakerERC20,
+  // uint256 _takerTokenIdOrAmount
+
+
   // Step 3
   handleCreateTrade(event) {
       var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
+      var makerERC20 = this.state.makerContractTypeIsERC20 === ValidationStatus.valid;
+      var takerERC20 = this.state.takerContractTypeIsERC20 === ValidationStatus.valid;
 
-      EtheraryInstance.createERC721Trade(
+      EtheraryInstance.createTrade(
           this.state.tokenContractMaker,
-          this.state.makerTokenId,
+          makerERC20,
+          this.state.makerTokenIdOrAmount,
           this.state.tokenContractTaker,
-          this.state.takerTokenId,
+          takerERC20,
+          this.state.takerTokenIdOrAmount,
           {from: this.props.web3.eth.accounts[0], gas:500000}
       ).then(function(txid) {
           var txLogs = getLogs(txid);
@@ -454,15 +541,52 @@ export default class NewTrade extends React.Component {
   }
 
   handleApproval(event) {
+      if (this.state.makerContractTypeIsERC20 === ValidationStatus.valid) {
+          this.handleApprovalERC20(event);
+      }
+
+      if (this.state.makerContractTypeIsERC20 === ValidationStatus.invalid) {
+          this.handleApprovalERC721(event);
+      }
+  }
+
+  handleApprovalERC721(event) {
+
       var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, this.state.tokenContractMaker);
 
       var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
-      ERC721Instance.approve(etheraryAddress, this.state.makerTokenId, {from: this.props.web3.eth.accounts[0]})
+      ERC721Instance.approve(etheraryAddress, this.state.makerTokenIdOrAmount, {from: this.props.web3.eth.accounts[0]})
       .then(function(txid) {
           var expectedEvent = {
               _owner: this.props.web3.eth.accounts[0],
               _approved: etheraryAddress,
-              _tokenId: this.props.web3.toBigNumber(this.state.makerTokenId)
+              _tokenId: this.props.web3.toBigNumber(this.state.makerTokenIdOrAmount)
+          }
+          if(didEventOccur(txid, expectedEvent)) {
+              this.setState({
+                  withdrawalApproved: true
+              })
+              console.log('Token approved');
+          }
+      }.bind(this))
+      .catch(function(error) {
+          console.log('Error approving: ', error);
+      });
+
+      event.preventDefault();
+  }
+
+  handleApprovalERC20(event) {
+
+      var ERC20Instance = instantiateContractAt(ERC20, this.props.web3, this.state.tokenContractMaker);
+
+      var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
+      ERC20Instance.approve(etheraryAddress, this.state.makerTokenIdOrAmount, {from: this.props.web3.eth.accounts[0]})
+      .then(function(txid) {
+          var expectedEvent = {
+              owner: this.props.web3.eth.accounts[0],
+              spender: etheraryAddress,
+              value: this.props.web3.toBigNumber(this.state.makerTokenIdOrAmount)
           }
           if(didEventOccur(txid, expectedEvent)) {
               this.setState({
@@ -481,7 +605,8 @@ export default class NewTrade extends React.Component {
   // Util for step 3
   approvalButtonDisabled() {
       return (this.state.validContractAndTokenOwned !== ValidationStatus.valid
-              || this.state.takerTokenIdExists !== ValidationStatus.valid);
+              || !this.props.web3.isAddress(this.state.tokenContractTaker)
+              || !(parseInt(this.state.takerTokenIdOrAmount) >= 0));
   }
 
   createButtonDisabled() {
