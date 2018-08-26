@@ -82,7 +82,7 @@ contract TokenInterface {
         internal
     {
         if (_isERC20) {assert(ERC20(_contractAddress).transferFrom(_from, _to, _tokenAmountOrId));}
-        if (!_isERC20) {ERC721(_contractAddress).transferFrom(_from, _to, _tokenAmountOrId);}
+        if (!_isERC20) {ERC721(_contractAddress).safeTransferFrom(_from, _to, _tokenAmountOrId);}
     }
 
     /** @dev Approves transfer of token (used when trade is completed to allow players to
