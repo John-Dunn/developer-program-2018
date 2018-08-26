@@ -106,7 +106,7 @@ contract Etherary is Ownable, TokenInterface {
       * @param isERC20 Whether 0 is allowed or not
       * @param amount Trade amount
       */
-    function validTokenIdOrAmount(bool isERC20, uint256 amount) private returns (bool) {
+    function validTokenIdOrAmount(bool isERC20, uint256 amount) private pure returns (bool) {
         return isERC20 ? amount > 0 : true;
     }
 
