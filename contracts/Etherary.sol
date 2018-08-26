@@ -1,6 +1,7 @@
 pragma solidity 0.4.24;
 
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "openzeppelin-solidity/contracts/token/ERC721/ERC721Receiver.sol";
 import "./TokenInterface.sol";
 
 /// @title Etherary - trustless exchange of ERC721 and ERC20 token
@@ -19,7 +20,7 @@ import "./TokenInterface.sol";
 //  - Taker: Party that completes a trade, receiving the maker token, giving away the taker token
 //  - Taker token: Token the taker has that the maker wants
 
-contract Etherary is Ownable, TokenInterface {
+contract Etherary is Ownable, TokenInterface, ERC721Receiver {
 
     mapping (uint256 => Trade) public idToTrade;
 
@@ -273,4 +274,16 @@ contract Etherary is Ownable, TokenInterface {
         emit TradeCompleted(_tradeId);
     }
 
+    // @dev Allows safe transfers of ERC721 token
+    function onERC721Received(
+        address _operator,
+        address _from,
+        uint256 _tokenId,
+        bytes _data
+    )
+      public
+      returns(bytes4)
+    {
+        return ERC721_RECEIVED;
+    }
 }
