@@ -26,35 +26,52 @@ A trustless marketplace where one-to-one trades of ERC20 and ERC721 token can ta
 
 
 ## Running the project
-The following instructions have been tested on a fresh Ubuntu 16.04.05 LTS with git, nodejs (8.11.4), npm (5.6.0), ganache-cli (6.1.8), and truffle (4.1.14) installed. If you have any trouble getting the steps below to work please let me know.
+The following instructions have been tested on a fresh Ubuntu 16.04.05 LTS with git (2.7.4)
+```
+sudo apt-get install git
+```
+nodejs (8.11.4), npm (5.6.0) (see [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions))
 
-1. Run `npm install` to install the dependencies (may take a bit)
-2. Run `ganache-cli` and remember the mnemonic for importing it in Metamask later (or run `ganache-cli -m "voice inch endorse recycle absurd claim ripple receive section same exist profit"` and use that mnemonic).
-3. Import the seed phrase to Metamask and switch to localhost:8545. You should see a balance just below 100 ETH.
-4. `truffle compile` and `truffle migrate`
-5. Launch the frontend with `npm run start`. Your browser window at http://localhost:3000/ should open.
+ganache-cli (6.1.8)
+```
+sudo npm install -g ganache-cli
+```
+and truffle (4.1.14)
+```
+sudo npm install -g truffle
+```
+
+installed. In addition you need Metamask. I chose the Firefox version and did not try the new version. If you have any trouble getting the steps below to work please let me know.
+
+1. Checkout the project: `git clone https://github.com/John-Dunn/developer-program-2018.git` and change into that folder `cd developer-program-2018`.
+2. Run `npm install` to install the dependencies for the frontend (this took ~180s on my VM)
+3. Run `ganache-cli` and remember the mnemonic for importing it in Metamask later (or run `ganache-cli -m "voice inch endorse recycle absurd claim ripple receive section same exist profit"` and use that mnemonic).
+4. Import the seed phrase to Metamask and switch to localhost:8545. You should see a balance of 100 ETH.
+5. Open a new terminal in the same folder and run `truffle compile` and `truffle migrate`
+6. Launch the frontend with `npm run start`. Your browser window at http://localhost:3000/ should open.
 and connect to localhost 8545. You may need to refresh the page.
 
 ## Things you can try
-In order to test the full functionality as maker and taker of a trade, you may want to create a second Metamask account. You can do so in the top right corner as shown in this image. Whenever you switch accounts, you need to refresh the page.
+In order to test the full functionality as maker and taker of a trade, you may want to create a second Metamask account. You can do so in the top right corner as shown in this image.
 
 ![Account setup](/img/metamaskAccount.png)
 
 
-To make testing easier, there is a <b>Testing</b> section where you can mint different ERC721 token.
-For example mint two ant token for account 1, then switch to account 2, refresh the page and mint two beaver token for account 2.
+To make testing easier, there is a <b>Testing</b> section where you can mint token from different ERC20 and ERC721 faucets
+For example mint an ant token for account 1, swith to account 2, refresh the page, and mint some ERC20A token. From account 2 you can now create a trade of your ERC20 token for the ant token of the other account. The steps to do that are described below.
+Unfortunately the UI is not as smooth as I'd like it to be (when is it ever?). It may occasionally be helpful to refresh the page whenever you switch accounts or some update is stuck. If your Metamask popup is blank it may help to resize it.
 
 #### Creating a trade
-Go to the <b>New Trade</b> tab and fill out the form (if you followed the steps above you could create a trade giving away beaver token 0 for ant token 0). Once you created the trade, you see it in the <b>Browse Trades</b> tab or the <b>Lookup Trade</b> tab.
+Go to the <b>New Trade</b> tab and fill out the form (if you followed the steps above you could create a trade giving away e.g. 10 ERC20A for ant token 0). Once you created the trade, you see it in the <b>Browse Trades</b> tab or the <b>Lookup Trade</b> tab.
 
 #### Cancelling a trade
-Find your trade, either in the <b>Browse Trades</b> tab or the <b>Lookup Trade</b> tab. If you are the maker you will see a cancel button below your trade. Once a trade is cancelled and you look it up again (tick the `Show inactive` checkbox), you will have the option to withdraw your token.
+Find your trade, either in the <b>Browse Trades</b> tab or the <b>Lookup Trade</b> tab. If you are the maker you will see a cancel button below your trade. Once a trade is cancelled and you look it up again, you will have the option to withdraw your token.
 
 #### Filling a trade
 Once a trade is created, the owner of the wanted token can fill it. Create a trade as described above (if you just created and cancelled a trade, you can just create the same trade again), then switch to the other account and refresh the page. Find the trade in the <b>Browse Trades</b> tab or the <b>Lookup Trade</b> tab, where you will see a button to complete the trade. Once completed both maker and taker accounts can now lookup the trade under the inactive trades where and withdraw the traded token. You can check which token you own at any time by switching to the <b>Testing</b> tab.
 
 
-That's it! I hope you had a bit of fun playing around with it. If you read the project outline you will know I am planning on expanding the functionality and running the dApp on the mainnet. I would very much appreciate any feedback! Please let me know on Ryver (JohnDunn) or open an issue.
+That's it! Feel free to try any other token combination you'd like. I hope you had a bit of fun playing around with it. If you read the project outline you will know I am planning on expanding the functionality and running the dApp on the mainnet. I would very much appreciate any feedback! Please let me know on Ryver (JohnDunn) or open an issue.
 
 
 
@@ -62,18 +79,18 @@ That's it! I hope you had a bit of fun playing around with it. If you read the p
 In order to facilitate grading, for each of the rubrics I'll point to the corresponding piece of code or explain where to find the information required.
 
 #### User Interface Requirements
-If you have gotten the app to run as mentioned in the previous section, the first two requirements should not be a problem. For the third point, the current account can always be seen on the right side of the header. One example for signing transactions and reflecting the contract updates in the UI is the <b>Testing</b> tab where you sign a transaction to mint a token and the token ID as well as the total balance is updated in the UI.
+If you have gotten the app to run as mentioned in the previous section, the first two requirements should not be a problem. For the third point, the current account can always be seen on in the top right. One example for signing transactions and reflecting the contract updates in the UI is the <b>Testing</b> tab where you sign a transaction to mint token and the total balance is updated in the UI.
 
 #### Testing
-If you run `truffle test` you will see Javascript tests running for the 3 contracts.
-There is the main contract (`Etherary.sol`), as well as token faucets for ERC20 (`GenericERC20Token.sol`) and ERC721 Token (`GenericERC721TokenA.sol`, `GenericERC721TokenB.sol` which only differn by name).
+If you run `truffle test` you will see Javascript tests running for 4 contracts (on my VM I closed Firefox and the UI console, but left ganache running).
+There are the main contracts (`Etherary.sol`, `TokenInterface.sol`), as well as two token faucets for ERC20 (`GenericERC20TokenA.sol` and `GenericERC20TokenA.sol`) and ERC721 Token (`GenericERC721TokenA.sol`, `GenericERC721TokenB.sol`). The two token faucets per token type only differ in their name, so only one of each is tested.
+Since `ERC20.sol` and `ERC721.sol` are only interfaces that do not contain any functionality they are not tested.  
 
-As an example of test structure, you can have a look at e.g. `etherary.orderFilling.test.js` where the context is set up my minting token to two accounts and creating a trade before each test. Each test is for a different stage of the trade completion process. For example the third test in that file completes a transaction and checks whether the `TradeCompleted` event is being emitted.
+As an example of test structure, you can have a look at e.g. `test/ERC20 for ERC721 Trade/etherary.tradeFilling.test.js` where the context is set up my minting token to two accounts and creating a trade before each test. Each test is for a different stage of the trade completion process. For example the third test in that file completes a transaction and checks whether the `TradeCompleted` event is being emitted.
 
-Each of the three main actions of the main contract is tested thoroughly (>5 tests for creating, cancelling and completing an order). The token faucets consist of very little code (they use the openzeppelin token contracts which are well-tested), yet are also tested for main functionality. Since the two ERC721 faucets are the same except the name, only one is tested.
+Each of the functions of the main contracts is tested thoroughly (>5 tests for creating, cancelling and completing an order, for each combination of token). The token faucets consist of very little code (they use the openzeppelin token contracts which are well-tested), yet are also tested for main functionality.
 
 #### Design Pattern Requirements
-[TODO: mention for the following two that faucets are irrelevant]
 - Circuit Breaker : The main contract `Etherary.sol` is `Ownable` and allows the owner to toggle the `stopped` variable. The modifier `stopInEmergency` based on that prevents new trades from being created or existing trades from being completed when a contract is stopped. Contract owners still may cancel and withdraw their token, as well as withdraw their token from completed trades.
 - Other design decisions are explained in `design_pattern_decisions.md`
 
@@ -83,3 +100,9 @@ Please see `avoiding_common_attacks.md`
 
 #### Library
 Each contract uses some OpenZeppelin contract. The main contract uses `Ownable` for circuit breaker functionality, the token faucets rely heavily on the token definitions and SafeMath. The contracts and libraries are imported via npm as ethPM does not carry the latest version (1.03 vs. 1.13).
+
+#### Additional Requirements
+If you check any contract (e.g. `Etherary.sol`) you will see it is thoroughly commented according to spec.
+
+#### Stretch goal
+Althouth the UI is not yet ready for it, the contracts have been deployed on the rinkeby testnet. Please see `deployed_addresses.txt` for more info. 
