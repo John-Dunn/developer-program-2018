@@ -1,9 +1,13 @@
 # Consensys Developer Program 2018 Final Project
-I chose to implement my own idea, a dApp that allows trustless trade of arbitrary Ethereum assets (ERC20, ERC721 token, and Ether via WETH). ERC721 token are non-fungible token with the most popular example being CryptoKitties (you can find more information about ERC721 [here](http://erc721.org/)). The most important feature of ERC721 token is that (in contrast to Ether or ERC20 token) they are distinguishable from one-another, like for example a painting.
+I chose to implement my own idea, a dApp that allows trustless trade of arbitrary Ethereum assets (ERC20, ERC721 token, and Ether via WETH). ERC721 token are non-fungible token with the most popular example being CryptoKitties. The most important feature of ERC721 token is that (in contrast to Ether or ERC20 token) they are distinguishable from one-another and are great for e.g. implementing trading cards (you can find more information about ERC721 [here](http://erc721.org/)).
 
-While there are marketplaces that allow auctioning ERC721 token for Ether, I believe trading them directly is more fun and in closer to the spirit of 'trading cards'. This is the topic of my project.
+While there are marketplaces that allow selling (a small set of) ERC20 token or auction ERC721 token, the ability to trade arbitrary token without a third party is sorely missed.
+The aim of this project is to implement this trustless trade mechanism, with the main use case, in my mind, being the direct trade of ERC721 token.
 
 In this readme I will focus on providing the information you need for evaluating this project, but if you are interested in reading more about the project feel free to have a look at the `Project Outline.md`.
+
+
+![Account setup](/img/create.gif)
 
 ## Description
 A trustless marketplace where one-to-one trades of ERC20 and ERC721 token can take place without going through Ether first or requiring an arbitrator. Users can create trades, cancel them and fill other users' trades. Upon cancellation or completion of a trade, all users can withdraw their new token.
@@ -26,22 +30,10 @@ A trustless marketplace where one-to-one trades of ERC20 and ERC721 token can ta
 
 
 ## Running the project
-The following instructions have been tested on a fresh Ubuntu 16.04.05 LTS with git (2.7.4)
-```
-sudo apt-get install git
-```
-nodejs (8.11.4), npm (5.6.0) (see [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions))
+The following instructions have been tested on a fresh Ubuntu 16.04.05 LTS with git (2.7.4, `sudo apt-get install git`)
+nodejs (8.11.4), npm (5.6.0) (see [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)), ganache-cli (6.1.8, `sudo npm install -g ganache-cli`), and truffle (4.1.14, `sudo npm install -g truffle`) installed.
 
-ganache-cli (6.1.8)
-```
-sudo npm install -g ganache-cli
-```
-and truffle (4.1.14)
-```
-sudo npm install -g truffle
-```
-
-installed. In addition you need Metamask. I chose the Firefox version and did not try the new version. If you have any trouble getting the steps below to work please let me know.
+In addition you need Metamask. I chose the (non-experimental) Firefox version. If you have any trouble getting this installed or the steps below to work please let me know.
 
 1. Checkout the project: `git clone https://github.com/John-Dunn/developer-program-2018.git` and change into that folder `cd developer-program-2018`.
 2. Run `npm install` to install the dependencies for the frontend (this took ~180s on my VM)
@@ -49,7 +41,7 @@ installed. In addition you need Metamask. I chose the Firefox version and did no
 4. Import the seed phrase to Metamask and switch to localhost:8545. You should see a balance of 100 ETH.
 5. Open a new terminal in the same folder and run `truffle compile` and `truffle migrate`
 6. Launch the frontend with `npm run start`. Your browser window at http://localhost:3000/ should open.
-and connect to localhost 8545. You may need to refresh the page.
+You may need to refresh the page.
 
 ## Things you can try
 In order to test the full functionality as maker and taker of a trade, you may want to create a second Metamask account. You can do so in the top right corner as shown in this image.
