@@ -16,6 +16,7 @@ import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
 
+
 class NavigationBar extends Component {
     render() {
         return(
@@ -50,17 +51,16 @@ class NavigationBar extends Component {
         );
     }
 }
-// <Link to='/myTrades'>
-//     <span className="pure-menu-item pure-menu-link">My Trades </span>
-// </Link>
+
 
 class Home extends Component {
     render() {
         return (
             <div>
-                <h2> Etherary can do everything!</h2>
                 <p>
-                    For example you can browse or create trades.<br></br>
+                    Trade arbitrary Ethereum-based assets. You can browse trades, create
+                    trades, and mint some token for testing by clicking on the appropriate
+                    tabs in the header.  <br></br>
                 </p>
             </div>
         );
@@ -92,10 +92,6 @@ class App extends Component {
             console.log('Error finding web3.', e)
         })
     }
-
-
-
-
 
     render() {
         return (
