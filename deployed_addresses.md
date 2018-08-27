@@ -1,4 +1,21 @@
-All contracts have been deployed to Rinkeby and had their code verified. You can try them on the testnet (remember to approve minted token first). Unfortunately the UI is not yet ready to work live, but you can interact e.g. via etherscan's read and write tabs. I created several trades that you can look up and fill.
+All contracts have been deployed to Rinkeby and had their code verified. You can try them on the testnet (remember to approve minted token first).
+
+
+Migration to Rinkeby was done by running `truffle migrate --network rinkeby`. This requires an an Infura token and the mnemonic of the contract creator. This must be specified in `accounts.js` in the root directory of this repository and should look like this:
+
+```javascript
+module.exports = {
+   rinkebyMnemonic: function() {
+       return "apple pear cherry pineapple coconut banana walnut tomato potato starfruit avocado lime";
+   }
+
+   infuraToken: function() {
+       return "yourInfuraToken";
+   }
+}
+```
+
+Unfortunately the UI is not yet ready to work live, but you can interact e.g. via etherscan's read and write tabs. I created several trades that you can look up and fill.
 
 Etherary is [here on etherscan](https://rinkeby.etherscan.io/address/0x05126263a314a32daac14d163f774963f0928ae0)
 
