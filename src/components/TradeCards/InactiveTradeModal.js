@@ -146,11 +146,13 @@ class InactiveTradeModal extends Component {
     }
 
     withdrawButton(onClickFunction) {
-        return (<Button
-                    color={this.state.withdrawalComplete? "success" : "primary"}
-                    onClick={onClickFunction}>
+        return (
+            <Button
+                color={this.state.withdrawalComplete? "success" : "primary"}
+                onClick={onClickFunction}
+            >
                 Withdraw
-                </Button>
+            </Button>
         );
     }
 
@@ -169,25 +171,24 @@ class InactiveTradeModal extends Component {
     render() {
         return (
             <Modal isOpen={this.props.show} toggle={this.props.toggleCallback}>
-              <ModalHeader>Trade #{this.props.tradeId}</ModalHeader>
+                <ModalHeader>Trade #{this.props.tradeId}</ModalHeader>
 
-              <ModalBody>
-                {this.statusMessage()}
-                <br></br> <br></br>
-                <TradeCardContent
-                    web3={this.props.web3}
-                    account={this.props.account}
-                    trade={this.props.trade}
-                />
-              </ModalBody>
+                <ModalBody>
+                    {this.statusMessage()}
+                    <br></br> <br></br>
+                    <TradeCardContent
+                        web3={this.props.web3}
+                        account={this.props.account}
+                        trade={this.props.trade}
+                    />
+                </ModalBody>
 
-              <ModalFooter>
-                {this.buttonRow()}
-              </ModalFooter>
+                <ModalFooter>
+                    {this.buttonRow()}
+                </ModalFooter>
             </Modal>
         )
     }
 }
-
 
 export default InactiveTradeModal;

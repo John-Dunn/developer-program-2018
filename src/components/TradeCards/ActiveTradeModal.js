@@ -40,15 +40,19 @@ class ActiveTradeModal extends Component {
 
     ownershipMessage() {
         if(this.state.tradeCompleted && tradeToIsMakerContractERC20(this.props.trade)) {
-            return (<font color="green"> <strong> Trade completed! You now own
-                    token {this.props.web3.fromWei(tradeToMakerTokenId(this.props.trade))}. Go to your trades to
-                    withdraw your token.</strong> </font>);
+            return (
+                <font color="green"> <strong> Trade completed! You now own
+                token {this.props.web3.fromWei(tradeToMakerTokenId(this.props.trade))}. Go to your trades to
+                withdraw your token.</strong> </font>
+            );
         }
 
         if(this.state.tradeCompleted && tradeToIsMakerContractERC20(this.props.trade)) {
-            return (<font color="green"> <strong> Trade completed! You now own
-                    token #{tradeToMakerTokenId(this.props.trade)}. Go to your trades to
-                    withdraw your token.</strong> </font>);
+            return (
+                <font color="green"> <strong> Trade completed! You now own
+                token #{tradeToMakerTokenId(this.props.trade)}. Go to your trades to
+                withdraw your token.</strong> </font>
+            );
         }
 
         if (this.props.ownsTakerToken) {
@@ -60,9 +64,11 @@ class ActiveTradeModal extends Component {
 
     instructionMessage() {
         if(this.props.ownsTakerToken) {
-            return(<span> Please review the trade details. If you would like to continue,
+            return(
+                <span> Please review the trade details. If you would like to continue,
                 you need to approve your token to be transferred before completing the trade.
-                <br></br>  <br></br>
+                <br></br>
+                <br></br>
                 </span>
             )
         }
@@ -167,24 +173,24 @@ class ActiveTradeModal extends Component {
         return (
             <Form>
                 <FormGroup row>
-                <Col sm={5}>
-                    <Button
-                        color={this.state.withdrawalApproved ? "success" : "primary"}
-                        onClick={this.handleApproval.bind(this)}
-                    >
+                    <Col sm={5}>
+                        <Button
+                            color={this.state.withdrawalApproved ? "success" : "primary"}
+                            onClick={this.handleApproval.bind(this)}
+                        >
                             Approve
-                    </Button>
-               </Col>
+                        </Button>
+                    </Col>
 
-                  <Col sm={4}>
-                      <Button
-                          disabled={!this.state.withdrawalApproved}
-                          color={this.state.tradeCompleted ? "success" : "primary"}
-                          onClick={this.handleCompleteTrade.bind(this)}
-                      >
-                              Complete Trade
-                      </Button>
-                 </Col>
+                    <Col sm={4}>
+                        <Button
+                            disabled={!this.state.withdrawalApproved}
+                            color={this.state.tradeCompleted ? "success" : "primary"}
+                            onClick={this.handleCompleteTrade.bind(this)}
+                        >
+                            Complete Trade
+                        </Button>
+                    </Col>
                 </FormGroup>
             </Form>
         )

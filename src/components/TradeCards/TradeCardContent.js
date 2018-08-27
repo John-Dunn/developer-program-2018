@@ -11,7 +11,7 @@ import {
     tradeToTaker
 } from '../../utils/tradeUnpacking'
 
-
+// Presents data for modals and trade cards
 class TradeCardContent extends Component {
 
     isMaker() {

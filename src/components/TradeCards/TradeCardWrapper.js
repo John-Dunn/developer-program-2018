@@ -27,17 +27,17 @@ import ERC721 from '../../resources/ERC721Basic.json'
 import ERC20 from '../../resources/ERC20Basic.json'
 
 
-
+// Main trade card component, uses modals and the card contant 
 class TradeCardWrapper extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          showActiveTradeModal: false,
-          showInactiveTradeModal: false,
-          ownsTakerToken: null,
+            showActiveTradeModal: false,
+            showInactiveTradeModal: false,
+            ownsTakerToken: null,
 
-          takerTokenApproved: false,
-          makerTokenApproved: false
+            takerTokenApproved: false,
+            makerTokenApproved: false
         };
     }
 
@@ -73,7 +73,6 @@ class TradeCardWrapper extends Component {
             this.isTokenApprovedERC721(trade, false);
         }
     }
-
 
     isTokenApprovedERC721(trade, isMaker) {
         var address = isMaker ? tradeToMakerContract(trade) : tradeToTakerContract(trade);

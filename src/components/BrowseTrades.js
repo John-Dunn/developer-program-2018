@@ -23,6 +23,7 @@ import Etherary from '../../build/contracts/Etherary.json'
 import ERC721 from '../resources/ERC721Basic.json'
 
 
+// Displays all trades
 class BrowseTrades extends Component {
 
     constructor(props) {
@@ -63,7 +64,6 @@ class BrowseTrades extends Component {
             }
             Promise.all(promises)
             .then(function(resolvedPromises){
-
                 this.setState({
                     trades: resolvedPromises
                 })
@@ -111,13 +111,10 @@ class BrowseTrades extends Component {
         )
     }
 
-
-
-
     handleTradeIdChange(event) {
-      this.setState({
-          tradeIdInput: event.target.value
-      });
+        this.setState({
+            tradeIdInput: event.target.value
+        });
     }
 
     handleTradeLookup(event) {

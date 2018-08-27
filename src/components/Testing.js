@@ -10,9 +10,7 @@ import ERC721FaucetB from '../../build/contracts/GenericERC721TokenB.json'
 import ERC20FaucetA from '../../build/contracts/GenericERC20TokenA.json'
 import ERC20FaucetB from '../../build/contracts/GenericERC20TokenB.json'
 
-
-//Props: web3, web3Connected
-
+// Component for the testing tab. Allows minting of tokens and displays balances
 class Testing extends Component {
     // Lifecycle methods
     constructor(props) {
@@ -47,13 +45,6 @@ class Testing extends Component {
         }
     }
 
-    getAllToken(instance) {
-        instance.totalSupply()
-        .then(function(result) {
-            console.log("Supply: ", result);
-        })
-    }
-
     componentDidMount() {
         if( this.props.web3Connected) {
             this.startup();
@@ -67,62 +58,7 @@ class Testing extends Component {
         }
     }
 
-    // Tools
-    instantiateContracts() {
-        var faucetAddressA = ERC721FaucetA.networks[this.props.web3.version.network].address;
-        var faucetInstanceA = getContractInstance(ERC721FaucetA, this.props.web3);
-
-        var faucetAddressB = ERC721FaucetB.networks[this.props.web3.version.network].address;
-        var faucetInstanceB = getContractInstance(ERC721FaucetB, this.props.web3);
-
-        var faucetAddressC = ERC20FaucetA.networks[this.props.web3.version.network].address;
-        var faucetInstanceC = getContractInstance(ERC20FaucetA, this.props.web3);
-
-        var faucetAddressD = ERC20FaucetB.networks[this.props.web3.version.network].address;
-        var faucetInstanceD = getContractInstance(ERC20FaucetB, this.props.web3);
-
-        this.setState({
-            faucetInstanceA: faucetInstanceA,
-            faucetAddressA: faucetAddressA,
-
-            faucetInstanceB: faucetInstanceB,
-            faucetAddressB: faucetAddressB,
-
-            faucetInstanceC: faucetInstanceC,
-            faucetAddressC: faucetAddressC,
-
-            faucetInstanceD: faucetInstanceD,
-            faucetAddressD: faucetAddressD
-        })
-        return [faucetInstanceA, faucetInstanceB, faucetInstanceC, faucetInstanceD];
-    }
-
-
-    fetchTokenA(tokenOwner, account) {
-        var tokensOwnedByAccount = [];
-        for (var i = 0; i < tokenOwner.length; i++) {
-            if (tokenOwner[i] === account) {
-                tokensOwnedByAccount.push(i);
-            }
-        }
-        this.setState({
-            tokenOwnedA: tokensOwnedByAccount
-        })
-    }
-
-    fetchTokenB(tokenOwner, account) {
-        var tokensOwnedByAccount = [];
-        for (var i = 0; i < tokenOwner.length; i++) {
-            if (tokenOwner[i] === account) {
-                tokensOwnedByAccount.push(i);
-            }
-        }
-        this.setState({
-            tokenOwnedB: tokensOwnedByAccount
-        })
-    }
-
-
+    // Initialize contracts
     startup() {
         var account = this.props.web3.eth.accounts[0];
         this.setState({
@@ -193,6 +129,61 @@ class Testing extends Component {
         }.bind(this))
     }
 
+    instantiateContracts() {
+        var faucetAddressA = ERC721FaucetA.networks[this.props.web3.version.network].address;
+        var faucetInstanceA = getContractInstance(ERC721FaucetA, this.props.web3);
+
+        var faucetAddressB = ERC721FaucetB.networks[this.props.web3.version.network].address;
+        var faucetInstanceB = getContractInstance(ERC721FaucetB, this.props.web3);
+
+        var faucetAddressC = ERC20FaucetA.networks[this.props.web3.version.network].address;
+        var faucetInstanceC = getContractInstance(ERC20FaucetA, this.props.web3);
+
+        var faucetAddressD = ERC20FaucetB.networks[this.props.web3.version.network].address;
+        var faucetInstanceD = getContractInstance(ERC20FaucetB, this.props.web3);
+
+        this.setState({
+            faucetInstanceA: faucetInstanceA,
+            faucetAddressA: faucetAddressA,
+
+            faucetInstanceB: faucetInstanceB,
+            faucetAddressB: faucetAddressB,
+
+            faucetInstanceC: faucetInstanceC,
+            faucetAddressC: faucetAddressC,
+
+            faucetInstanceD: faucetInstanceD,
+            faucetAddressD: faucetAddressD
+        })
+        return [faucetInstanceA, faucetInstanceB, faucetInstanceC, faucetInstanceD];
+    }
+
+    // ERC721 faucets give out IDs in increasing order, get all token owner by iterating
+    fetchTokenA(tokenOwner, account) {
+        var tokensOwnedByAccount = [];
+        for (var i = 0; i < tokenOwner.length; i++) {
+            if (tokenOwner[i] === account) {
+                tokensOwnedByAccount.push(i);
+            }
+        }
+        this.setState({
+            tokenOwnedA: tokensOwnedByAccount
+        })
+    }
+
+    fetchTokenB(tokenOwner, account) {
+        var tokensOwnedByAccount = [];
+        for (var i = 0; i < tokenOwner.length; i++) {
+            if (tokenOwner[i] === account) {
+                tokensOwnedByAccount.push(i);
+            }
+        }
+        this.setState({
+            tokenOwnedB: tokensOwnedByAccount
+        })
+    }
+
+    // Click handlers
     handleMintA() {
         this.handleMintERC721(true);
     }
@@ -208,7 +199,6 @@ class Testing extends Component {
     handleMintD() {
         this.handleMintERC20(false);
     }
-
 
     handleMintERC721(isFaucetA) {
         this.setState({
@@ -287,17 +277,19 @@ class Testing extends Component {
 
             if (isFaucetC) {
                 this.setState({
+                    justMintedC: true,
                     tokenBalanceC: balance,
                 })
             } else {
                 this.setState({
+                    justMintedD: true,
                     tokenBalanceD: balance,
                 })
             }
         }.bind(this))
     }
 
-
+    // Display
     mintMessage() {
         if (this.state.justMintedA) {
             return(<div className="centered">Minting successful. You received the ant token with
@@ -313,9 +305,7 @@ class Testing extends Component {
             return(<div className="centered">Minting successful.</div>)
         }
 
-
         return (<p></p>);
-
     }
 
 
@@ -328,10 +318,15 @@ class Testing extends Component {
 
         return (
             <div>
-            In order to make testing the contract easier, I created several token faucets, two for ERC721 token and two for ERC20 token.
-            That way you can test every combination you like. Just press the buttons below and receive the respective token.
-            To stay with the theme, the first ERC721 token contract is called CryptoAnts, the other CryptoBeavers.
-            In the case of ERC721 token you will receive one token per mint (its id will be displayed). For ERC20 token you will get a hundred at a time.<br/><br/>
+                In order to make testing the contract easier, I created several token faucets,
+                two for ERC721 token and two for ERC20 token. That way you can test every
+                combination you like. Just press the buttons below and receive the respective
+                token. To stay with the theme, the first ERC721 token contract is called
+                CryptoAnts, the other CryptoBeavers. In the case of ERC721 token you will
+                receive one token per mint (its id will be displayed). For ERC20 token you
+                will get a hundred at a time.
+                <br/><br/>
+
                 <h5> ERC721 Token CryptoAnts and CryptoBeavers </h5>
 
                 {
@@ -358,35 +353,34 @@ class Testing extends Component {
                 <br></br><br></br><br></br>
 
                 <div className="centered">
-                <br></br>
-                <br></br><br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
                     <FormGroup row>
-                      <Col>
-                      <Button color="primary"  onClick={this.handleMintA.bind(this)} >Mint an ant</Button>{'     '}
-                      </Col>
+                        <Col>
+                            <Button color="primary"  onClick={this.handleMintA.bind(this)} >Mint an ant</Button>{'     '}
+                        </Col>
 
-                      <Col >
-                      </Col>
+                        <Col>
+                        </Col>
 
-                      <Col>
-                      <Button color="primary" onClick={this.handleMintB.bind(this)} >Mint a beaver</Button>
-                      </Col>
+                        <Col>
+                            <Button color="primary" onClick={this.handleMintB.bind(this)} >Mint a beaver</Button>
+                        </Col>
 
+                        <Col >
+                        </Col>
 
-                    <Col >
-                    </Col>
+                        <Col>
+                            <Button color="primary" onClick={this.handleMintC.bind(this)} >Mint ERC20 A</Button>
+                        </Col>
 
-                    <Col>
-                    <Button color="primary" onClick={this.handleMintC.bind(this)} >Mint ERC20 A</Button>
-                    </Col>
+                        <Col >
+                        </Col>
 
-
-                      <Col >
-                      </Col>
-
-                      <Col>
-                      <Button color="primary" onClick={this.handleMintD.bind(this)} >Mint ERC20 B</Button>
-                      </Col>
+                        <Col>
+                            <Button color="primary" onClick={this.handleMintD.bind(this)} >Mint ERC20 B</Button>
+                        </Col>
 
                     </FormGroup>
 
@@ -398,5 +392,3 @@ class Testing extends Component {
 }
 
 export default Testing
-// <Button color="primary" size="lg" onClick={this.handleMintA.bind(this)} >Mint an ant</Button>{'     '}
-// <Button color="primary" size="lg" onClick={this.handleMintB.bind(this)} >Mint a beaver</Button>
