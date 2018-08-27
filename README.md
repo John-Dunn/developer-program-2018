@@ -43,7 +43,7 @@ In addition you need Metamask. I chose the (non-experimental) Firefox version. I
 6. Launch the frontend with `npm run start`. Your browser window at http://localhost:3000/ should open.
 You may need to refresh the page.
 
-## Things you can try
+## Creating, Cancelling and Completing a Trade
 In order to test the full functionality as maker and taker of a trade, you may want to create a second Metamask account. You can do so in the top right corner as shown in this image.
 
 ![Account setup](/img/metamaskAccount.png)
