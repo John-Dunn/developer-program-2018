@@ -39,9 +39,10 @@ The UI was built to enable easy evaluation of the smart contract, but featuring 
 - Better state management: The inclusion of ERC20 contracts demonstrated that keeping state manually is increasingly complicated. Components are a lot larger and less modular than I would like them to be, mostly to reduce the state changes that need to be carried across components. Using e.g. Redux would enable a clean rework.
 - UX improvements: In particular completing trades and withdrawing token should be easier. Currently 6 transactions are required to complete a trade, 3 by each participant (maker approves, maker creates order, taker approves, taker fills order, maker and taker withdraw. Even if this cannot be further reduced, the UI should make this as seamless as possible, e.g. redirect from the trade completion to the withdraw page
 - Robustness: Frontend should be robust against 1) contracts not being deployed 2) Metamask being locked 3) Metamask being on a wrong network
+- Improved gas estimation: Metamask occasionally fails to correctly calculate the gas cost and transactions fail. To prevent this for now, the gas costs have been set manually. In addition Metamask caches some calls and requires a workaround of providing some random gas value. Both of those issues should be fixed before working with real assets.
 
 ###### Improved testing
-Currently there is some very similar code for checking e.g. ERC721-ERC20 and ERC721-ERC721 trades. Similar to the token interface in solidity, a javascript interface would allow just changing the contracts and some flags for each test.
+Currently there is some very similar code for checking e.g. ERC721-ERC20 and ERC721-ERC721 trades. Similar to the token interface in solidity, a javascript interface would allow just changing the contracts and some flags for each test. 
 
 ###### Contract Upgrades
 - n for m trades: This is at the core of the intended use of ERC721 bartering, allow offering multiple token in a trade as well as wanting multiple token.

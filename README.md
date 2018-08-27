@@ -79,10 +79,11 @@ In order to facilitate grading, for each of the rubrics I'll point to the corres
 If you have gotten the app to run as mentioned in the previous section, the first two requirements should not be a problem. For the third point, the current account can always be seen on in the top right. One example for signing transactions and reflecting the contract updates in the UI is the <b>Testing</b> tab where you sign a transaction to mint token and the total balance is updated in the UI.
 
 #### Testing
-If you run `truffle test` you will see Javascript tests running for 4 contracts (on my VM I closed Firefox and the UI console, but left ganache running).
+If you run `truffle test` you will see Javascript tests running for 4 contracts.
 There are the main contracts (`Etherary.sol`, `TokenInterface.sol`), as well as two token faucets for ERC20 (`GenericERC20TokenA.sol` and `GenericERC20TokenA.sol`) and ERC721 Token (`GenericERC721TokenA.sol`, `GenericERC721TokenB.sol`). The two token faucets per token type only differ in their name, so only one of each is tested.
 Since `ERC20.sol` and `ERC721.sol` are only interfaces that do not contain any functionality they are not tested.  
 
+Each test contains a brief description of what is expected to occur. The goal of the tests is to cover the possible combinations of ERC20 and ERC721 trades, as well as different stages in the trade process (e.g. cancelling, approving).
 As an example of test structure, you can have a look at e.g. `test/ERC20 for ERC721 Trade/etherary.tradeFilling.test.js` where the context is set up my minting token to two accounts and creating a trade before each test. Each test is for a different stage of the trade completion process. For example the third test in that file completes a transaction and checks whether the `TradeCompleted` event is being emitted.
 
 Each of the functions of the main contracts is tested thoroughly (>5 tests for creating, cancelling and completing an order, for each combination of token). The token faucets consist of very little code (they use the openzeppelin token contracts which are well-tested), yet are also tested for main functionality.
@@ -96,7 +97,7 @@ Each of the functions of the main contracts is tested thoroughly (>5 tests for c
 Please see `avoiding_common_attacks.md`
 
 #### Library
-Each contract uses some OpenZeppelin contract. The main contract uses `Ownable` for circuit breaker functionality, the token faucets rely heavily on the token definitions and SafeMath. The contracts and libraries are imported via npm as ethPM does not carry the latest version (1.03 vs. 1.13).
+Each contract uses some OpenZeppelin contract, see e.g. `Etherary.sol` which  uses `Ownable` for circuit breaker functionality. The token faucets rely heavily on the token definitions and `SafeMath` library. The contracts and libraries are imported via npm as ethPM does not carry the latest version (1.03 vs. 1.13).
 
 #### Additional Requirements
 If you check any contract (e.g. `Etherary.sol`) you will see it is thoroughly commented according to spec.
