@@ -210,7 +210,7 @@ class Testing extends Component {
 
         var instance = isFaucetA ? this.state.faucetInstanceA : this.state.faucetInstanceB;
         var account = this.state.account;
-        instance.mint({from:this.state.account})
+        instance.mint({from:this.state.account, gas:500000})
         // Get minted token number for UI
         .then(function(result) {
             console.log("Minting successful", result);
@@ -263,7 +263,7 @@ class Testing extends Component {
 
         var instance = isFaucetC ? this.state.faucetInstanceC : this.state.faucetInstanceD;
         var account = this.state.account;
-        instance.mint({from:this.state.account})
+        instance.mint({from:this.state.account, gas:500000})
         // Get minted token number for UI
         .then(function(result) {
             console.log("Minting successful", result);
