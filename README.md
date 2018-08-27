@@ -71,7 +71,12 @@ Find your trade, either in the <b>Browse Trades</b> tab or the <b>Lookup Trade</
 Once a trade is created, the owner of the wanted token can fill it. Create a trade as described above (if you just created and cancelled a trade, you can just create the same trade again), then switch to the other account and refresh the page. Find the trade in the <b>Browse Trades</b> tab or the <b>Lookup Trade</b> tab, where you will see a button to complete the trade. Once completed both maker and taker accounts can now lookup the trade under the inactive trades where and withdraw the traded token. You can check which token you own at any time by switching to the <b>Testing</b> tab.
 
 
-That's it! Feel free to try any other token combination you'd like. I hope you had a bit of fun playing around with it. If you read the project outline you will know I am planning on expanding the functionality and running the dApp on the mainnet. I would very much appreciate any feedback! Please let me know on Ryver (JohnDunn) or open an issue.
+That's it! Feel free to try any other token combination you'd like.
+I hope you had a bit of fun playing around with it.
+All contracts are also deployed on Rinkeby, so you can try them out there as well (unfortunately the UI does not support it yet).
+See the `deployed_addresses.md` for more details.
+If you read the project outline you will know I am planning on expanding the functionality and running the dApp on the mainnet.
+I would very much appreciate any feedback! Please let me know on Ryver (JohnDunn) or open an issue.
 
 
 
@@ -105,4 +110,4 @@ Each contract uses some OpenZeppelin contract. The main contract uses `Ownable` 
 If you check any contract (e.g. `Etherary.sol`) you will see it is thoroughly commented according to spec.
 
 #### Stretch goal
-Althouth the UI is not yet ready for it, the contracts have been deployed on the rinkeby testnet. Please see `deployed_addresses.txt` for more info. 
+Althouth the UI is not yet ready for it, the contracts have been deployed on the Rinkeby testnet. Please see `deployed_addresses.md` for more info.
