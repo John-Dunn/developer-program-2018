@@ -28,7 +28,7 @@ contract('Etherary - Filling Trades (ERC20 for ERC721)', function(accounts) {
     var tradeId = 0;
 
     before(async function() {
-        // Deploy two ERC721 Faucets
+        // Deploy two Faucets
         tokenA = await GenericERC20TokenA.new({gas: 5000000});
         tokenB = await GenericERC721TokenB.new({gas: 5000000});
 

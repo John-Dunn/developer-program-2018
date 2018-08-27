@@ -27,7 +27,7 @@ import ERC721 from '../../resources/ERC721Basic.json'
 import ERC20 from '../../resources/ERC20Basic.json'
 
 
-// Main trade card component, uses modals and the card contant 
+// Main trade card component, uses modals and the card contant
 class TradeCardWrapper extends Component {
     constructor(props) {
         super(props);
@@ -161,7 +161,7 @@ class TradeCardWrapper extends Component {
     // Button onClick
     handleCancelTrade() {
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
-        EtheraryInstance.cancelTrade(this.props.tradeId, {from:this.props.web3.eth.accounts[0]})
+        EtheraryInstance.cancelTrade(this.props.tradeId, {from:this.props.web3.eth.accounts[0], gas:500000})
         .then(function(txid) {
             var expectedEvent = { _tradeId: this.props.web3.toBigNumber(this.props.tradeId) }
             if(didEventOccur(txid, expectedEvent)) {

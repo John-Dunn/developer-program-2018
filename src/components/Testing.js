@@ -210,7 +210,7 @@ class Testing extends Component {
 
         var instance = isFaucetA ? this.state.faucetInstanceA : this.state.faucetInstanceB;
         var account = this.state.account;
-        instance.mint({from:this.state.account})
+        instance.mint({from:this.state.account, gas:500000})
         // Get minted token number for UI
         .then(function(result) {
             console.log("Minting successful", result);
@@ -235,7 +235,7 @@ class Testing extends Component {
 
             // The gas in the following line is to prevent caching
             // see https://github.com/ethereum/web3.js/issues/1463
-            return instance.balanceOf.call(account, {gas: 500000+Math.floor(Math.random()*1001)})
+            return instance.balanceOf.call(account, {gas: Math.floor(Math.random()*1001)})
         }.bind(this))
         .then(function(result) {
             var balance = result.toNumber();
@@ -263,13 +263,13 @@ class Testing extends Component {
 
         var instance = isFaucetC ? this.state.faucetInstanceC : this.state.faucetInstanceD;
         var account = this.state.account;
-        instance.mint({from:this.state.account})
+        instance.mint({from:this.state.account, gas:500000})
         // Get minted token number for UI
         .then(function(result) {
             console.log("Minting successful", result);
             // The gas in the following line is to prevent caching
             // see https://github.com/ethereum/web3.js/issues/1463
-            return instance.balanceOf.call(account, {gas: 500000+Math.floor(Math.random()*1001)})
+            return instance.balanceOf.call(account, {gas: Math.floor(Math.random()*1001)})
         }.bind(this))
         .then(function(result) {
             var balance = this.props.web3.fromWei(result.toNumber());

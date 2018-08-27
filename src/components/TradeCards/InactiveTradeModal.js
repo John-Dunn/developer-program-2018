@@ -47,6 +47,7 @@ class InactiveTradeModal extends Component {
         var account = this.props.account;
         var instance = instantiateContractAt(ERC20, this.props.web3, tokenContract);
         var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
+        // Hardcoded since gas estimate is fails occasionally
         instance.transferFrom(etheraryAddress, account, tokenId, {from: account, gas:500000})
         .then(function(txid) {
             var expectedEvent = {
@@ -71,6 +72,7 @@ class InactiveTradeModal extends Component {
         var account = this.props.account;
         var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tokenContract);
         var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
+        // Hardcoded since gas estimate is fails occasionally
         ERC721Instance.transferFrom(etheraryAddress, account, tokenId, {from: account, gas:500000})
         .then(function(txid) {
             var expectedEvent = {

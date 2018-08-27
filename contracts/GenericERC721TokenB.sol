@@ -2,7 +2,9 @@ pragma solidity 0.4.24;
 
 import "openzeppelin-solidity/contracts/token/ERC721/ERC721Token.sol";
 
-
+/**
+ * @title Generic Token example that anybody can mint by calling the mint function.
+ */
 contract GenericERC721TokenB is ERC721Token {
 
     string private name = "GenericERC721TokenB";

@@ -89,7 +89,7 @@ class ActiveTradeModal extends Component {
         var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(trade));
 
         var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
-        ERC721Instance.approve(etheraryAddress, tradeToTakerTokenId(trade), {from: this.props.web3.eth.accounts[0]})
+        ERC721Instance.approve(etheraryAddress, tradeToTakerTokenId(trade), {from: this.props.web3.eth.accounts[0], gas:500000})
         .then(function(txid) {
             var expectedEvent = {
                 _owner: this.props.web3.eth.accounts[0],
@@ -116,7 +116,7 @@ class ActiveTradeModal extends Component {
         var ERC20Instance = instantiateContractAt(ERC20, this.props.web3, tradeToTakerContract(trade));
 
         var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
-        ERC20Instance.approve(etheraryAddress, tradeToTakerTokenId(trade), {from: this.props.web3.eth.accounts[0]})
+        ERC20Instance.approve(etheraryAddress, tradeToTakerTokenId(trade), {from: this.props.web3.eth.accounts[0], gas:500000})
         .then(function(txid) {
             var expectedEvent = {
                 owner: this.props.web3.eth.accounts[0],
@@ -147,7 +147,8 @@ class ActiveTradeModal extends Component {
 
         EtheraryInstance.fillTrade(
             this.props.tradeId,
-            {from: this.props.web3.eth.accounts[0], gas:500000}
+            // Gas estimate is ~280k but fails occasionally
+            {from: this.props.web3.eth.accounts[0], gas: 300000}
         ).then(function(txid) {
             console.log('Completing trade', txid);
             var expectedEvent = {
