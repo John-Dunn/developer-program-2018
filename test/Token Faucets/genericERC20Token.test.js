@@ -1,4 +1,4 @@
-var GenericERC20Token = artifacts.require('GenericERC20Token')
+var GenericERC20Token = artifacts.require('GenericERC20TokenA')
 const web3Abi = require('web3-eth-abi');
 
 // Truffle tests cannot handle overloaded functions at the moment, using the ABI of the

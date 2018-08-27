@@ -1,11 +1,11 @@
-var exceptions = require("./exceptions.js");
+var exceptions = require("../exceptions.js");
 
 var GenericERC721TokenA = artifacts.require('GenericERC721TokenA')
 var GenericERC721TokenB = artifacts.require('GenericERC721TokenB')
 var Etherary = artifacts.require("Etherary");
 
 
-contract('Etherary - Createing Trades', function(accounts) {
+contract('Etherary - Creating Trades (ERC721 for ERC721)', function(accounts) {
 
     const deployer = accounts[0]
     const alice = accounts[1]
@@ -24,6 +24,8 @@ contract('Etherary - Createing Trades', function(accounts) {
     const tokenBobSells = 0;
     const tokenAliceWantsBobOwns = 1;
     const nonexistingToken = 10;
+    // ERC721 trades
+    const isERC20 = false;
 
     before(async function() {
         // Deploy two ERC721 Faucets
@@ -69,27 +71,16 @@ contract('Etherary - Createing Trades', function(accounts) {
 
 
 
-    describe("Opening a sell order", function () {
-        it("should not allow creation of a sell order with bad token contract", async function () {
-            await exceptions.tryCatch(
-                etherary.createERC721Trade.sendTransaction(
-                    0x0,
-                    tokenAliceSells,
-                    0x0,
-                    tokenAliceWantsBobOwns,
-                    {from: alice}
-                ),
-                exceptions.errTypes.revert
-            );
-        });
+    describe("Opening a sell trade", function () {
 
-
-        it("should not allow creation of a sell order with nonexisting token for sale", async function () {
+        it("should not allow creation of a sell trade with nonexisting token for sale", async function () {
             await exceptions.tryCatch(
-                etherary.createERC721Trade.sendTransaction(
+                etherary.createTrade.sendTransaction(
                     tokenA.address,
+                    isERC20,
                     nonexistingToken,
                     tokenB.address,
+                    isERC20,
                     tokenAliceWantsBobOwns,
                     {from: alice}
                 ),
@@ -98,12 +89,14 @@ contract('Etherary - Createing Trades', function(accounts) {
         });
 
 
-        it("should not allow creation of a sell order with unapproved token", async function () {
+        it("should not allow creation of a sell trade with unapproved token", async function () {
             await exceptions.tryCatch(
-                etherary.createERC721Trade.sendTransaction(
+                etherary.createTrade.sendTransaction(
                     tokenA.address,
+                    isERC20,
                     tokenAliceKeeps, // Is not approved to be withdrawn by contract
                     tokenB.address,
+                    isERC20,
                     tokenAliceWantsBobOwns,
                     {from: alice}
                 ),
@@ -112,26 +105,14 @@ contract('Etherary - Createing Trades', function(accounts) {
         });
 
 
-        it("should not allow creation of a sell order with nonexisting wanted token", async function () {
+        it("should not allow creation of a sell trade from other account", async function () {
             await exceptions.tryCatch(
-                etherary.createERC721Trade.sendTransaction(
+                etherary.createTrade.sendTransaction(
                     tokenA.address,
+                    isERC20,
                     tokenAliceSells,
                     tokenB.address,
-                    nonexistingToken,
-                    {from: alice}
-                ),
-                exceptions.errTypes.revert
-            );
-        });
-
-
-        it("should not allow creation of a sell order from other account", async function () {
-            await exceptions.tryCatch(
-                etherary.createERC721Trade.sendTransaction(
-                    tokenA.address,
-                    tokenAliceSells,
-                    tokenB.address,
+                    isERC20,
                     tokenAliceWantsBobOwns,
                     {from: bob}
                 ),
@@ -141,10 +122,12 @@ contract('Etherary - Createing Trades', function(accounts) {
 
 
         it("should allow creation of a trade", async function () {
-            await etherary.createERC721Trade.sendTransaction(
+            await etherary.createTrade.sendTransaction(
                 tokenA.address,
+                isERC20,
                 tokenAliceSells,
                 tokenB.address,
+                isERC20,
                 tokenAliceWantsBobOwns,
                 {from: alice}
             );
@@ -156,9 +139,9 @@ contract('Etherary - Createing Trades', function(accounts) {
             });
 
             const logMakerTokenContract = log.args._makerTokenContract;
-            const logMakerToken = log.args._makerTokenId.toNumber()
+            const logMakerToken = log.args._makerTokenIdOrAmount.toNumber()
             const logTakerTokenContract = log.args._takerTokenContract;
-            const logTakerToken = log.args._takerTokenId.toNumber();
+            const logTakerToken = log.args._takerTokenIdOrAmount.toNumber();
             const logTradeId = log.args._tradeId.toNumber();
 
             assert.equal(logMakerTokenContract, tokenA.address, "should emit correct maker contract address");
@@ -171,12 +154,14 @@ contract('Etherary - Createing Trades', function(accounts) {
         });
 
 
-        it("should not allow creation the same order twice", async function () {
+        it("should not allow creation the same trade twice", async function () {
             await exceptions.tryCatch(
-                etherary.createERC721Trade.sendTransaction(
+                etherary.createTrade.sendTransaction(
                     tokenA.address,
+                    isERC20,
                     tokenAliceSells,
                     tokenB.address,
+                    isERC20,
                     tokenAliceWantsBobOwns,
                     {from: alice}
                 ),
@@ -184,13 +169,15 @@ contract('Etherary - Createing Trades', function(accounts) {
             );
         });
 
-        it("should allow creation of another sell order", async function () {
+        it("should allow creation of another sell trade", async function () {
             await etherary.toggle
 
-            await etherary.createERC721Trade.sendTransaction(
+            await etherary.createTrade.sendTransaction(
                 tokenB.address,
+                isERC20,
                 tokenBobSells,
                 tokenA.address,
+                isERC20,
                 tokenAliceWantsBobOwns,
                 {from: bob}
             );
@@ -202,9 +189,9 @@ contract('Etherary - Createing Trades', function(accounts) {
             });
 
             const logMakerTokenContract = log.args._makerTokenContract;
-            const logMakerToken = log.args._makerTokenId.toNumber()
+            const logMakerToken = log.args._makerTokenIdOrAmount.toNumber()
             const logTakerTokenContract = log.args._takerTokenContract;
-            const logTakerToken = log.args._takerTokenId.toNumber();
+            const logTakerToken = log.args._takerTokenIdOrAmount.toNumber();
             const logTradeId = log.args._tradeId.toNumber();
 
             assert.equal(logMakerTokenContract, tokenB.address, "should emit correct maker contract address");
@@ -220,21 +207,24 @@ contract('Etherary - Createing Trades', function(accounts) {
         it("should allow a trade to be queried", async function () {
             let Trade = await etherary.idToTrade.call(0);
             // struct Trade {
-            //     //AssetType assetType;
+            //     bool isMakerContractERC20; // If false, ERC721
+            //     bool isTakerContractERC20; // If false, ERC721
             //     address maker;
             //     address taker;
             //     address makerTokenContract;
             //     address takerTokenContract;
-            //     uint256 makerTokenId; /// @dev only used for ERC721
-            //     uint256 takerTokenId; /// @dev only used for ERC721
+            //     uint256 makerTokenIdOrAmount;
+            //     uint256 takerTokenIdOrAmount;
             //     bool isActive;
             // }
-            assert.equal(Trade[0], alice, "order creator should be alice");
-            assert.equal(Trade[2], tokenA.address, "token for sale should be from faucet A");
-            assert.equal(Trade[3], tokenB.address, "token wanted should be from faucet B");
-            assert.equal(Trade[4], tokenAliceSells, "token to be sold should be as specified");
-            assert.equal(Trade[5], tokenAliceWantsBobOwns, "token to be bought should be as specified");
-            assert.equal(Trade[6], true, "order should be active");
+            assert.equal(Trade[0], isERC20, "maker contract is ERC721");
+            assert.equal(Trade[1], isERC20, "taker contract is ERC721");
+            assert.equal(Trade[2], alice, "trade creator should be alice");
+            assert.equal(Trade[4], tokenA.address, "token for sale should be from faucet A");
+            assert.equal(Trade[5], tokenB.address, "token wanted should be from faucet B");
+            assert.equal(Trade[6], tokenAliceSells, "token to be sold should be as specified");
+            assert.equal(Trade[7], tokenAliceWantsBobOwns, "token to be bought should be as specified");
+            assert.equal(Trade[8], true, "trade should be active");
         });
     });
 
@@ -271,10 +261,12 @@ contract('Etherary - Createing Trades', function(accounts) {
         it("should not allow new trade when stopped", async function () {
             await etherary.toggleContractActive.sendTransaction({from: deployer});
             await exceptions.tryCatch(
-                etherary.createERC721Trade.sendTransaction(
+                etherary.createTrade.sendTransaction(
                     tokenA.address,
+                    isERC20,
                     tokenAliceSells,
                     tokenB.address,
+                    isERC20,
                     tokenAliceWantsBobOwns,
                     {from: alice}
                 ),

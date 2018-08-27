@@ -1,18 +1,20 @@
-pragma solidity ^0.4.24;
+pragma solidity 0.4.24;
 
 import "openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 
 /**
- * @title Faucet Token
- * @dev Simple ERC20 Token example which can serve as a faucet. Allows anybody to request some token
- * Based on the MintableToken by OpenZeppelin: https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/token/ERC20/MintableToken.sol
+ * @title Generic Token example that anybody can mint by calling the mint function.
  */
-contract FaucetToken is StandardToken {
+contract GenericERC20TokenB is StandardToken {
+
+    string public constant name = "GenericERC20TokenB";
+    string public constant symbol = "GET20B";
+    uint8 public constant DECIMALS = 18;
+
     event Mint(address indexed to, uint256 amount);
 
     uint256 constant private PRE_DECIMAL_VALUE = 100;
-    uint8 constant internal FAUCET_DECIMALS = 18;
-    uint256 constant public AMOUNT_TO_MINT = PRE_DECIMAL_VALUE*10**uint256(FAUCET_DECIMALS);
+    uint256 constant public AMOUNT_TO_MINT = PRE_DECIMAL_VALUE*10**uint256(DECIMALS);
 
     /**
     * @dev Function to mint token and transfer them to the message sender.
@@ -33,6 +35,4 @@ contract FaucetToken is StandardToken {
         emit Transfer(address(0), _to, AMOUNT_TO_MINT);
         return true;
     }
-
-
 }

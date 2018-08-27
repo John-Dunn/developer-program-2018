@@ -1,18 +1,18 @@
 # Consensys Developer Program 2018 Final Project
-I chose to implement my own idea, a dApp to trade arbitrary ERC721 token directly. ERC721 token are non-fungible token with the most popular example being CryptoKitties (you can find more information about ERC721 [here](http://erc721.org/)). The most important feature of ERC721 token is that (in contrast to Ether or ERC20 token) they are distinguishable from one-another, like for example a painting.
+I chose to implement my own idea, a dApp that allows trustless trade of arbitrary Ethereum assets (ERC20, ERC721 token, and Ether via WETH). ERC721 token are non-fungible token with the most popular example being CryptoKitties (you can find more information about ERC721 [here](http://erc721.org/)). The most important feature of ERC721 token is that (in contrast to Ether or ERC20 token) they are distinguishable from one-another, like for example a painting.
 
 While there are marketplaces that allow auctioning ERC721 token for Ether, I believe trading them directly is more fun and in closer to the spirit of 'trading cards'. This is the topic of my project.
 
 In this readme I will focus on providing the information you need for evaluating this project, but if you are interested in reading more about the project feel free to have a look at the `Project Outline.md`.
 
 ## Description
-A trustless marketplace where one-to-one trades of ERC721 can take place without going through Ether first or requiring an arbitrator. Users can create trades, cancel them and fill other users' trades. Upon cancellation or completion of a trade, all users can withdraw their new token.
+A trustless marketplace where one-to-one trades of ERC20 and ERC721 token can take place without going through Ether first or requiring an arbitrator. Users can create trades, cancel them and fill other users' trades. Upon cancellation or completion of a trade, all users can withdraw their new token.
 
 
 #### User stories
-- As a owner of an ERC721 token, I want to trade it for some another token per smart contract so that I don't have to sell it first or trust a third party
+- As a owner of ERC721/ERC20 token, I want to trade it for some other ERC721/ERC20 token per smart contract so that I don't have to sell it first or trust a third party
 
-- As a owner of an ERC721 token, I want to create a trade by specifying my token as well as the token I want to trade my token for so that the owner of that token is able to complete the trade and we both get each other's token.
+- As a owner of ERC721/ERC20 token, I want to create a trade by specifying my token as well as the token I want to trade my token for so that the owner of that token is able to complete the trade and we both get each other's token.
 
 - As a user I want to browse all trades
 
@@ -30,7 +30,7 @@ The following instructions have been tested on a fresh Ubuntu 16.04.05 LTS with 
 
 1. Run `npm install` to install the dependencies (may take a bit)
 2. Run `ganache-cli` and remember the mnemonic for importing it in Metamask later (or run `ganache-cli -m "voice inch endorse recycle absurd claim ripple receive section same exist profit"` and use that mnemonic).
-3. Import the seed phrase to Metamask and switch to localhost:8545. You should see a balance just below 100 ETH. 
+3. Import the seed phrase to Metamask and switch to localhost:8545. You should see a balance just below 100 ETH.
 4. `truffle compile` and `truffle migrate`
 5. Launch the frontend with `npm run start`. Your browser window at http://localhost:3000/ should open.
 and connect to localhost 8545. You may need to refresh the page.

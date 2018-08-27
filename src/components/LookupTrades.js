@@ -1,5 +1,17 @@
 import React, { Component } from 'react'
-import { Form, FormGroup, Label, Input, FormFeedback, FormText, Col, Button, InputGroupButtonDropdown, DropdownToggle, DropdownMenu} from 'reactstrap';
+import {
+    Form,
+    FormGroup,
+    Label,
+    Input,
+    FormFeedback,
+    FormText,
+    Col,
+    Button,
+    InputGroupButtonDropdown,
+    DropdownToggle,
+    DropdownMenu
+} from 'reactstrap';
 
 // Custom components
 import TradeCardWrapper from './TradeCards/TradeCardWrapper'
@@ -20,7 +32,7 @@ import {
 import Etherary from '../../build/contracts/Etherary.json'
 import ERC721 from '../resources/ERC721Basic.json'
 
-
+// Lookup trade by Id
 class BrowseTrades extends Component {
 
     constructor(props) {
@@ -33,9 +45,9 @@ class BrowseTrades extends Component {
     }
 
     handleTradeIdChange(event) {
-      this.setState({
-          tradeIdInput: event.target.value
-      });
+        this.setState({
+            tradeIdInput: event.target.value
+        });
     }
 
     handleTradeLookup(event) {
@@ -75,57 +87,51 @@ class BrowseTrades extends Component {
     render() {
         return (
             <div>
-            <div className="centered">
-                <Form>
-                <FormGroup row>
-                  <Label for="tokenId" sm={3}>Trade ID</Label>
-                  <Col sm={7}>
-                      <Input
-                        type="number"
-                        id="tokenId"
-                        placeholder="123"
-                        invalid={this.tradeInvalid()}
-                        onChange={this.handleTradeIdChange.bind(this)}
-                      />
+                <div className="centered">
+                    <Form>
+                        <FormGroup row>
+                            <Label for="tokenId" sm={3}>Trade ID</Label>
+                            <Col sm={7}>
+                                <Input
+                                    type="number"
+                                    id="tokenId"
+                                    placeholder="123"
+                                    invalid={this.tradeInvalid()}
+                                    onChange={this.handleTradeIdChange.bind(this)}
+                                />
 
-                      <FormFeedback tooltip>This trade ID does not exist.</FormFeedback>
-                      <FormText>Enter the ID of the trade you want to look up.</FormText>
-                  </Col>
+                                <FormFeedback tooltip>This trade ID does not exist.</FormFeedback>
+                                <FormText>Enter the ID of the trade you want to look up.</FormText>
+                            </Col>
 
-                  <Col sm={2}>
-                      <Button
-                          type="submit"
-                          color="primary"
-                          onClick={this.handleTradeLookup.bind(this)}
-                      >
-                        Lookup Trade
-                      </Button>
-                 </Col>
-                </FormGroup>
-                </Form>
+                            <Col sm={2}>
+                                <Button
+                                    type="submit"
+                                    color="primary"
+                                    onClick={this.handleTradeLookup.bind(this)}
+                                >
+                                    Lookup Trade
+                                </Button>
+                            </Col>
+                        </FormGroup>
+                    </Form>
+                </div>
 
-            </div>
                 {
                     this.tradeValid()
-                    ?
-                    <div className="centered">
-                        <Col sm="6">
-                        <TradeCardWrapper
-                            web3={this.props.web3}
-                            tradeId={this.state.tradeId}
-                            trade={this.state.trade}
-                            reloadCallback={this.updateTrade.bind(this)}
-                          />
-                        </Col>
-                    </div>
+                    ?   <div className="centered">
+                            <Col sm="6">
+                                <TradeCardWrapper
+                                    web3={this.props.web3}
+                                    tradeId={this.state.tradeId}
+                                    trade={this.state.trade}
+                                    reloadCallback={this.updateTrade.bind(this)}
+                                />
+                            </Col>
+                        </div>
                     : <div></div>
                 }
             </div>
-
-
-
-
-
         );
     }
 }

@@ -13,6 +13,8 @@ import {
     tradeToMaker,
     tradeToMakerContract,
     tradeToTakerContract,
+    tradeToIsMakerContractERC20,
+    tradeToIsTakerContractERC20,
     tradeToMakerTokenId,
     tradeToTakerTokenId,
     tradeToActive,
@@ -22,18 +24,20 @@ import {
 // Contracts
 import Etherary from '../../../build/contracts/Etherary.json'
 import ERC721 from '../../resources/ERC721Basic.json'
+import ERC20 from '../../resources/ERC20Basic.json'
 
 
+// Main trade card component, uses modals and the card contant 
 class TradeCardWrapper extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          showActiveTradeModal: false,
-          showInactiveTradeModal: false,
-          takerTokenOwner: null,
+            showActiveTradeModal: false,
+            showInactiveTradeModal: false,
+            ownsTakerToken: null,
 
-          takerTokenApproved: false,
-          makerTokenApproved: false
+            takerTokenApproved: false,
+            makerTokenApproved: false
         };
     }
 
@@ -53,6 +57,24 @@ class TradeCardWrapper extends Component {
     }
 
     isTokenApproved(trade, isMaker) {
+        if (isMaker && tradeToIsMakerContractERC20(trade)) {
+            this.isTokenApprovedERC20(trade, true);
+        }
+
+        if (isMaker && !tradeToIsMakerContractERC20(trade)) {
+            this.isTokenApprovedERC721(trade, true);
+        }
+
+        if (!isMaker && tradeToIsTakerContractERC20(trade)) {
+            this.isTokenApprovedERC20(trade, false);
+        }
+
+        if (!isMaker && !tradeToIsTakerContractERC20(trade)) {
+            this.isTokenApprovedERC721(trade, false);
+        }
+    }
+
+    isTokenApprovedERC721(trade, isMaker) {
         var address = isMaker ? tradeToMakerContract(trade) : tradeToTakerContract(trade);
         var tokenId = isMaker ? tradeToMakerTokenId(trade) : tradeToTakerTokenId(trade);
 
@@ -69,6 +91,25 @@ class TradeCardWrapper extends Component {
         })
     }
 
+    isTokenApprovedERC20(trade, isMaker) {
+        var address = isMaker ? tradeToMakerContract(trade) : tradeToTakerContract(trade);
+        var tokenId = isMaker ? tradeToMakerTokenId(trade) : tradeToTakerTokenId(trade);
+
+        var instance = instantiateContractAt(ERC20, this.props.web3, address);
+        var etheraryAddress = Etherary.networks[this.props.web3.version.network].address;
+        var account = this.props.web3.eth.accounts[0];
+
+        instance.allowance(etheraryAddress, account)
+        .then(function(allowance) {
+            console.log("Allowance: ", allowance.toNumber());
+            var isApproved = (allowance.toNumber() >= (isMaker ? tradeToMakerTokenId(trade) : tradeToTakerTokenId(trade)));
+            var newState = isMaker ? {makerTokenApproved: isApproved} : {takerTokenApproved: isApproved};
+            this.setState(newState);
+        }.bind(this))
+        .catch(function(err) {
+            console.log("Querying approval failed: ", err);
+        })
+    }
 
     // Active Trade Modal
     handleTradeModal() {
@@ -85,22 +126,42 @@ class TradeCardWrapper extends Component {
     }
 
     getTakerTokenOwner() {
+        if (tradeToIsTakerContractERC20(this.props.trade)) {
+            this.getTakerTokenOwnerERC20()
+        }
+
+        if (!tradeToIsTakerContractERC20(this.props.trade)) {
+            this.getTakerTokenOwnerERC721()
+        }
+    }
+
+    getTakerTokenOwnerERC721() {
         var ERC721Instance = instantiateContractAt(ERC721, this.props.web3, tradeToTakerContract(this.props.trade));
         ERC721Instance.ownerOf(tradeToTakerTokenId(this.props.trade))
         .then(function(owner) {
-            this.setState({takerTokenOwner: owner});
+            this.setState({ownsTakerToken: owner === this.props.web3.eth.accounts[0]});
         }.bind(this))
         .catch(function(err) {
             console.log("Querying ownership failed: ", err);
         })
     }
 
-
+    getTakerTokenOwnerERC20() {
+        var instance = instantiateContractAt(ERC20, this.props.web3, tradeToTakerContract(this.props.trade));
+        instance.balanceOf(this.props.web3.eth.accounts[0])
+        .then(function(balance) {
+            console.log("Balance:", balance.toNumber());
+            this.setState({ownsTakerToken: balance.toNumber() >= tradeToTakerTokenId(this.props.trade)});
+        }.bind(this))
+        .catch(function(err) {
+            console.log("Querying ownership failed: ", err);
+        })
+    }
 
     // Button onClick
     handleCancelTrade() {
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
-        EtheraryInstance.cancelERC721Trade(this.props.tradeId, {from:this.props.web3.eth.accounts[0]})
+        EtheraryInstance.cancelTrade(this.props.tradeId, {from:this.props.web3.eth.accounts[0]})
         .then(function(txid) {
             var expectedEvent = { _tradeId: this.props.web3.toBigNumber(this.props.tradeId) }
             if(didEventOccur(txid, expectedEvent)) {
@@ -164,6 +225,7 @@ class TradeCardWrapper extends Component {
         return (
             <CardText>
                 <TradeCardContent
+                    web3={this.props.web3}
                     account={this.props.web3.eth.accounts[0]}
                     trade={this.props.trade}
                 />
@@ -188,7 +250,7 @@ class TradeCardWrapper extends Component {
                     tradeId={this.props.tradeId}
                     account={this.props.web3.eth.accounts[0]}
                     trade={this.props.trade}
-                    takerTokenOwner={this.state.takerTokenOwner}
+                    ownsTakerToken={this.state.ownsTakerToken}
                     web3={this.props.web3}
                     reloadCallback={this.props.reloadCallback}
                 />
