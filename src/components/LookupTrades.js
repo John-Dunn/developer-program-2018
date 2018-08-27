@@ -60,7 +60,8 @@ class BrowseTrades extends Component {
         if (this.state.tradeIdInput === null) { return }
 
         var EtheraryInstance = getContractInstance(Etherary, this.props.web3);
-        EtheraryInstance.idToTrade.call(this.state.tradeIdInput, {gas: 500000+Math.floor(Math.random()*1001)})
+        // The random gas is not required, but prevent metamask from caching
+        EtheraryInstance.idToTrade.call(this.state.tradeIdInput, {gas: Math.floor(Math.random()*1001)})
         .then(function(trade) {
             this.setState({
                 tradeId: this.state.tradeIdInput,

@@ -483,7 +483,7 @@ export default class NewTrade extends React.Component {
             this.state.tokenContractTaker,
             takerERC20,
             this.state.takerTokenIdOrAmount,
-            {from: this.props.web3.eth.accounts[0], gas:500000}
+            {from: this.props.web3.eth.accounts[0]}
         ).then(function(txid) {
             var txLogs = getLogs(txid);
             var id = txLogs[0].args._tradeId.toNumber();

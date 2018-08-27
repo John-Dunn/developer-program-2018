@@ -147,7 +147,8 @@ class ActiveTradeModal extends Component {
 
         EtheraryInstance.fillTrade(
             this.props.tradeId,
-            {from: this.props.web3.eth.accounts[0], gas:500000}
+            // Gas estimate is ~280k but fails occasionally
+            {from: this.props.web3.eth.accounts[0], gas: 300000}
         ).then(function(txid) {
             console.log('Completing trade', txid);
             var expectedEvent = {
