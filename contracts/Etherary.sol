@@ -5,6 +5,7 @@ import "openzeppelin-solidity/contracts/token/ERC721/ERC721Receiver.sol";
 import "./TokenInterface.sol";
 
 /// @title Etherary - trustless exchange of ERC721 and ERC20 token
+/// @author JohnDunn (https://github.com/John-Dunn)
 // Allows the creation of trades by specifying an ERC20 or ERC721 contract, token on that contracts
 // (that the caller owns), as well as ERC20 or ERC721 contract and a token on that contract that
 // the caller wants. The trade maker's token is then withdrawn to this contract. Once
