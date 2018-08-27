@@ -31,12 +31,12 @@ A trustless marketplace where one-to-one trades of ERC20 and ERC721 token can ta
 
 ## Running the project
 The following instructions have been tested on a fresh Ubuntu 16.04.05 LTS with git (2.7.4, `sudo apt-get install git`)
-nodejs (8.11.4), npm (5.6.0) (see [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)), ganache-cli (6.1.8, `sudo npm install -g ganache-cli`), and truffle (4.1.14, `sudo npm install -g truffle`) installed.
+nodejs (8.11.4), npm (5.6.0) (for instructions for those two see [here](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)), ganache-cli (6.1.8, `sudo npm install -g ganache-cli`), and truffle (4.1.14, `sudo npm install -g truffle`) installed.
 
-In addition you need Metamask. I chose the (non-experimental) Firefox version. If you have any trouble getting this installed or the steps below to work please let me know.
+In addition you need Metamask. I chose the old (non-beta) Firefox version ([here](https://addons.mozilla.org/en-US/firefox/addon/ether-metamask/)). If you have any trouble getting this installed or the steps below to work please let me know.
 
 1. Checkout the project: `git clone https://github.com/John-Dunn/developer-program-2018.git` and change into that folder `cd developer-program-2018`.
-2. Run `npm install` to install the dependencies for the frontend (this took ~180s on my VM)
+2. Run `npm install` to install the dependencies for the frontend (this took around 300s on my VM)
 3. Run `ganache-cli` and remember the mnemonic for importing it in Metamask later (or run `ganache-cli -m "voice inch endorse recycle absurd claim ripple receive section same exist profit"` and use that mnemonic).
 4. Import the seed phrase to Metamask and switch to localhost:8545. You should see a balance of 100 ETH.
 5. Open a new terminal in the same folder and run `truffle compile` and `truffle migrate`
