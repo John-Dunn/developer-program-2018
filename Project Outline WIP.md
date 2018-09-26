@@ -42,9 +42,11 @@ The UI was built to enable easy evaluation of the smart contract, but featuring 
 - Improved gas estimation: Metamask occasionally fails to correctly calculate the gas cost and transactions fail. To prevent this for now, the gas costs have been set manually. In addition Metamask caches some calls and requires a workaround of providing some random gas value. Both of those issues should be fixed before working with real assets.
 
 ###### Improved testing
-Currently there is some very similar code for checking e.g. ERC721-ERC20 and ERC721-ERC721 trades. Similar to the token interface in solidity, a javascript interface would allow just changing the contracts and some flags for each test. 
+Currently there is some very similar code for checking e.g. ERC721-ERC20 and ERC721-ERC721 trades. Similar to the token interface in solidity, a javascript interface would allow just changing the contracts and some flags for each test.
 
 ###### Contract Upgrades
+- A contract factory creating one contract per trade would be more elegant from a security perspective. This would compartmentalize the risks. If a maker were to submit a malicious contract it would be on the taker to make sure the contract is the one wanted. If the maker submits a valid token contract and the taker contract is malicious, it is the maker's fault. In any case there are only the two participant's funds at stake, and since both parties agree on both participating contracts there can be no surprises.
+
 - n for m trades: This is at the core of the intended use of ERC721 bartering, allow offering multiple token in a trade as well as wanting multiple token.
 - Optional expiration dates on trades
 
